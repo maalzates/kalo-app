@@ -34,6 +34,59 @@
                         <div class="text-h6">{{ mealStore.calorieGoal }}</div>
                     </v-col>
                 </v-row>
+                <v-divider class="my-6"></v-divider>
+
+                <div class="text-left">
+                    <div class="d-flex justify-space-between mb-1">
+                        <span class="text-subtitle-2 font-weight-bold"
+                            >Proteína</span
+                        >
+                        <span class="text-caption text-grey">
+                            {{ Math.round(mealStore.totalProtein) }}g /
+                            {{ mealStore.proteinGoal }}g
+                        </span>
+                    </div>
+                    <v-progress-linear
+                        :model-value="mealStore.proteinUsagePercentage"
+                        color="deep-purple"
+                        height="8"
+                        rounded
+                        class="mb-4"
+                    ></v-progress-linear>
+
+                    <div class="d-flex justify-space-between mb-1">
+                        <span class="text-subtitle-2 font-weight-bold"
+                            >Carbohidratos</span
+                        >
+                        <span class="text-caption text-grey">
+                            {{ Math.round(mealStore.totalCarbs) }}g /
+                            {{ mealStore.carbsGoal }}g
+                        </span>
+                    </div>
+                    <v-progress-linear
+                        :model-value="mealStore.carbsUsagePercentage"
+                        color="orange-darken-1"
+                        height="8"
+                        rounded
+                        class="mb-4"
+                    ></v-progress-linear>
+
+                    <div class="d-flex justify-space-between mb-1">
+                        <span class="text-subtitle-2 font-weight-bold"
+                            >Grasas</span
+                        >
+                        <span class="text-caption text-grey">
+                            {{ Math.round(mealStore.totalFat) }}g /
+                            {{ mealStore.fatGoal }}g
+                        </span>
+                    </div>
+                    <v-progress-linear
+                        :model-value="mealStore.fatUsagePercentage"
+                        color="cyan-darken-1"
+                        height="8"
+                        rounded
+                    ></v-progress-linear>
+                </div>
             </v-card>
         </v-col>
     </v-row>

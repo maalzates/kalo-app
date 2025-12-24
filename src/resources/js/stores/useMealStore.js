@@ -7,6 +7,21 @@ export const useMealStore = defineStore('mealStore', () => {
     const meals = ref([]);
     const calorieGoal = ref(userSettings.dailyCalorieGoal);
 
+    // 1. Metas de macros (vienen de userSettings)
+    const proteinGoal = ref(userSettings.dailyProteinGoal);
+    const carbsGoal = ref(userSettings.dailyCarbsGoal);
+    const fatGoal = ref(userSettings.dailyFatGoal);
+
+    // 2. Totales consumidos
+    const totalProtein = computed(() => meals.value?.reduce((acc, m) => acc + m.protein, 0) || 0);
+    const totalCarbs = computed(() => meals.value?.reduce((acc, m) => acc + m.carbs, 0) || 0);
+    const totalFat = computed(() => meals.value?.reduce((acc, m) => acc + m.fat, 0) || 0);
+
+    // 3. Porcentajes para las barras
+    const proteinUsagePercentage = computed(() => (totalProtein.value / proteinGoal.value) * 100 || 0);
+    const carbsUsagePercentage = computed(() => (totalCarbs.value / carbsGoal.value) * 100 || 0);
+    const fatUsagePercentage = computed(() => (totalFat.value / fatGoal.value) * 100 || 0);
+
     const totalCalories = computed(() => {
         return meals.value.reduce((acc, meal) => acc + meal.calories, 0);
     });
@@ -49,5 +64,14 @@ export const useMealStore = defineStore('mealStore', () => {
         remainingCalories,
         calorieColor,
         fetchMeals,
+        proteinGoal,
+        carbsGoal,
+        fatGoal,
+        totalProtein,
+        totalCarbs,
+        totalFat,
+        proteinUsagePercentage,
+        carbsUsagePercentage,
+        fatUsagePercentage,
     };
 });
