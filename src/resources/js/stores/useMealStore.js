@@ -20,6 +20,23 @@ export const useMealStore = defineStore('mealStore', () => {
         return calorieGoal.value - totalCalories.value;
     });
 
+    const calorieColor = computed(() => {
+        const pct = calorieUsagePercentage.value;
+    
+        switch (true) {
+            case pct < 60:
+                return 'orange';
+            case pct >= 60 && pct < 80:
+                return 'amber';
+            case pct >= 80 && pct < 90:
+                return 'green';
+            case pct >= 90 && pct <= 100:
+                return 'deep-purple';
+            default:
+                return 'red';
+        }
+    });
+
     const fetchMeals = () => {
         meals.value = mealRepository.getDaily();
     };
@@ -30,6 +47,7 @@ export const useMealStore = defineStore('mealStore', () => {
         totalCalories,
         calorieUsagePercentage,
         remainingCalories,
+        calorieColor,
         fetchMeals,
     };
 });

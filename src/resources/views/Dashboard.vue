@@ -8,7 +8,7 @@
                     :model-value="mealStore.calorieUsagePercentage"
                     :size="200"
                     :width="15"
-                    color="deep-purple"
+                    :color="mealStore.calorieColor"
                 >
                     <div class="text-center">
                         <span class="text-h4 font-weight-bold">{{
