@@ -37,9 +37,10 @@
   
           <template v-slot:append>
             <v-btn
-              icon="mdi-chevron-right"
+              icon="mdi-delete-outline"
               variant="text"
-              color="grey-lighten-1"
+              color="red"
+              @click="mealStore.removeMeal(meal.id)"
             ></v-btn>
           </template>
         </v-list-item>
