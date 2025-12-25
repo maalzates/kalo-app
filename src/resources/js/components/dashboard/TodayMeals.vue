@@ -57,6 +57,6 @@
   </template>
   
   <script setup>
-  import { useMealStore } from "../../stores/useMealStore";
+  import { useMealStore } from "@/stores/useMealStore";
   const mealStore = useMealStore();
   </script>

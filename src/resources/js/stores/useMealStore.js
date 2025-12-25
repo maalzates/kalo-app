@@ -5,6 +5,7 @@ import { userSettings } from "../data/userStats";
 
 export const useMealStore = defineStore("mealStore", () => {
     const meals = ref([]);
+    const selectedDate = ref(new Date());
     const calorieGoal = ref(userSettings.dailyCalorieGoal);
 
     // 1. Metas de macros (vienen de userSettings)
@@ -71,8 +72,13 @@ export const useMealStore = defineStore("mealStore", () => {
         meals.value = mealRepository.delete(id);
     };
 
+    const selectDate = (date) => {
+        selectedDate.value = date;
+    };
+
     return {
         meals,
+        selectedDate,
         calorieGoal,
         totalCalories,
         calorieUsagePercentage,
@@ -89,5 +95,6 @@ export const useMealStore = defineStore("mealStore", () => {
         fatUsagePercentage,
         fetchMeals,
         removeMeal,
+        selectDate,
     };
 });
