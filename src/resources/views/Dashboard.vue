@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="12" md="6">
-      <DailySummary />
+      <DailySummary class="ml-0 ml-md-6"/>
     </v-col>
 
     <v-col cols="12" md="6">
