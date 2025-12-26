@@ -1,4 +1,4 @@
-export const recepies = [
+export const recipes = [
     {
         id: 1,
         name: 'Huevos con Tostada',
