@@ -1,9 +1,9 @@
 <template>
   <v-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" max-width="500px">
-    <v-card title="Registrar consumo">
+    <v-card title="Registrar consumo" elevation="2" rounded="xl" class="pa-2">
       <v-card-subtitle>
         <v-icon start>mdi-calendar</v-icon>
-        {{ selectedDate }}
+        <span class="text-subtitle-1">{{ selectedDate }}</span>
       </v-card-subtitle>
       <v-card-text>
         <v-tabs v-model="activeTab" grow color="deep-purple-accent-4" class="mb-4">
