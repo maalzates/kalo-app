@@ -4,7 +4,7 @@
             <DateSelector />
         </v-col>
         <v-col cols="12" md="6">
-            <DailySummary />
+            <DailyMacrosSummary />
         </v-col>
 
         <v-col cols="12" md="6">
@@ -29,7 +29,7 @@
 import { onMounted } from "vue";
 import { useMealLogsStore } from "@/stores/useMealLogsStore";
 
-import DailySummary from "@/components/dashboard/DailySummary.vue";
+import DailyMacrosSummary from "@/components/dashboard/DailyMacrosSummary.vue";
 import DailyMealLogs from "@/components/dashboard/DailyMealLogs.vue";
 import DateSelector from "@/components/dashboard/DateSelector.vue";
 import { ref } from "vue";
