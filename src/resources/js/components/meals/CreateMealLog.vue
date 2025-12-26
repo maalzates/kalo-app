@@ -4,7 +4,7 @@
         <v-card-text>
           <v-autocomplete
             label="Buscar alimento"
-            :items="mealLogsStore.foodLibrary"
+            :items="ingredientsStore.ingredients"
             item-title="name"
             return-object
             variant="outlined"
@@ -45,7 +45,7 @@
         <v-card-actions class="pa-4">
           <v-spacer></v-spacer>
           <v-btn variant="text" @click="$emit('update:modelValue', false)">Cancelar</v-btn>
-          <v-btn color="deep-purple-accent-4" variant="flat" class="px-6" @click="saveMeal">Guardar</v-btn>
+          <v-btn color="deep-purple-accent-4" variant="flat" class="px-6" @click="saveMealLog">Guardar</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -54,13 +54,14 @@
   <script setup>
   import { ref, onMounted } from 'vue';
   import { useMealLogsStore } from '@/stores/useMealLogsStore';
+  import { useIngredientsStore } from '@/stores/useIngredientsStore';
   
   defineProps({ modelValue: Boolean });
   const emit = defineEmits(['update:modelValue']);
   
   const mealLogsStore = useMealLogsStore();
-  
-  // Estado inicial con defaults: 100g
+  const ingredientsStore = useIngredientsStore();
+
   const initialState = {
     name: '',
     amount: 100,
@@ -72,9 +73,10 @@
   };
   
   const form = ref({ ...initialState });
-  
+
   onMounted(() => {
-    mealLogsStore.fetchFoodLibrary();
+    mealLogsStore.fetchMealLogs();
+    ingredientsStore.fetchIngredients();
   });
   
   const onFoodSelected = (food) => {
@@ -84,10 +86,9 @@
     }
   };
   
-  const saveMeal = () => {
-    mealLogsStore.storeMealLog({ ...form.value });
+  const saveMealLog = () => {
+    mealLogsStore.addMealLog({ ...form.value });
     emit('update:modelValue', false);
-    // Reseteo al estado inicial
     form.value = { ...initialState };
   };
   </script>

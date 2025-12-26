@@ -1,5 +1,4 @@
-import { mealLogs } from "../data/mealLogs";
-import { foodLibrary } from '../data/foodLibrary';
+import { mealLogs } from "@/data/MealLogs";
 
 const mealLogsRepository = {
     getMealLogs() {
@@ -22,10 +21,6 @@ const mealLogsRepository = {
         };
         mealLogs.push(newMeal);
         return [...mealLogs];
-    },
-
-    getFoodLibrary() {
-        return foodLibrary;
     },
 };
 
