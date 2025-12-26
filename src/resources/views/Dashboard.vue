@@ -10,17 +10,10 @@
         <v-col cols="12" md="6">
             <DailyMealLogs />
         </v-col>
-        <v-col cols="12">
-            <v-btn
-                icon="mdi-plus"
-                color="deep-purple"
-                variant="tonal"
-                size="small"
-                @click="openCreateMealLogDialog"
-                class="d-md-none"
-                ></v-btn
-            >
-        </v-col>
+        <MobileFloatingButton 
+            icon="mdi-plus" 
+            @click="openCreateMealLogDialog" 
+        />
         <CreateMealLog v-model="isCreateMealLogDialogOpen" />
     </v-row>
 </template>
@@ -34,6 +27,7 @@ import DailyMealLogs from "@/components/dashboard/DailyMealLogs.vue";
 import DateSelector from "@/components/dashboard/DateSelector.vue";
 import { ref } from "vue";
 import CreateMealLog from "@/components/meals/CreateMealLog.vue";
+import MobileFloatingButton from "@/components/common/MobileFloatingButton.vue";
 
 const isCreateMealLogDialogOpen = ref(false);
 

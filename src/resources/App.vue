@@ -1,7 +1,7 @@
 <template>
   <v-app shadow>
     <v-app-bar color="deep-purple" elevation="0" border="b">
-      <v-app-bar-nav-icon class="d-md-none" @click="drawer = !drawer" />
+      <v-app-bar-nav-icon  @click="drawer = !drawer" />
       <v-app-bar-title class="logo">KALO<span class="logo-light">APP</span></v-app-bar-title>
     </v-app-bar>
 
