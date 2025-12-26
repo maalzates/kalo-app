@@ -8,6 +8,16 @@ export const useDateStore = defineStore('dateStore', () => {
     selectedDate.value = newDate;
   };
 
+  // ex: 10 de diciembre de 2025
+  const fullDate = computed(() => {
+    return selectedDate.value.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  });
+
+  // dd-mm-yyyy
   const formattedDate = computed(() => {
     const d = selectedDate.value;
     const day = d.getDate().toString().padStart(2, '0');
@@ -19,6 +29,7 @@ export const useDateStore = defineStore('dateStore', () => {
   return {
     selectedDate,
     setSelectedDate,
-    formattedDate
+    formattedDate,
+    fullDate
   };
 });

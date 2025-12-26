@@ -1,6 +1,10 @@
 <template>
   <v-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" max-width="500px">
     <v-card title="Registrar consumo">
+      <v-card-subtitle>
+        <v-icon start>mdi-calendar</v-icon>
+        {{ selectedDate }}
+      </v-card-subtitle>
       <v-card-text>
         <v-tabs v-model="activeTab" grow color="deep-purple-accent-4" class="mb-4">
           <v-tab value="food">Alimentos</v-tab>
@@ -63,18 +67,21 @@
   import { useMealLogsStore } from '@/stores/useMealLogsStore';
   import { useIngredientsStore } from '@/stores/useIngredientsStore';
   import { useRecipesStore } from '@/stores/useRecipesStore';
-  
+  import { useDateStore } from '@/stores/useDateStore';
+
   defineProps({ modelValue: Boolean });
   const emit = defineEmits(['update:modelValue']);
   
   // Acceso a las 3 stores necesarias
   const mealLogsStore = useMealLogsStore();
+  const dateStore = useDateStore();
   const ingredientsStore = useIngredientsStore();
   const recipesStore = useRecipesStore();
   
   const activeTab = ref('food');
   const selectedItem = ref(null);
-  
+  const selectedDate = ref(dateStore.fullDate);
+
   const initialState = {
     name: '',
     base_amount: 0,
