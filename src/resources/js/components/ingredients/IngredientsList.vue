@@ -94,19 +94,19 @@
         class="mt-4 rounded-lg"
       ></v-alert>
     </v-card>
-    <AddIngredient v-model="isAddIngredientDialogOpen" :initialData="selectedIngredient" />
+    <AddOrEditIngredient v-model="isAddOrEditDialogOpen" :initialData="selectedIngredient" />
     <MobileFloatingButton icon="mdi-plus" @click="openDialog(null, false)" />
   </template>
   
   <script setup>
   import { ref, computed } from 'vue';
   import { useIngredientsStore } from '@/stores/useIngredientsStore';
-  import AddIngredient from '@/components/ingredients/AddIngredient.vue';
+  import AddOrEditIngredient from '@/components/ingredients/AddOrEditIngredient.vue';
   import MobileFloatingButton from '@/components/common/MobileFloatingButton.vue';
   
   const ingredientsStore = useIngredientsStore();
   const search = ref('');
-  const isAddIngredientDialogOpen = ref(false);
+  const isAddOrEditDialogOpen = ref(false);
   const selectedIngredient = ref(null);
 
   const filteredIngredients = computed(() => {
@@ -121,7 +121,7 @@
     } else {
       selectedIngredient.value = null;
     }
-    isAddIngredientDialogOpen.value = true;
+    isAddOrEditDialogOpen.value = true;
   };
   
   defineEmits(['add', 'edit', 'delete']);
