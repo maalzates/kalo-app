@@ -7,6 +7,7 @@
           color="deep-purple"
           variant="tonal"
           size="small"
+          @click="openAddMealDialog"
         ></v-btn>
       </v-card-title>
   
@@ -54,9 +55,18 @@
         <p>Aún no has registrado nada hoy</p>
       </div>
     </v-card>
+    <AddMealDialog v-model="isAddMealDialogOpen" />
   </template>
   
   <script setup>
   import { useMealStore } from "@/stores/useMealStore";
+  import { ref } from 'vue';
+  import AddMealDialog from '@/components/meals/AddMealDialog.vue';
   const mealStore = useMealStore();
+
+  const isAddMealDialogOpen = ref(false);
+
+  const openAddMealDialog = () => {
+    isAddMealDialogOpen.value = true;
+  };
   </script>

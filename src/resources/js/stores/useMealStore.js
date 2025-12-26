@@ -5,6 +5,7 @@ import { userSettings } from "../data/userStats";
 
 export const useMealStore = defineStore("mealStore", () => {
     const meals = ref([]);
+    const foodLibrary = ref([]);
     const selectedDate = ref(new Date());
     const calorieGoal = ref(userSettings.dailyCalorieGoal);
 
@@ -76,8 +77,18 @@ export const useMealStore = defineStore("mealStore", () => {
         selectedDate.value = date;
     };
 
+    const fetchFoodLibrary = () => {
+        foodLibrary.value = mealRepository.getFoodLibrary();
+    };
+
+    const addMeal = (mealData) => {
+        const updatedMeals = mealRepository.save(mealData);
+        meals.value = updatedMeals;
+    };
+
     return {
         meals,
+        foodLibrary,
         selectedDate,
         calorieGoal,
         totalCalories,
@@ -96,5 +107,7 @@ export const useMealStore = defineStore("mealStore", () => {
         fetchMeals,
         removeMeal,
         selectDate,
+        fetchFoodLibrary,
+        addMeal,
     };
 });

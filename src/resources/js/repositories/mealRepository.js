@@ -1,4 +1,5 @@
 import { dailyMeals } from "../data/meals";
+import { foodLibrary } from '../data/foodLibrary';
 
 const mealRepository = {
     getDaily() {
@@ -12,6 +13,19 @@ const mealRepository = {
             dailyMeals.splice(index, 1);
         }
         return [...dailyMeals];
+    },
+
+    save(meal) {
+        const newMeal = {
+            id: Math.random().toString(36).substring(2, 15),
+            ...meal
+        };
+        dailyMeals.push(newMeal);
+        return [...dailyMeals];
+    },
+
+    getFoodLibrary() {
+        return foodLibrary;
     },
 };
 
