@@ -3,6 +3,13 @@
     <v-app-bar color="deep-purple" elevation="0" border="b">
       <v-app-bar-nav-icon  @click="drawer = !drawer" />
       <v-app-bar-title class="logo">KALO<span class="logo-light">APP</span></v-app-bar-title>
+      
+      <v-spacer class="d-md-none"></v-spacer>
+      <div class="d-md-none mr-4" @click="$router.push('/profile')">
+        <v-avatar size="32" color="deep-purple-lighten-4" class="cursor-pointer">
+          <span class="text-caption text-deep-purple font-weight-bold">JD</span>
+        </v-avatar>
+      </div>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" color="deep-purple" theme="dark">
@@ -12,6 +19,18 @@
         <v-list-item prepend-icon="mdi-chef-hat" title="Recetas" to="/recipes" class="mb-2" />
         <v-list-item prepend-icon="mdi-target" title="Objetivos" to="/goals" />
       </v-list>
+
+      <template v-slot:append>
+        <v-divider></v-divider>
+        <v-list-item
+          lines="two"
+          prepend-avatar="https://randomuser.me/api/portraits/men/1.jpg"
+          title="Juan Dueñas"
+          subtitle="Meta: 2,400 kcal"
+          class="pa-4 cursor-pointer"
+          to="/profile"
+        ></v-list-item>
+      </template>
     </v-navigation-drawer>
 
     <v-btn 
@@ -39,8 +58,9 @@ const drawer = ref(true)
 <style scoped>
 .logo { font-weight: 900; letter-spacing: -1.5px; font-size: 1.5rem; }
 .logo-light { font-weight: 300; }
+.cursor-pointer { cursor: pointer; }
 
-/* Botón Toggle Inteligente */
+/* Botón Toggle Inteligente (Mantener tal cual) */
 .btn-toggle {
   position: fixed;
   top: 50%;
@@ -48,12 +68,11 @@ const drawer = ref(true)
   z-index: 2000;
   border-radius: 0 50% 50% 0;
   transform: translateY(-50%);
-  transition: left 0.3s ease; /* Sincronizado con la animación del drawer */
+  transition: left 0.3s ease;
 }
 
-/* Cuando el menú está abierto, el botón se desplaza con él */
 .btn-toggle.is-open {
-  left: 256px; /* Ancho por defecto del drawer de Vuetify */
+  left: 256px; 
 }
 
 .main-menu :deep(.v-list-item) { min-height: 56px !important; }
