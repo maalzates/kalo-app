@@ -7,13 +7,13 @@
           color="deep-purple"
           variant="tonal"
           size="small"
-          @click="openAddMealDialog"
+          @click="openCreateMealLogDialog"
         ></v-btn>
       </v-card-title>
   
       <v-list lines="two" class="bg-transparent">
         <v-list-item
-          v-for="meal in mealStore.meals"
+          v-for="meal in mealLogsStore.mealLogs"
           :key="meal.id"
           class="mb-2 border-b-sm"
         >
@@ -41,32 +41,32 @@
               icon="mdi-delete-outline"
               variant="text"
               color="red"
-              @click="mealStore.removeMeal(meal.id)"
+              @click="mealLogsStore.removeMealLog(meal.id)"
             ></v-btn>
           </template>
         </v-list-item>
       </v-list>
   
       <div
-        v-if="mealStore.meals.length === 0"
+        v-if="mealLogsStore.mealLogs.length === 0"
         class="pa-8 text-center text-grey"
       >
         <v-icon size="48" class="mb-2">mdi-clipboard-text-outline</v-icon>
         <p>Aún no has registrado nada hoy</p>
       </div>
     </v-card>
-    <AddMealDialog v-model="isAddMealDialogOpen" />
+    <CreateMealLog v-model="isCreateMealLogDialogOpen" />
   </template>
   
   <script setup>
-  import { useMealStore } from "@/stores/useMealStore";
+  import { useMealLogsStore } from "@/stores/useMealLogsStore";
   import { ref } from 'vue';
-  import AddMealDialog from '@/components/meals/AddMealDialog.vue';
-  const mealStore = useMealStore();
+  import CreateMealLog from '@/components/meals/CreateMealLog.vue';
+  const mealLogsStore = useMealLogsStore();
 
-  const isAddMealDialogOpen = ref(false);
+  const isCreateMealLogDialogOpen = ref(false);
 
-  const openAddMealDialog = () => {
-    isAddMealDialogOpen.value = true;
+  const openCreateMealLogDialog = () => {
+    isCreateMealLogDialogOpen.value = true;
   };
   </script>

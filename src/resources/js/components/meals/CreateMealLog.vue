@@ -4,7 +4,7 @@
         <v-card-text>
           <v-autocomplete
             label="Buscar alimento"
-            :items="store.foodLibrary"
+            :items="mealLogsStore.foodLibrary"
             item-title="name"
             return-object
             variant="outlined"
@@ -53,12 +53,12 @@
   
   <script setup>
   import { ref, onMounted } from 'vue';
-  import { useMealStore } from '@/stores/useMealStore';
+  import { useMealLogsStore } from '@/stores/useMealLogsStore';
   
   defineProps({ modelValue: Boolean });
   const emit = defineEmits(['update:modelValue']);
   
-  const store = useMealStore();
+  const mealLogsStore = useMealLogsStore();
   
   // Estado inicial con defaults: 100g
   const initialState = {
@@ -74,7 +74,7 @@
   const form = ref({ ...initialState });
   
   onMounted(() => {
-    store.fetchFoodLibrary();
+    mealLogsStore.fetchFoodLibrary();
   });
   
   const onFoodSelected = (food) => {
@@ -85,7 +85,7 @@
   };
   
   const saveMeal = () => {
-    store.addMeal({ ...form.value });
+    mealLogsStore.storeMealLog({ ...form.value });
     emit('update:modelValue', false);
     // Reseteo al estado inicial
     form.value = { ...initialState };

@@ -16,34 +16,34 @@
                 color="deep-purple"
                 variant="tonal"
                 size="small"
-                @click="openAddMealDialog"
+                @click="openCreateMealLogDialog"
                 class="d-md-none"
                 ></v-btn
             >
         </v-col>
-        <AddMealDialog v-model="isAddMealDialogOpen" />
+        <CreateMealLog v-model="isCreateMealLogDialogOpen" />
     </v-row>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
-import { useMealStore } from "@/stores/useMealStore";
+import { useMealLogsStore } from "@/stores/useMealLogsStore";
 
 import DailySummary from "@/components/dashboard/DailySummary.vue";
 import TodayMeals from "@/components/dashboard/TodayMeals.vue";
 import DateSelector from "@/components/dashboard/DateSelector.vue";
 import { ref } from "vue";
-import AddMealDialog from "@/components/meals/AddMealDialog.vue";
+import CreateMealLog from "@/components/meals/CreateMealLog.vue";
 
-const isAddMealDialogOpen = ref(false);
+const isCreateMealLogDialogOpen = ref(false);
 
-const openAddMealDialog = () => {
-    isAddMealDialogOpen.value = true;
+const openCreateMealLogDialog = () => {
+    isCreateMealLogDialogOpen.value = true;
 };
 
-const mealStore = useMealStore();
+const mealLogsStore = useMealLogsStore();
 
 onMounted(() => {
-    mealStore.fetchMeals();
+    mealLogsStore.fetchMealLogs();
 });
 </script>

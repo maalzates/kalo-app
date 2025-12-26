@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import mealRepository from "../repositories/mealRepository";
+import mealLogsRepository from "../repositories/mealLogsRepository";
 import { userSettings } from "../data/userStats";
 
-export const useMealStore = defineStore("mealStore", () => {
-    const meals = ref([]);
+export const useMealLogsStore = defineStore("mealLogsStore", () => {
+    const mealLogs = ref([]);
     const foodLibrary = ref([]);
     const selectedDate = ref(new Date());
     const calorieGoal = ref(userSettings.dailyCalorieGoal);
@@ -16,13 +16,13 @@ export const useMealStore = defineStore("mealStore", () => {
 
     // 2. Totales consumidos
     const totalProtein = computed(
-        () => meals.value?.reduce((acc, m) => acc + m.protein, 0) || 0
+        () => mealLogs.value?.reduce((acc, m) => acc + m.protein, 0) || 0
     );
     const totalCarbs = computed(
-        () => meals.value?.reduce((acc, m) => acc + m.carbs, 0) || 0
+        () => mealLogs.value?.reduce((acc, m) => acc + m.carbs, 0) || 0
     );
     const totalFat = computed(
-        () => meals.value?.reduce((acc, m) => acc + m.fat, 0) || 0
+        () => mealLogs.value?.reduce((acc, m) => acc + m.fat, 0) || 0
     );
 
     const proteinUsagePercentage = computed(
@@ -36,7 +36,7 @@ export const useMealStore = defineStore("mealStore", () => {
     );
 
     const totalCalories = computed(() => {
-        return meals.value.reduce((acc, meal) => acc + meal.calories, 0);
+        return mealLogs.value.reduce((acc, meal) => acc + meal.calories, 0);
     });
 
     const calorieUsagePercentage = computed(() => {
@@ -65,12 +65,17 @@ export const useMealStore = defineStore("mealStore", () => {
         }
     });
 
-    const fetchMeals = () => {
-        meals.value = mealRepository.getDaily();
+    const fetchMealLogs = () => {
+        mealLogs.value = mealLogsRepository.getMealLogs();
     };
 
-    const removeMeal = (id) => {
-        meals.value = mealRepository.delete(id);
+    const addMealLog = (mealData) => {
+        const updatedMealLogs = mealLogsRepository.storeMealLog(mealData);
+        mealLogs.value = updatedMealLogs;
+    };
+
+    const removeMealLog = (id) => {
+        mealLogs.value = mealLogsRepository.deleteMealLog(id);
     };
 
     const selectDate = (date) => {
@@ -78,16 +83,11 @@ export const useMealStore = defineStore("mealStore", () => {
     };
 
     const fetchFoodLibrary = () => {
-        foodLibrary.value = mealRepository.getFoodLibrary();
-    };
-
-    const addMeal = (mealData) => {
-        const updatedMeals = mealRepository.save(mealData);
-        meals.value = updatedMeals;
+        foodLibrary.value = mealLogsRepository.getFoodLibrary();
     };
 
     return {
-        meals,
+        mealLogs,
         foodLibrary,
         selectedDate,
         calorieGoal,
@@ -104,10 +104,10 @@ export const useMealStore = defineStore("mealStore", () => {
         proteinUsagePercentage,
         carbsUsagePercentage,
         fatUsagePercentage,
-        fetchMeals,
-        removeMeal,
+        fetchMealLogs,
+        removeMealLog,
+        addMealLog,
         selectDate,
         fetchFoodLibrary,
-        addMeal,
     };
 });

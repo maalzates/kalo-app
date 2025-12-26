@@ -3,14 +3,14 @@
       <v-card-title class="text-h5 mb-4">Resumen Diario</v-card-title>
   
       <v-progress-circular
-        :model-value="mealStore.calorieUsagePercentage"
+        :model-value="mealLogsStore.calorieUsagePercentage"
         :size="200"
         :width="15"
-        :color="mealStore.calorieColor"
+        :color="mealLogsStore.calorieColor"
       >
         <div class="text-center">
           <span class="text-h4 font-weight-bold">{{
-            mealStore.remainingCalories
+            mealLogsStore.remainingCalories
           }}</span>
           <div class="text-caption text-uppercase">kcal restantes</div>
         </div>
@@ -19,11 +19,11 @@
       <v-row class="mt-6">
         <v-col cols="6">
           <div class="text-subtitle-2 text-grey">Consumidas</div>
-          <div class="text-h6">{{ mealStore.totalCalories }}</div>
+          <div class="text-h6">{{ mealLogsStore.totalCalories }}</div>
         </v-col>
         <v-col cols="6">
           <div class="text-subtitle-2 text-grey">Objetivo</div>
-          <div class="text-h6">{{ mealStore.calorieGoal }}</div>
+          <div class="text-h6">{{ mealLogsStore.calorieGoal }}</div>
         </v-col>
       </v-row>
   
@@ -33,12 +33,12 @@
         <div class="d-flex justify-space-between mb-1">
           <span class="text-subtitle-2 font-weight-bold">Proteína</span>
           <span class="text-caption text-grey">
-            {{ Math.round(mealStore.totalProtein) }}g /
-            {{ mealStore.proteinGoal }}g
+            {{ Math.round(mealLogsStore.totalProtein) }}g /
+            {{ mealLogsStore.proteinGoal }}g
           </span>
         </div>
         <v-progress-linear
-          :model-value="mealStore.proteinUsagePercentage"
+          :model-value="mealLogsStore.proteinUsagePercentage"
           color="deep-purple"
           height="8"
           rounded
@@ -48,12 +48,12 @@
         <div class="d-flex justify-space-between mb-1">
           <span class="text-subtitle-2 font-weight-bold">Carbohidratos</span>
           <span class="text-caption text-grey">
-            {{ Math.round(mealStore.totalCarbs) }}g /
-            {{ mealStore.carbsGoal }}g
+            {{ Math.round(mealLogsStore.totalCarbs) }}g /
+            {{ mealLogsStore.carbsGoal }}g
           </span>
         </div>
         <v-progress-linear
-          :model-value="mealStore.carbsUsagePercentage"
+          :model-value="mealLogsStore.carbsUsagePercentage"
           color="orange-darken-1"
           height="8"
           rounded
@@ -63,12 +63,12 @@
         <div class="d-flex justify-space-between mb-1">
           <span class="text-subtitle-2 font-weight-bold">Grasas</span>
           <span class="text-caption text-grey">
-            {{ Math.round(mealStore.totalFat) }}g /
-            {{ mealStore.fatGoal }}g
+            {{ Math.round(mealLogsStore.totalFat) }}g /
+            {{ mealLogsStore.fatGoal }}g
           </span>
         </div>
         <v-progress-linear
-          :model-value="mealStore.fatUsagePercentage"
+          :model-value="mealLogsStore.fatUsagePercentage"
           color="cyan-darken-1"
           height="8"
           rounded
@@ -78,6 +78,6 @@
   </template>
   
   <script setup>
-  import { useMealStore } from "../../stores/useMealStore";
-  const mealStore = useMealStore();
+  import { useMealLogsStore } from '@/stores/useMealLogsStore';
+  const mealLogsStore = useMealLogsStore();
   </script>

@@ -1,4 +1,4 @@
-export const dailyMeals = [
+export const mealLogs = [
     {
       id: 1,
       name: 'Huevos con Tostada',

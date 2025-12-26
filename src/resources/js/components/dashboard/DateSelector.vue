@@ -12,7 +12,7 @@
           </template>
           
           <v-date-picker 
-            v-model="store.selectedDate" 
+            v-model="mealLogsStore.selectedDate" 
             @update:model-value="onDateSelected"
             color="deep-purple-accent-4"
           ></v-date-picker>
@@ -25,12 +25,12 @@
   
   <script setup>
   import { computed } from 'vue';
-  import { useMealStore } from '@/stores/useMealStore';
+  import { useMealLogsStore } from '@/stores/useMealLogsStore';
   
-  const store = useMealStore();
+  const mealLogsStore = useMealLogsStore();
   
   const formattedDate = computed(() => {
-    return store.selectedDate.toLocaleDateString('es-ES', {
+    return mealLogsStore.selectedDate.toLocaleDateString('es-ES', {
       day: 'numeric',
       month: 'short',
       year: 'numeric'
@@ -38,12 +38,12 @@
   });
   
   const changeDay = (offset) => {
-    const newDate = new Date(store.selectedDate);
+    const newDate = new Date(mealLogsStore.selectedDate);
     newDate.setDate(newDate.getDate() + offset);
-    store.selectDate(newDate);
+    mealLogsStore.selectDate(newDate);
   };
   
   const onDateSelected = (newDate) => {
-    store.selectDate(newDate);
+    mealLogsStore.selectDate(newDate);
   };
   </script>
