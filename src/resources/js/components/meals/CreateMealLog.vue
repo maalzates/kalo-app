@@ -31,16 +31,19 @@
 
         <div v-if="form.name">
           <p class="text-subtitle-2 mb-2">Has seleccionado: <strong>{{ form.name }}</strong></p>
-          <v-row>
+          <v-row v-if="activeTab === 'food'">
             <v-col cols="7">
-              <v-text-field v-model.number="form.amount" label="Cantidad" type="number" variant="outlined" density="compact"></v-text-field>
+              <v-text-field v-model.number="form.base_amount" label="Cantidad" type="number" variant="outlined" density="compact"></v-text-field>
             </v-col>
             <v-col cols="5">
-              <v-select v-model="form.unit" :items="['g', 'ml', 'un']" label="Unidad" variant="outlined" density="compact"></v-select>
+              <v-select v-model="form.base_unit" :items="['g', 'ml', 'unidad']" label="Unidad" variant="outlined" density="compact"></v-select>
             </v-col>
           </v-row>
           
           <v-alert density="compact" color="deep-purple-lighten-5" class="text-caption">
+            <div v-if="activeTab === 'food'" class="mb-1 text-grey-darken-1 italic">
+              Valores por cada <strong>{{ form.base_amount }}{{ form.base_unit }}</strong>:
+            </div>
             Macros: {{ form.calories }} kcal | P: {{ form.protein }}g | C: {{ form.carbs }}g | G: {{ form.fat }}g
           </v-alert>
         </div>
@@ -56,7 +59,7 @@
 </template>
 
 <script setup>
-  import { ref, computed, onMounted } from 'vue';
+  import { ref, computed, onMounted, watch } from 'vue';
   import { useMealLogsStore } from '@/stores/useMealLogsStore';
   import { useIngredientsStore } from '@/stores/useIngredientsStore';
   import { useRecipesStore } from '@/stores/useRecipesStore';
@@ -74,8 +77,8 @@
   
   const initialState = {
     name: '',
-    amount: 100,
-    unit: 'g',
+    base_amount: 0,
+    base_unit: '',
     calories: 0,
     protein: 0,
     carbs: 0,
@@ -99,6 +102,7 @@
   
   const onFoodSelected = (item) => {
     if (item) {
+      console.log(item);
       // Volcamos los datos del ingrediente/receta al formulario de log
       form.value = { ...form.value, ...item };
     }
@@ -116,4 +120,9 @@
     form.value = { ...initialState };
     selectedItem.value = null;
   };
+
+  watch(activeTab, () => {
+    form.value = { ...initialState };
+    selectedItem.value = null;
+  });
   </script>
