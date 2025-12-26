@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Dashboard from '../views/Dashboard.vue';
+import Dashboard from '@/components/Dashboard.vue';
+import IngredientsList from '@/components/ingredients/IngredientsList.vue';
 
 const routes = [
     { path: '/', component: Dashboard },
-    { path: '/goals', component: () => import('../views/Goals.vue') }
+    { path: '/ingredients', component: IngredientsList },
+    { path: '/goals', component: () => import('../js/components/Goals.vue') }
 ];
 
 const router = createRouter({
