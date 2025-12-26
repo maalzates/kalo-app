@@ -3,7 +3,7 @@
     <v-card title="Registrar consumo" elevation="2" rounded="xl" class="pa-2">
       <v-card-subtitle>
         <v-icon start>mdi-calendar</v-icon>
-        <span class="text-subtitle-1">{{ selectedDate }}</span>
+        <span class="text-subtitle-1">{{ dateStore.fullDate }}</span>
       </v-card-subtitle>
       <v-card-text>
         <v-tabs v-model="activeTab" grow color="deep-purple-accent-4" class="mb-4">
@@ -93,9 +93,6 @@
   
   const form = ref({ ...initialState });
   
-  const selectedDate = computed(() => {
-    return dateStore.fullDate;
-  });
   // El puente entre el tab activo y la store correspondiente
   const filteredLibrary = computed(() => {
     return activeTab.value === 'food' 

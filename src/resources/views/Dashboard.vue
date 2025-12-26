@@ -8,7 +8,7 @@
         </v-col>
 
         <v-col cols="12" md="6">
-            <TodayMeals />
+            <DailyMealLogs />
         </v-col>
         <v-col cols="12">
             <v-btn
@@ -30,7 +30,7 @@ import { onMounted } from "vue";
 import { useMealLogsStore } from "@/stores/useMealLogsStore";
 
 import DailySummary from "@/components/dashboard/DailySummary.vue";
-import TodayMeals from "@/components/dashboard/TodayMeals.vue";
+import DailyMealLogs from "@/components/dashboard/DailyMealLogs.vue";
 import DateSelector from "@/components/dashboard/DateSelector.vue";
 import { ref } from "vue";
 import CreateMealLog from "@/components/meals/CreateMealLog.vue";

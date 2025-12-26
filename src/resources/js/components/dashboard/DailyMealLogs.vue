@@ -1,7 +1,7 @@
 <template>
     <v-card elevation="2" rounded="xl" class="pa-4">
       <v-card-title class="d-flex justify-space-between align-center px-4">
-        <span class="text-h5 font-weight-bold">Comidas de hoy</span>
+        <span class="text-h5 font-weight-bold">Comidas de {{ dateStore.dayAndMonth }} </span>
         <v-btn
           icon="mdi-plus"
           color="deep-purple"
@@ -60,9 +60,11 @@
   
   <script setup>
   import { useMealLogsStore } from "@/stores/useMealLogsStore";
+  import { useDateStore } from "@/stores/useDateStore";
   import { ref } from 'vue';
   import CreateMealLog from '@/components/meals/CreateMealLog.vue';
   const mealLogsStore = useMealLogsStore();
+  const dateStore = useDateStore();
 
   const isCreateMealLogDialogOpen = ref(false);
 

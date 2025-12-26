@@ -17,6 +17,14 @@ export const useDateStore = defineStore('dateStore', () => {
     });
   });
 
+  // ex: 10 de diciembre
+  const dayAndMonth = computed(() => {
+    return selectedDate.value.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long'
+    });
+  });
+
   // dd-mm-yyyy
   const formattedDate = computed(() => {
     const d = selectedDate.value;
@@ -30,6 +38,7 @@ export const useDateStore = defineStore('dateStore', () => {
     selectedDate,
     setSelectedDate,
     formattedDate,
-    fullDate
+    fullDate,
+    dayAndMonth
   };
 });
