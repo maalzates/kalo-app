@@ -80,7 +80,6 @@
   
   const activeTab = ref('food');
   const selectedItem = ref(null);
-  const selectedDate = ref(dateStore.fullDate);
 
   const initialState = {
     name: '',
@@ -94,6 +93,9 @@
   
   const form = ref({ ...initialState });
   
+  const selectedDate = computed(() => {
+    return dateStore.fullDate;
+  });
   // El puente entre el tab activo y la store correspondiente
   const filteredLibrary = computed(() => {
     return activeTab.value === 'food' 
