@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import ingredientsRepository from "@/repositories/useIngredientsRepository";
+import ingredientsRepository from "@/repositories/ingredientsRepository.js";
 
 export const useIngredientsStore = defineStore("ingredientsStore", () => {
     const ingredients = ref([]);
