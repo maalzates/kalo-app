@@ -127,7 +127,7 @@ import { ref, computed } from "vue";
 import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import AddOrEditIngredient from "@/components/ingredients/AddOrEditIngredient.vue";
 import MobileFloatingButton from "@/components/common/MobileFloatingButton.vue";
-import ConfirmDeleteDialog from "@/components/ingredients/ConfirmDeleteDialog.vue";
+import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog.vue";
 
 const ingredientsStore = useIngredientsStore();
 const search = ref("");
