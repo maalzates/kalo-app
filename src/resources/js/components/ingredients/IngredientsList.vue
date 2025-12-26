@@ -17,7 +17,7 @@
             rounded="pill"
             variant="flat"
             class="d-none d-md-flex"
-            @click="isAddIngredientDialogOpen = true"
+            @click="openDialog(null, false)"
           >
             Nuevo
           </v-btn>
@@ -70,7 +70,7 @@
                     <template v-slot:prepend>
                       <v-icon size="small">mdi-pencil</v-icon>
                     </template>
-                    <v-list-item-title>Editar</v-list-item-title>
+                    <v-list-item-title @click="openDialog(item, true)">Editar</v-list-item-title>
                   </v-list-item>
                   <v-list-item @click="$emit('delete', item.id)" color="error">
                     <template v-slot:prepend>
@@ -94,8 +94,8 @@
         class="mt-4 rounded-lg"
       ></v-alert>
     </v-card>
-    <AddIngredient v-model="isAddIngredientDialogOpen" />
-    <MobileFloatingButton icon="mdi-plus" @click="isAddIngredientDialogOpen = true" />
+    <AddIngredient v-model="isAddIngredientDialogOpen" :initialData="selectedIngredient" />
+    <MobileFloatingButton icon="mdi-plus" @click="openDialog(null, false)" />
   </template>
   
   <script setup>
@@ -107,12 +107,22 @@
   const ingredientsStore = useIngredientsStore();
   const search = ref('');
   const isAddIngredientDialogOpen = ref(false);
-  
+  const selectedIngredient = ref(null);
+
   const filteredIngredients = computed(() => {
     return ingredientsStore.ingredients.filter(ing => 
       ing.name.toLowerCase().includes(search.value.toLowerCase())
     );
   });
+
+  const openDialog = (item, isEditing = false) => {
+    if (isEditing) {
+      selectedIngredient.value = {...item};
+    } else {
+      selectedIngredient.value = null;
+    }
+    isAddIngredientDialogOpen.value = true;
+  };
   
   defineEmits(['add', 'edit', 'delete']);
   </script>
