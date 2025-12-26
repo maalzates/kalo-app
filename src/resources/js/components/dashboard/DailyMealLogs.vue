@@ -1,7 +1,7 @@
 <template>
     <v-card elevation="2" rounded="xl" class="pa-4">
       <v-card-title class="d-flex justify-space-between align-center px-4">
-        <span class="text-h5 font-weight-bold">Comidas de {{ dateStore.dayAndMonth }} </span>
+        <span class="text-h5 font-weight-bold text-wrap">Comidas al {{ dateStore.dayAndMonth }} </span>
         <v-btn
           icon="mdi-plus"
           color="deep-purple"
@@ -23,7 +23,7 @@
             </v-avatar>
           </template>
   
-          <v-list-item-title class="text-subtitle-1 font-weight-bold">
+          <v-list-item-title class="text-subtitle-1 font-weight-bold text-wrap">
             {{ meal.name }}
           </v-list-item-title>
   
