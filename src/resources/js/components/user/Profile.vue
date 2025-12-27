@@ -1,7 +1,6 @@
 <template>
     <v-container maxWidth="800px">
-      <h1 class="text-h4 font-weight-black mb-6">Mi Perfil</h1>
-  
+        <UserInformationCard class="mb-2"/>
       <v-row>
         <v-col cols="12" md="6">
           <v-card elevation="2" rounded="xl" class="pa-4 h-100">
@@ -80,4 +79,10 @@
         </v-col>
       </v-row>
     </v-container>
+    
   </template>
+
+  <script setup>
+    import UserInformationCard from '@/components/user/UserInformationCard.vue';
+
+  </script>
