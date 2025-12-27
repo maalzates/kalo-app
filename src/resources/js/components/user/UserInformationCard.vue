@@ -13,7 +13,7 @@
         <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
   
         <template v-slot:append>
-          <v-btn icon="mdi-cog" variant="text" color="grey" @click="$emit('open-edit')"></v-btn>
+          <v-btn icon="mdi-cog" variant="text" color="grey" @click="isModalOpen = true"></v-btn>
         </template>
       </v-list-item>
   
@@ -56,16 +56,23 @@
           </v-col>
         </v-row>
       </v-card-text>
+      <EditUserInfo 
+            v-model="isModalOpen" 
+            :user-data="user"
+            @save="handleSave"
+        />
     </v-card>
   </template>
   
   <script setup>
-  import { computed } from 'vue';
+  import { computed, ref } from 'vue';
   import { useUserStore } from '@/stores/useUserStore';
+  import EditUserInfo from '@/components/user/EditUserInfo.vue'; // Importación local
   
   const userStore = useUserStore();
   const emit = defineEmits(['open-edit']);
   const user = computed(() => userStore.authenticatedUser);
+  const isModalOpen = ref(false);
   
   const currentWeight = computed(() => {
     if (!user.value?.biometrics?.length) return '--';
