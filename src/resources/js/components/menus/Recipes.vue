@@ -1,5 +1,5 @@
 <template>
-    <v-card elevation="2" rounded="xl" class="pa-4">
+    <v-card elevation="2" rounded="xl" class="pa-4 ml-0 ml-md-6">
       <v-card-item class="px-0 pt-0">
         <div class="d-flex align-center justify-space-between mb-4">
           <div>
