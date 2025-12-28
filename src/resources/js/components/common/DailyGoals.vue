@@ -1,45 +1,71 @@
 <template>
-    <v-card color="deep-purple-accent-4" theme="dark" rounded="xl" class="pa-6">
-        <div class="text-center mb-4">
-            <div class="text-h4 font-weight-bold">Tus metas diarias</div>
-            <div class="text-h6 opacity-70">Objetivos activos basados en tu perfil</div>
-        </div>
-        <v-row class="text-center" dense>
-            <v-col cols="3">
-                <div class="text-h5 font-weight-black">
-                    {{ user.current_targets.calories }}
-                </div>
-                <div class="text-caption">Kcal</div>
+    <v-card 
+      v-if="user?.current_targets"
+      color="deep-purple-lighten-5" 
+      rounded="xl" 
+      variant="flat"
+    >
+      <v-row no-gutters align="center">
+        <v-col 
+          cols="12" 
+          sm="4" 
+          class="pa-4 border-b-sm border-sm-0 border-e-sm-border-deep-purple-lighten-4"
+        >
+          <div class="d-flex align-center justify-center justify-sm-start">
+            <v-icon 
+              icon="mdi-flag-checkered" 
+              color="deep-purple-accent-4" 
+              class="mr-3 opacity-80"
+            ></v-icon>
+            <div>
+              <div class="text-overline font-weight-black text-deep-purple-accent-4 line-height-1">
+                Metas Diarias
+              </div>
+              <div class="text-caption text-deep-purple-lighten-1 text-truncate">
+                Basado en tu perfil
+              </div>
+            </div>
+          </div>
+        </v-col>
+  
+        <v-col cols="12" sm="8" class="pa-2">
+          <v-row no-gutters justify="space-around" class="text-center align-center">
+            <v-col>
+              <div class="text-h6 font-weight-black text-deep-purple-accent-4">
+                {{ user.current_targets.calories }}
+              </div>
+              <div class="text-caption font-weight-bold text-deep-purple-lighten-2 text-uppercase">
+                kcal
+              </div>
             </v-col>
-            <v-col cols="3">
-                <div class="text-h5 font-weight-black">
-                    {{ user.current_targets.protein }}g
-                </div>
-                <div class="text-caption">Proteína</div>
-            </v-col>
-            <v-col cols="3">
-                <div class="text-h5 font-weight-black">
-                    {{ user.current_targets.carbs }}g
-                </div>
-                <div class="text-caption">Carbs</div>
-            </v-col>
-            <v-col cols="3">
-                <div class="text-h5 font-weight-black">
-                    {{ user.current_targets.fat }}g
-                </div>
-                <div class="text-caption">Grasas</div>
-            </v-col>
-        </v-row>
+  
+            <v-divider vertical inset color="deep-purple-accent-4" class="border-opacity-25 mx-1"></v-divider>
+  
+            <v-col v-for="macro in macros" :key="macro.label">
+    <div class="text-h6 font-weight-black text-deep-purple-accent-4 mb-1">
+        {{ macro.value }}<small class="text-caption ml-1 font-weight-medium">g</small>
+    </div>
+    
+    <div class="text-caption font-weight-bold text-deep-purple-lighten-2 text-uppercase">
+        {{ macro.label }}
+    </div>
+</v-col>
+          </v-row>
+        </v-col>
+      </v-row>
     </v-card>
-</template>
-
-<script setup>
-import { useUserStore } from "@/stores/useUserStore";
-const userStore = useUserStore();
-const user = userStore.authenticatedUser;
-</script>
-
-<style scoped>
-.opacity-70 { opacity: 0.7; }
-.opacity-20 { opacity: 0.2; }
-</style>
+  </template>
+  
+  <script setup>
+  import { computed } from 'vue';
+  import { useUserStore } from "@/stores/useUserStore";
+  
+  const userStore = useUserStore();
+  const user = computed(() => userStore.authenticatedUser);
+  
+  const macros = computed(() => [
+    { label: 'Prot', value: user.value?.current_targets?.protein || 0 },
+    { label: 'Carb', value: user.value?.current_targets?.carbs || 0 },
+    { label: 'Grasa', value: user.value?.current_targets?.fat || 0 },
+  ]);
+  </script>
