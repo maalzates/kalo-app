@@ -1,9 +1,10 @@
 <template>
   <v-app shadow>
     <v-app-bar color="deep-purple" elevation="0" border="b">
-      <v-app-bar-nav-icon  @click="drawer = !drawer" />
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-app-bar-title class="logo">KALO<span class="logo-light">APP</span></v-app-bar-title>
       <v-spacer class="d-md-none"></v-spacer>
+      
       <div class="d-md-none mr-4" @click="$router.push('/profile')">
         <v-avatar size="32" color="deep-purple-lighten-4" class="cursor-pointer">
           <span class="text-caption text-deep-purple font-weight-bold">JD</span>
@@ -25,12 +26,17 @@
         <v-divider></v-divider>
         <v-list-item
           lines="two"
-          prepend-avatar="https://randomuser.me/api/portraits/men/1.jpg"
           title="Juan Dueñas"
           subtitle="Meta: 2,400 kcal"
           class="pa-4 cursor-pointer"
           to="/profile"
-        ></v-list-item>
+        >
+          <template v-slot:prepend>
+            <v-avatar color="deep-purple-lighten-4" class="mr-n1">
+              <span class="text-body-2 text-deep-purple font-weight-bold">JD</span>
+            </v-avatar>
+          </template>
+        </v-list-item>
       </template>
     </v-navigation-drawer>
 
@@ -61,7 +67,6 @@ const drawer = ref(true)
 .logo-light { font-weight: 300; }
 .cursor-pointer { cursor: pointer; }
 
-/* Botón Toggle Inteligente (Mantener tal cual) */
 .btn-toggle {
   position: fixed;
   top: 50%;
