@@ -3,7 +3,6 @@
     <v-app-bar color="deep-purple" elevation="0" border="b">
       <v-app-bar-nav-icon  @click="drawer = !drawer" />
       <v-app-bar-title class="logo">KALO<span class="logo-light">APP</span></v-app-bar-title>
-      
       <v-spacer class="d-md-none"></v-spacer>
       <div class="d-md-none mr-4" @click="$router.push('/profile')">
         <v-avatar size="32" color="deep-purple-lighten-4" class="cursor-pointer">
@@ -18,6 +17,8 @@
         <v-list-item prepend-icon="mdi-food-apple" title="Ingredientes" to="/ingredients" class="mb-2" />
         <v-list-item prepend-icon="mdi-chef-hat" title="Recetas" to="/recipes" class="mb-2" />
         <v-list-item prepend-icon="mdi-target" title="Macros" to="/macros" />
+        <v-list-item prepend-icon="mdi-login" title="Login" to="/login" />
+        <v-list-item prepend-icon="mdi-register" title="Register" to="/register" />
       </v-list>
 
       <template v-slot:append>
