@@ -10,9 +10,9 @@
               <v-btn icon @click="$emit('update:modelValue', false)">
                   <v-icon>mdi-close</v-icon>
               </v-btn>
-              <v-toolbar-title class="font-weight-bold">
-                  {{ isEditing ? "Editar Receta" : "Nueva Receta" }}
-              </v-toolbar-title>
+              <div class="text-body-1 text-sm-h6 font-weight-bold text-wrap line-height-1 pl-2">
+                {{ isEditing ? "Editar Receta" : "Nueva Receta" }}
+              </div>
               <v-spacer></v-spacer>
               <v-btn
                   variant="flat"
