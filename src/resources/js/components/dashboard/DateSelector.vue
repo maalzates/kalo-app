@@ -1,6 +1,6 @@
 <template>
-  <v-card variant="flat" class="mb-4 bg-transparent">
-    <v-card-text class="d-flex align-center justify-center">
+  <v-card variant="flat" class="bg-transparent">
+    <v-card-text class="d-flex align-center justify-center pb-0 pt-0">
       <v-btn icon="mdi-chevron-left" variant="text" @click="changeDay(-1)"></v-btn>
 
       <v-menu :close-on-content-click="false">

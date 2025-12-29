@@ -17,7 +17,7 @@
         <v-list-item prepend-icon="mdi-view-dashboard" title="Tablero" to="/" class="mb-2" />
         <v-list-item prepend-icon="mdi-food-apple" title="Ingredientes" to="/ingredients" class="mb-2" />
         <v-list-item prepend-icon="mdi-chef-hat" title="Recetas" to="/recipes" class="mb-2" />
-        <v-list-item prepend-icon="mdi-target" title="Objetivos" to="/goals" />
+        <v-list-item prepend-icon="mdi-target" title="Macros" to="/macros" />
       </v-list>
 
       <template v-slot:append>
