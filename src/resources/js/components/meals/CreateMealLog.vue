@@ -10,9 +10,7 @@
                 <v-btn icon @click="$emit('update:modelValue', false)">
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
-                <div
-                    class="text-body-1 text-sm-h6 font-weight-bold text-wrap line-height-1 pl-2"
-                >
+                <div class="text-body-1 text-sm-h6 font-weight-bold text-wrap line-height-1 pl-2">
                     Registrar Consumo
                 </div>
                 <v-spacer></v-spacer>
@@ -28,65 +26,32 @@
             </v-toolbar>
 
             <v-container class="pa-4" style="max-width: 800px">
-                <v-card
-                    rounded="xl"
-                    class="pa-4 mb-4"
-                    elevation="1"
-                    border="sm"
-                >
+                <v-card rounded="xl" class="pa-4 mb-4" elevation="1" border="sm">
                     <div class="d-flex align-center justify-space-between mb-4">
                         <div class="d-flex align-center">
-                            <v-icon color="deep-purple-accent-4" class="mr-2"
-                                >mdi-calendar</v-icon
-                            >
-                            <span
-                                class="text-subtitle-2 font-weight-bold text-grey-darken-2"
-                                >{{ dateStore.fullDate }}</span
-                            >
+                            <v-icon color="deep-purple-accent-4" class="mr-2">mdi-calendar</v-icon>
+                            <span class="text-subtitle-2 font-weight-bold text-grey-darken-2">
+                                {{ dateStore.fullDate }}
+                            </span>
                         </div>
-                        <v-chip
-                            size="small"
-                            color="deep-purple-accent-4"
-                            variant="tonal"
-                            class="font-weight-bold"
-                        >
+                        <v-chip size="small" color="deep-purple-accent-4" variant="tonal" class="font-weight-bold">
                             LOG DIARIO
                         </v-chip>
                     </div>
 
-                    <v-tabs
-                        v-model="activeTab"
-                        grow
-                        color="deep-purple-accent-4"
-                        class="bg-grey-lighten-4 rounded-lg"
-                    >
-                        <v-tab value="food" class="font-weight-bold"
-                            >Alimentos</v-tab
-                        >
-                        <v-tab value="recipe" class="font-weight-bold"
-                            >Recetas</v-tab
-                        >
+                    <v-tabs v-model="activeTab" grow color="deep-purple-accent-4" class="bg-grey-lighten-4 rounded-lg">
+                        <v-tab value="food" class="font-weight-bold">Alimentos</v-tab>
+                        <v-tab value="recipe" class="font-weight-bold">Recetas</v-tab>
                     </v-tabs>
                 </v-card>
 
-                <v-card
-                    rounded="xl"
-                    class="pa-4 mb-4"
-                    elevation="1"
-                    border="sm"
-                >
-                    <div
-                        class="text-subtitle-2 mb-2 ml-1 font-weight-bold text-grey-darken-2 uppercase"
-                    >
+                <v-card rounded="xl" class="pa-4 mb-4" elevation="1" border="sm">
+                    <div class="text-subtitle-2 mb-2 ml-1 font-weight-bold text-grey-darken-2 uppercase">
                         Seleccionar de la biblioteca
                     </div>
                     <v-autocomplete
                         v-model="selectedItem"
-                        :label="
-                            activeTab === 'food'
-                                ? 'Buscar en mis alimentos...'
-                                : 'Buscar en mis recetas...'
-                        "
+                        :label="activeTab === 'food' ? 'Buscar en mis alimentos...' : 'Buscar en mis recetas...'"
                         :items="filteredLibrary"
                         item-title="name"
                         return-object
@@ -99,18 +64,9 @@
                     >
                         <template v-slot:no-data>
                             <v-list-item @click="handleCreateNew" class="py-2">
-                                <v-list-item-title
-                                    class="text-deep-purple font-weight-bold text-body-2"
-                                >
-                                    <v-icon start size="18"
-                                        >mdi-plus-circle</v-icon
-                                    >
-                                    Crear
-                                    {{
-                                        activeTab === "food"
-                                            ? "nuevo alimento"
-                                            : "nueva receta"
-                                    }}
+                                <v-list-item-title class="text-deep-purple font-weight-bold text-body-2">
+                                    <v-icon start size="18">mdi-plus-circle</v-icon>
+                                    Crear {{ activeTab === "food" ? "nuevo alimento" : "nueva receta" }}
                                 </v-list-item-title>
                             </v-list-item>
                         </template>
@@ -119,29 +75,20 @@
 
                 <v-expand-transition>
                     <div v-if="form.name">
-                        <div
-                            class="text-overline mb-2 ml-2 text-deep-purple-accent-4 font-weight-bold"
-                        >
+                        <div class="text-overline mb-2 ml-2 text-deep-purple-accent-4 font-weight-bold">
                             Detalles del registro
                         </div>
 
-                        <v-card
-                            rounded="xl"
-                            class="pa-5 mb-4"
-                            elevation="1"
-                            border="sm"
-                        >
-                            <div
-                                class="text-h6 font-weight-black mb-4 text-deep-purple-darken-4 text-truncate"
-                            >
+                        <v-card rounded="xl" class="pa-5 mb-4" elevation="1" border="sm">
+                            <div class="text-h6 font-weight-black mb-4 text-deep-purple-darken-4 text-truncate">
                                 {{ form.name }}
                             </div>
 
                             <v-row dense>
-                                <v-col cols="7">
+                                <v-col :cols="activeTab === 'food' ? 7 : 12">
                                     <v-text-field
                                         v-model.number="form.base_amount"
-                                        label="Cantidad consumida"
+                                        :label="activeTab === 'food' ? 'Cantidad consumida' : 'Número de porciones'"
                                         type="number"
                                         variant="outlined"
                                         rounded="lg"
@@ -149,7 +96,8 @@
                                         hide-details
                                     ></v-text-field>
                                 </v-col>
-                                <v-col cols="5">
+
+                                <v-col v-if="activeTab === 'food'" cols="5">
                                     <v-select
                                         v-model="form.base_unit"
                                         :items="['g', 'ml', 'unidad']"
@@ -162,64 +110,26 @@
                                 </v-col>
                             </v-row>
 
-                            <v-card
-                                variant="tonal"
-                                color="deep-purple-accent-4"
-                                rounded="lg"
-                                class="mt-6 pa-4"
-                            >
+                            <v-card variant="tonal" color="deep-purple-accent-4" rounded="lg" class="mt-6 pa-4">
                                 <v-row no-gutters class="text-center">
                                     <v-col>
-                                        <div class="text-h6 font-weight-black">
-                                            {{ form.calories }}
-                                        </div>
-                                        <div
-                                            class="text-caption font-weight-bold uppercase"
-                                        >
-                                            kcal
-                                        </div>
+                                        <div class="text-h6 font-weight-black">{{ form.calories }}</div>
+                                        <div class="text-caption font-weight-bold uppercase">kcal</div>
                                     </v-col>
-                                    <v-divider
-                                        vertical
-                                        class="mx-2 opacity-20"
-                                    ></v-divider>
+                                    <v-divider vertical class="mx-2 opacity-20"></v-divider>
                                     <v-col>
-                                        <div class="text-h6 font-weight-black">
-                                            {{ form.protein }}g
-                                        </div>
-                                        <div
-                                            class="text-caption font-weight-bold uppercase"
-                                        >
-                                            Prot
-                                        </div>
+                                        <div class="text-h6 font-weight-black">{{ form.protein }}g</div>
+                                        <div class="text-caption font-weight-bold uppercase">Prot</div>
                                     </v-col>
-                                    <v-divider
-                                        vertical
-                                        class="mx-2 opacity-20"
-                                    ></v-divider>
+                                    <v-divider vertical class="mx-2 opacity-20"></v-divider>
                                     <v-col>
-                                        <div class="text-h6 font-weight-black">
-                                            {{ form.carbs }}g
-                                        </div>
-                                        <div
-                                            class="text-caption font-weight-bold uppercase"
-                                        >
-                                            Carbs
-                                        </div>
+                                        <div class="text-h6 font-weight-black">{{ form.carbs }}g</div>
+                                        <div class="text-caption font-weight-bold uppercase">Carbs</div>
                                     </v-col>
-                                    <v-divider
-                                        vertical
-                                        class="mx-2 opacity-20"
-                                    ></v-divider>
+                                    <v-divider vertical class="mx-2 opacity-20"></v-divider>
                                     <v-col>
-                                        <div class="text-h6 font-weight-black">
-                                            {{ form.fat }}g
-                                        </div>
-                                        <div
-                                            class="text-caption font-weight-bold uppercase"
-                                        >
-                                            Grasa
-                                        </div>
+                                        <div class="text-h6 font-weight-black">{{ form.fat }}g</div>
+                                        <div class="text-caption font-weight-bold uppercase">Grasa</div>
                                     </v-col>
                                 </v-row>
                             </v-card>
@@ -274,22 +184,27 @@ onMounted(() => {
 
 const onFoodSelected = (item) => {
     if (item) {
-        // Volcamos los datos conservando la reactividad
         form.value = { ...initialState, ...JSON.parse(JSON.stringify(item)) };
-        // Ajuste opcional: Si es un alimento nuevo poner 100 por defecto
-        if (form.value.base_amount === 0) form.value.base_amount = 100;
+        
+        if (activeTab.value === 'recipe') {
+            form.value.base_amount = 1;
+            form.value.base_unit = 'porción';
+        } else if (form.value.base_amount === 0) {
+            form.value.base_amount = 100;
+        }
     }
 };
 
 const handleCreateNew = () => {
-    console.log("Abrir flujo de creación para:", activeTab.value);
+    console.log("Crear nuevo elemento para:", activeTab.value);
 };
 
 const saveMeal = () => {
-    mealLogsStore.addMealLog({ ...form.value });
+    mealLogsStore.addMealLog({ 
+        ...form.value,
+        type: activeTab.value 
+    });
     emit("update:modelValue", false);
-
-    // Reset completo
     form.value = { ...initialState };
     selectedItem.value = null;
 };
