@@ -33,6 +33,7 @@ class UpdateUserRequest extends FormRequest
             'birth_date' => ['nullable', 'date'],
             'gender' => ['nullable', 'in:male,female,other'],
             'height' => ['nullable', 'integer', 'min:1', 'max:300'],
+            'role_id' => ['nullable', 'integer', 'exists:roles,id'],
         ];
     }
 
@@ -45,6 +46,7 @@ class UpdateUserRequest extends FormRequest
             'height.integer' => 'The height must be an integer.',
             'height.min' => 'The height must be at least 1 cm.',
             'height.max' => 'The height must not exceed 300 cm.',
+            'role_id.exists' => 'The selected role does not exist.',
         ];
     }
 
@@ -61,6 +63,7 @@ class UpdateUserRequest extends FormRequest
             birthDate: $this->input('birth_date'),
             gender: $this->input('gender'),
             height: $this->input('height') ? (int) $this->input('height') : null,
+            roleId: $this->input('role_id') ? (string) $this->input('role_id') : null,
         );
     }
 }

@@ -26,6 +26,7 @@ class CreateUserRequest extends FormRequest
             'google_id' => ['nullable', 'string', 'max:255', 'unique:users,google_id'],
             'auth_provider' => ['nullable', 'string', 'max:50'],
             'password' => ['nullable', 'string', 'min:8'],
+            'role_id' => ['nullable', 'integer', 'exists:roles,id'],
         ];
     }
 
@@ -42,6 +43,7 @@ class CreateUserRequest extends FormRequest
             'height.max' => 'The height must not exceed 300 cm.',
             'google_id.unique' => 'The Google ID has already been taken.',
             'password.min' => 'The password must be at least 8 characters.',
+            'role_id.exists' => 'The selected role does not exist.',
         ];
     }
 
@@ -57,6 +59,7 @@ class CreateUserRequest extends FormRequest
             googleId: $this->input('google_id'),
             authProvider: $this->input('auth_provider'),
             password: $this->input('password'),
+            roleId: $this->input('role_id') ? (string) $this->input('role_id') : null,
         );
     }
 }

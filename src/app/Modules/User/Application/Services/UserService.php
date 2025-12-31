@@ -51,6 +51,7 @@ class UserService
             'google_id' => $dto->googleId,
             'auth_provider' => $dto->authProvider,
             'password' => $dto->password,
+            'role_id' => $dto->roleId ?? '1',
         ]);
     }
 
@@ -69,6 +70,7 @@ class UserService
             'birth_date' => $dto->birthDate,
             'gender' => $dto->gender,
             'height' => $dto->height,
+            'role_id' => $dto->roleId,
         ], fn ($value) => $value !== null);
 
         $this->repository->update($dto->userId, $updateData);

@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 use App\Modules\Biometric\Presentation\Http\Controllers\BiometricController;
 use App\Modules\Ingredient\Presentation\Http\Controllers\IngredientController;
+use App\Modules\Macro\Presentation\Http\Controllers\MacroController;
 use App\Modules\MealLog\Presentation\Http\Controllers\MealLogController;
+use App\Modules\Permission\Presentation\Http\Controllers\PermissionController;
 use App\Modules\Recipe\Presentation\Http\Controllers\RecipeController;
 use App\Modules\Recipe\Presentation\Http\Controllers\RecipeIngredientController;
+use App\Modules\Role\Presentation\Http\Controllers\RoleController;
+use App\Modules\Role\Presentation\Http\Controllers\RolePermissionController;
 use App\Modules\User\Presentation\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,5 +56,32 @@ Route::prefix('biometrics')->group(function () {
     Route::get('/{biometric}', [BiometricController::class, 'show']);
     Route::put('/{biometric}', [BiometricController::class, 'update']);
     Route::delete('/{biometric}', [BiometricController::class, 'destroy']);
+});
+
+Route::prefix('roles')->group(function () {
+    Route::get('/', [RoleController::class, 'index']);
+    Route::post('/', [RoleController::class, 'store']);
+    Route::get('/{role}', [RoleController::class, 'show']);
+    Route::put('/{role}', [RoleController::class, 'update']);
+    Route::delete('/{role}', [RoleController::class, 'destroy']);
+
+    Route::post('/{role}/permissions', [RolePermissionController::class, 'attach']);
+    Route::delete('/{role}/permissions/{permission}', [RolePermissionController::class, 'detach']);
+});
+
+Route::prefix('permissions')->group(function () {
+    Route::get('/', [PermissionController::class, 'index']);
+    Route::post('/', [PermissionController::class, 'store']);
+    Route::get('/{permission}', [PermissionController::class, 'show']);
+    Route::put('/{permission}', [PermissionController::class, 'update']);
+    Route::delete('/{permission}', [PermissionController::class, 'destroy']);
+});
+
+Route::prefix('macros')->group(function () {
+    Route::get('/', [MacroController::class, 'index']);
+    Route::post('/', [MacroController::class, 'store']);
+    Route::get('/{macro}', [MacroController::class, 'show']);
+    Route::put('/{macro}', [MacroController::class, 'update']);
+    Route::delete('/{macro}', [MacroController::class, 'destroy']);
 });
 

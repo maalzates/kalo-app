@@ -14,6 +14,7 @@ readonly class UpdateUserDTO
         public ?string $birthDate,
         public ?string $gender,
         public ?int $height,
+        public ?string $roleId,
     ) {
     }
 }

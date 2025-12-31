@@ -7,4 +7,7 @@ return [
     App\Modules\Recipe\RecipeServiceProvider::class,
     App\Modules\MealLog\MealLogServiceProvider::class,
     App\Modules\Biometric\BiometricServiceProvider::class,
+    App\Modules\Role\RoleServiceProvider::class,
+    App\Modules\Permission\PermissionServiceProvider::class,
+    App\Modules\Macro\MacroServiceProvider::class,
 ];

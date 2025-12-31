@@ -16,6 +16,7 @@ readonly class CreateUserDTO
         public ?string $googleId,
         public ?string $authProvider,
         public ?string $password,
+        public ?string $roleId,
     ) {
     }
 }
