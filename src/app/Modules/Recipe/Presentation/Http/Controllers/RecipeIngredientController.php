@@ -12,6 +12,7 @@ use App\Modules\Recipe\Infrastructure\Models\Recipe;
 use App\Modules\Recipe\Presentation\Http\Requests\AttachIngredientRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class RecipeIngredientController extends ApiController
 {
@@ -27,7 +28,7 @@ class RecipeIngredientController extends ApiController
             return $this->success(null, 'Ingredient attached successfully', Response::HTTP_CREATED);
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to attach ingredient', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -39,7 +40,7 @@ class RecipeIngredientController extends ApiController
             return $this->success(null, 'Ingredient detached successfully', Response::HTTP_NO_CONTENT);
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to detach ingredient', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -52,7 +53,7 @@ class RecipeIngredientController extends ApiController
             return $this->success(null, 'Ingredient pivot updated successfully');
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to update ingredient pivot', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

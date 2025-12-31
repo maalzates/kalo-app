@@ -13,6 +13,7 @@ use App\Modules\Biometric\Presentation\Http\Requests\UpdateBiometricRequest;
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class BiometricController extends ApiController
 {
@@ -43,7 +44,7 @@ class BiometricController extends ApiController
         try {
             $biometric = $this->service->create($request->toDTO());
             return $this->success($biometric, 'Biometric created successfully', Response::HTTP_CREATED);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to create biometric', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -55,7 +56,7 @@ class BiometricController extends ApiController
             return $this->success($updatedBiometric, 'Biometric updated successfully');
         } catch (BiometricNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to update biometric', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -67,7 +68,7 @@ class BiometricController extends ApiController
             return $this->success(null, 'Biometric deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (BiometricNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to delete biometric', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

@@ -13,6 +13,7 @@ use App\Modules\User\Presentation\Http\Requests\IndexUserRequest;
 use App\Modules\User\Presentation\Http\Requests\UpdateUserRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class UserController extends ApiController
 {
@@ -43,7 +44,7 @@ class UserController extends ApiController
         try {
             $user = $this->service->create($request->toDTO());
             return $this->success($user, 'User created successfully', Response::HTTP_CREATED);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to create user', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -55,7 +56,7 @@ class UserController extends ApiController
             return $this->success($updatedUser, 'User updated successfully');
         } catch (UserNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to update user', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -67,7 +68,7 @@ class UserController extends ApiController
             return $this->success(null, 'User deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (UserNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to delete user', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

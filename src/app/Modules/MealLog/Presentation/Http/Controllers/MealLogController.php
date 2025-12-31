@@ -14,6 +14,7 @@ use App\Modules\MealLog\Presentation\Http\Requests\IndexMealLogRequest;
 use App\Modules\MealLog\Presentation\Http\Requests\UpdateMealLogRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class MealLogController extends ApiController
 {
@@ -46,7 +47,7 @@ class MealLogController extends ApiController
             return $this->success($mealLog, 'Meal log created successfully', Response::HTTP_CREATED);
         } catch (InvalidMealLogException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to create meal log', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -58,7 +59,7 @@ class MealLogController extends ApiController
             return $this->success($updatedMealLog, 'Meal log updated successfully');
         } catch (MealLogNotFoundException|InvalidMealLogException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to update meal log', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -70,7 +71,7 @@ class MealLogController extends ApiController
             return $this->success(null, 'Meal log deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (MealLogNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to delete meal log', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

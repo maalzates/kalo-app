@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Ingredient\Infrastructure\Models;
 
+use App\Modules\MealLog\Infrastructure\Models\MealLog;
+use App\Modules\Recipe\Infrastructure\Models\Recipe;
+use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -39,19 +42,19 @@ class Ingredient extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Modules\User\Infrastructure\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function recipes(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Modules\Recipe\Infrastructure\Models\Recipe::class)
+        return $this->belongsToMany(Recipe::class)
             ->withPivot('amount', 'unit')
             ->withTimestamps();
     }
 
     public function mealLogs(): HasMany
     {
-        return $this->hasMany(\App\Modules\MealLog\Infrastructure\Models\MealLog::class);
+        return $this->hasMany(MealLog::class);
     }
 }
 

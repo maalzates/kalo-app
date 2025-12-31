@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Biometric\Infrastructure\Models;
 
+use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,7 +37,7 @@ class Biometric extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Modules\User\Infrastructure\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 }
 

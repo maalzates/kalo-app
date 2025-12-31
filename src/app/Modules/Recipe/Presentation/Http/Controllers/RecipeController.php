@@ -13,6 +13,7 @@ use App\Modules\Recipe\Presentation\Http\Requests\IndexRecipeRequest;
 use App\Modules\Recipe\Presentation\Http\Requests\UpdateRecipeRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class RecipeController extends ApiController
 {
@@ -43,7 +44,7 @@ class RecipeController extends ApiController
         try {
             $recipe = $this->service->create($request->toDTO());
             return $this->success($recipe, 'Recipe created successfully', Response::HTTP_CREATED);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to create recipe', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -55,7 +56,7 @@ class RecipeController extends ApiController
             return $this->success($updatedRecipe, 'Recipe updated successfully');
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to update recipe', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -67,7 +68,7 @@ class RecipeController extends ApiController
             return $this->success(null, 'Recipe deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to delete recipe', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

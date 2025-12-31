@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\User\Infrastructure\Models;
 
+use App\Modules\Biometric\Infrastructure\Models\Biometric;
+use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
+use App\Modules\MealLog\Infrastructure\Models\MealLog;
+use App\Modules\Recipe\Infrastructure\Models\Recipe;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+
 
 class User extends Authenticatable
 {
@@ -43,22 +48,22 @@ class User extends Authenticatable
 
     public function ingredients(): HasMany
     {
-        return $this->hasMany(\App\Modules\Ingredient\Infrastructure\Models\Ingredient::class);
+        return $this->hasMany(Ingredient::class);
     }
 
     public function recipes(): HasMany
     {
-        return $this->hasMany(\App\Modules\Recipe\Infrastructure\Models\Recipe::class);
+        return $this->hasMany(Recipe::class);
     }
 
     public function mealLogs(): HasMany
     {
-        return $this->hasMany(\App\Modules\MealLog\Infrastructure\Models\MealLog::class);
+        return $this->hasMany(MealLog::class);
     }
 
     public function biometrics(): HasMany
     {
-        return $this->hasMany(\App\Modules\Biometric\Infrastructure\Models\Biometric::class);
+        return $this->hasMany(Biometric::class);
     }
 }
 

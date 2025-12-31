@@ -13,6 +13,7 @@ use App\Modules\Ingredient\Presentation\Http\Requests\IndexIngredientRequest;
 use App\Modules\Ingredient\Presentation\Http\Requests\UpdateIngredientRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Throwable;
 
 class IngredientController extends ApiController
 {
@@ -43,7 +44,7 @@ class IngredientController extends ApiController
         try {
             $ingredient = $this->service->create($request->toDTO());
             return $this->success($ingredient, 'Ingredient created successfully', Response::HTTP_CREATED);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to create ingredient', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -55,7 +56,7 @@ class IngredientController extends ApiController
             return $this->success($updatedIngredient, 'Ingredient updated successfully');
         } catch (IngredientNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to update ingredient', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -67,7 +68,7 @@ class IngredientController extends ApiController
             return $this->success(null, 'Ingredient deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (IngredientNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             return $this->error('Failed to delete ingredient', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

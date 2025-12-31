@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\MealLog\Infrastructure\Models;
 
+use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
+use App\Modules\Recipe\Infrastructure\Models\Recipe;
+use App\Modules\User\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,17 +36,17 @@ class MealLog extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(\App\Modules\User\Infrastructure\Models\User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function ingredient(): BelongsTo
     {
-        return $this->belongsTo(\App\Modules\Ingredient\Infrastructure\Models\Ingredient::class);
+        return $this->belongsTo(Ingredient::class);
     }
 
     public function recipe(): BelongsTo
     {
-        return $this->belongsTo(\App\Modules\Recipe\Infrastructure\Models\Recipe::class);
+        return $this->belongsTo(Recipe::class);
     }
 }
 
