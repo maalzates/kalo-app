@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Modules\Biometric\Infrastructure\Models\Biometric;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\Biometric;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class BiometricSeeder extends Seeder

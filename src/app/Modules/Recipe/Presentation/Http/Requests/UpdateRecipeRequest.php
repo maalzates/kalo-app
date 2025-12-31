@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Recipe\Presentation\Http\Requests;
 
 use App\Modules\Recipe\Application\DTOs\UpdateRecipeDTO;
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
+use App\Models\Recipe;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRecipeRequest extends FormRequest

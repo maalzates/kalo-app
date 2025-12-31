@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Permission\Presentation\Http\Requests;
 
 use App\Modules\Permission\Application\DTOs\UpdatePermissionDTO;
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Models\Permission;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePermissionRequest extends FormRequest

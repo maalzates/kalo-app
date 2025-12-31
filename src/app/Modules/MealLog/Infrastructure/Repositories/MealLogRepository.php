@@ -7,7 +7,7 @@ namespace App\Modules\MealLog\Infrastructure\Repositories;
 use App\Modules\MealLog\Domain\Contracts\MealLogRepositoryInterface;
 use App\Modules\MealLog\Domain\Exceptions\MealLogCreationFailedException;
 use App\Modules\MealLog\Domain\Exceptions\MealLogUpdateFailedException;
-use App\Modules\MealLog\Infrastructure\Models\MealLog;
+use App\Models\MealLog;
 use Throwable;
 
 class MealLogRepository implements MealLogRepositoryInterface

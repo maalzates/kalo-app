@@ -8,7 +8,7 @@ use App\Modules\Role\Domain\Contracts\RoleRepositoryInterface;
 use App\Modules\Role\Domain\Exceptions\PermissionAttachmentFailedException;
 use App\Modules\Role\Domain\Exceptions\RoleCreationFailedException;
 use App\Modules\Role\Domain\Exceptions\RoleUpdateFailedException;
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Models\Role;
 use Throwable;
 
 class RoleRepository implements RoleRepositoryInterface

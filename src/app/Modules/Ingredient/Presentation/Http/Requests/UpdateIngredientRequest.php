@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Ingredient\Presentation\Http\Requests;
 
 use App\Modules\Ingredient\Application\DTOs\UpdateIngredientDTO;
-use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
+use App\Models\Ingredient;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateIngredientRequest extends FormRequest

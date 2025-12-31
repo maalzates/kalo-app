@@ -7,7 +7,7 @@ namespace App\Modules\User\Infrastructure\Repositories;
 use App\Modules\User\Domain\Contracts\UserRepositoryInterface;
 use App\Modules\User\Domain\Exceptions\UserCreationFailedException;
 use App\Modules\User\Domain\Exceptions\UserUpdateFailedException;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Throwable;
 

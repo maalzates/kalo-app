@@ -8,7 +8,7 @@ use App\Modules\Recipe\Domain\Contracts\RecipeRepositoryInterface;
 use App\Modules\Recipe\Domain\Exceptions\IngredientAttachmentFailedException;
 use App\Modules\Recipe\Domain\Exceptions\RecipeCreationFailedException;
 use App\Modules\Recipe\Domain\Exceptions\RecipeUpdateFailedException;
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
+use App\Models\Recipe;
 use Throwable;
 
 class RecipeRepository implements RecipeRepositoryInterface

@@ -8,7 +8,7 @@ use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\Role\Application\Services\RoleService;
 use App\Modules\Role\Domain\Exceptions\RoleInUseException;
 use App\Modules\Role\Domain\Exceptions\RoleNotFoundException;
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Models\Role;
 use App\Modules\Role\Presentation\Http\Requests\CreateRoleRequest;
 use App\Modules\Role\Presentation\Http\Requests\IndexRoleRequest;
 use App\Modules\Role\Presentation\Http\Requests\UpdateRoleRequest;

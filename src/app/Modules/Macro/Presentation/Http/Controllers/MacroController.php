@@ -8,7 +8,7 @@ use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\Macro\Application\Services\MacroService;
 use App\Modules\Macro\Domain\Exceptions\DuplicateMacroException;
 use App\Modules\Macro\Domain\Exceptions\MacroNotFoundException;
-use App\Modules\Macro\Infrastructure\Models\Macro;
+use App\Models\Macro;
 use App\Modules\Macro\Presentation\Http\Requests\CreateMacroRequest;
 use App\Modules\Macro\Presentation\Http\Requests\IndexMacroRequest;
 use App\Modules\Macro\Presentation\Http\Requests\UpdateMacroRequest;

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Role\Presentation\Http\Requests;
 
 use App\Modules\Role\Application\DTOs\AttachPermissionDTO;
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AttachPermissionRequest extends FormRequest

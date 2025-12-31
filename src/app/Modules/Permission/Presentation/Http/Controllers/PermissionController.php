@@ -8,7 +8,7 @@ use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\Permission\Application\Services\PermissionService;
 use App\Modules\Permission\Domain\Exceptions\PermissionInUseException;
 use App\Modules\Permission\Domain\Exceptions\PermissionNotFoundException;
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Models\Permission;
 use App\Modules\Permission\Presentation\Http\Requests\CreatePermissionRequest;
 use App\Modules\Permission\Presentation\Http\Requests\IndexPermissionRequest;
 use App\Modules\Permission\Presentation\Http\Requests\UpdatePermissionRequest;

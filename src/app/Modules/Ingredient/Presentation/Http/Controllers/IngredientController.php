@@ -7,7 +7,7 @@ namespace App\Modules\Ingredient\Presentation\Http\Controllers;
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\Ingredient\Application\Services\IngredientService;
 use App\Modules\Ingredient\Domain\Exceptions\IngredientNotFoundException;
-use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
+use App\Models\Ingredient;
 use App\Modules\Ingredient\Presentation\Http\Requests\CreateIngredientRequest;
 use App\Modules\Ingredient\Presentation\Http\Requests\IndexIngredientRequest;
 use App\Modules\Ingredient\Presentation\Http\Requests\UpdateIngredientRequest;

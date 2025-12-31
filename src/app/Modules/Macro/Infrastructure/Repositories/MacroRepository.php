@@ -7,7 +7,7 @@ namespace App\Modules\Macro\Infrastructure\Repositories;
 use App\Modules\Macro\Domain\Contracts\MacroRepositoryInterface;
 use App\Modules\Macro\Domain\Exceptions\MacroCreationFailedException;
 use App\Modules\Macro\Domain\Exceptions\MacroUpdateFailedException;
-use App\Modules\Macro\Infrastructure\Models\Macro;
+use App\Models\Macro;
 use Throwable;
 
 class MacroRepository implements MacroRepositoryInterface

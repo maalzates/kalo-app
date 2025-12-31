@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
-use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\Recipe;
+use App\Models\Ingredient;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class RecipeSeeder extends Seeder

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Modules\Macro\Infrastructure\Models\Macro;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\Macro;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class MacroSeeder extends Seeder

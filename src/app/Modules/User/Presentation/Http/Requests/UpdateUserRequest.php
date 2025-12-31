@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\User\Presentation\Http\Requests;
 
 use App\Modules\User\Application\DTOs\UpdateUserDTO;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateUserRequest extends FormRequest

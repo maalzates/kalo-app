@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Modules\Role\Presentation\Http\Controllers;
 
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Models\Permission;
 use App\Modules\Role\Application\DTOs\AttachPermissionDTO;
 use App\Modules\Role\Application\Services\RoleService;
 use App\Modules\Role\Domain\Exceptions\RoleNotFoundException;
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Models\Role;
 use App\Modules\Role\Presentation\Http\Requests\AttachPermissionRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;

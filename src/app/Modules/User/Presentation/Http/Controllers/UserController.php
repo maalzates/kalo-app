@@ -7,7 +7,7 @@ namespace App\Modules\User\Presentation\Http\Controllers;
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\User\Application\Services\UserService;
 use App\Modules\User\Domain\Exceptions\UserNotFoundException;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\User;
 use App\Modules\User\Presentation\Http\Requests\CreateUserRequest;
 use App\Modules\User\Presentation\Http\Requests\IndexUserRequest;
 use App\Modules\User\Presentation\Http\Requests\UpdateUserRequest;

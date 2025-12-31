@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Modules\MealLog\Infrastructure\Models\MealLog;
-use App\Modules\User\Infrastructure\Models\User;
-use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
+use App\Models\MealLog;
+use App\Models\User;
+use App\Models\Ingredient;
+use App\Models\Recipe;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MealLogFactory extends Factory

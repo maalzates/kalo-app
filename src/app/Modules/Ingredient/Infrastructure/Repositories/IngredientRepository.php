@@ -7,7 +7,7 @@ namespace App\Modules\Ingredient\Infrastructure\Repositories;
 use App\Modules\Ingredient\Domain\Contracts\IngredientRepositoryInterface;
 use App\Modules\Ingredient\Domain\Exceptions\IngredientCreationFailedException;
 use App\Modules\Ingredient\Domain\Exceptions\IngredientUpdateFailedException;
-use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
+use App\Models\Ingredient;
 use Throwable;
 
 class IngredientRepository implements IngredientRepositoryInterface

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Permission\Infrastructure\Models;
+namespace App\Models;
 
-use App\Modules\Role\Infrastructure\Models\Role;
+use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

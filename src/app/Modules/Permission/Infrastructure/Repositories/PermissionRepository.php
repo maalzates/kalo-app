@@ -7,7 +7,7 @@ namespace App\Modules\Permission\Infrastructure\Repositories;
 use App\Modules\Permission\Domain\Contracts\PermissionRepositoryInterface;
 use App\Modules\Permission\Domain\Exceptions\PermissionCreationFailedException;
 use App\Modules\Permission\Domain\Exceptions\PermissionUpdateFailedException;
-use App\Modules\Permission\Infrastructure\Models\Permission;
+use App\Models\Permission;
 use Throwable;
 
 class PermissionRepository implements PermissionRepositoryInterface

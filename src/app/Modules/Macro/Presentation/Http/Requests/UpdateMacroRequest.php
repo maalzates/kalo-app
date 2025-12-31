@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Macro\Presentation\Http\Requests;
 
 use App\Modules\Macro\Application\DTOs\UpdateMacroDTO;
-use App\Modules\Macro\Infrastructure\Models\Macro;
+use App\Models\Macro;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMacroRequest extends FormRequest

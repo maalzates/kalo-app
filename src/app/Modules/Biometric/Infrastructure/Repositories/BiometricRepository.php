@@ -7,7 +7,7 @@ namespace App\Modules\Biometric\Infrastructure\Repositories;
 use App\Modules\Biometric\Domain\Contracts\BiometricRepositoryInterface;
 use App\Modules\Biometric\Domain\Exceptions\BiometricCreationFailedException;
 use App\Modules\Biometric\Domain\Exceptions\BiometricUpdateFailedException;
-use App\Modules\Biometric\Infrastructure\Models\Biometric;
+use App\Models\Biometric;
 use Throwable;
 
 class BiometricRepository implements BiometricRepositoryInterface

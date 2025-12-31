@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\MealLog\Infrastructure\Models;
+namespace App\Models;
 
-use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\Ingredient;
+use App\Models\Recipe;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

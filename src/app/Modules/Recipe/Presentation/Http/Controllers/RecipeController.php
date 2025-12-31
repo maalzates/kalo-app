@@ -7,7 +7,7 @@ namespace App\Modules\Recipe\Presentation\Http\Controllers;
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\Recipe\Application\Services\RecipeService;
 use App\Modules\Recipe\Domain\Exceptions\RecipeNotFoundException;
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
+use App\Models\Recipe;
 use App\Modules\Recipe\Presentation\Http\Requests\CreateRecipeRequest;
 use App\Modules\Recipe\Presentation\Http\Requests\IndexRecipeRequest;
 use App\Modules\Recipe\Presentation\Http\Requests\UpdateRecipeRequest;

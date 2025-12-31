@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Modules\Recipe\Presentation\Http\Controllers;
 
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
-use App\Modules\Ingredient\Infrastructure\Models\Ingredient;
+use App\Models\Ingredient;
 use App\Modules\Recipe\Application\Services\RecipeService;
 use App\Modules\Recipe\Domain\Exceptions\RecipeNotFoundException;
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
+use App\Models\Recipe;
 use App\Modules\Recipe\Presentation\Http\Requests\AttachIngredientRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;

@@ -2,41 +2,39 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Ingredient\Infrastructure\Models;
+namespace App\Models;
 
-use App\Modules\MealLog\Infrastructure\Models\MealLog;
-use App\Modules\Recipe\Infrastructure\Models\Recipe;
-use App\Modules\User\Infrastructure\Models\User;
+use App\Models\Ingredient;
+use App\Models\MealLog;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Ingredient extends Model
+class Recipe extends Model
 {
     use HasFactory;
 
-    protected $table = 'ingredients';
+    protected $table = 'recipes';
 
     protected $fillable = [
         'name',
-        'amount',
-        'unit',
-        'kcal',
-        'prot',
-        'carb',
-        'fat',
+        'servings',
+        'total_kcal',
+        'total_prot',
+        'total_carb',
+        'total_fat',
         'user_id',
     ];
 
     protected function casts(): array
     {
         return [
-            'amount' => 'decimal:2',
-            'prot' => 'decimal:2',
-            'carb' => 'decimal:2',
-            'fat' => 'decimal:2',
+            'total_prot' => 'decimal:2',
+            'total_carb' => 'decimal:2',
+            'total_fat' => 'decimal:2',
         ];
     }
 
@@ -45,9 +43,9 @@ class Ingredient extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function recipes(): BelongsToMany
+    public function ingredients(): BelongsToMany
     {
-        return $this->belongsToMany(Recipe::class)
+        return $this->belongsToMany(Ingredient::class)
             ->withPivot('amount', 'unit')
             ->withTimestamps();
     }

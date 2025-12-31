@@ -6,7 +6,7 @@ namespace App\Modules\Biometric\Presentation\Http\Controllers;
 
 use App\Modules\Biometric\Application\Services\BiometricService;
 use App\Modules\Biometric\Domain\Exceptions\BiometricNotFoundException;
-use App\Modules\Biometric\Infrastructure\Models\Biometric;
+use App\Models\Biometric;
 use App\Modules\Biometric\Presentation\Http\Requests\CreateBiometricRequest;
 use App\Modules\Biometric\Presentation\Http\Requests\IndexBiometricRequest;
 use App\Modules\Biometric\Presentation\Http\Requests\UpdateBiometricRequest;

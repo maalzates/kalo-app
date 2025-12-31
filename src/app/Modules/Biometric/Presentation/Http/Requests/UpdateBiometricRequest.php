@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Biometric\Presentation\Http\Requests;
 
 use App\Modules\Biometric\Application\DTOs\UpdateBiometricDTO;
-use App\Modules\Biometric\Infrastructure\Models\Biometric;
+use App\Models\Biometric;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBiometricRequest extends FormRequest

@@ -8,7 +8,7 @@ use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\MealLog\Application\Services\MealLogService;
 use App\Modules\MealLog\Domain\Exceptions\InvalidMealLogException;
 use App\Modules\MealLog\Domain\Exceptions\MealLogNotFoundException;
-use App\Modules\MealLog\Infrastructure\Models\MealLog;
+use App\Models\MealLog;
 use App\Modules\MealLog\Presentation\Http\Requests\CreateMealLogRequest;
 use App\Modules\MealLog\Presentation\Http\Requests\IndexMealLogRequest;
 use App\Modules\MealLog\Presentation\Http\Requests\UpdateMealLogRequest;

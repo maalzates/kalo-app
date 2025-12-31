@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\MealLog\Presentation\Http\Requests;
 
 use App\Modules\MealLog\Application\DTOs\UpdateMealLogDTO;
-use App\Modules\MealLog\Infrastructure\Models\MealLog;
+use App\Models\MealLog;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMealLogRequest extends FormRequest
