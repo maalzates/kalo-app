@@ -17,18 +17,21 @@ class UserFactory extends Factory
 
     public function definition(): array
     {
+        $birthDate = $this->faker->optional(0.8)->dateTimeBetween('-60 years', '-18 years');
+        $emailVerifiedAt = $this->faker->optional(0.9)->dateTimeBetween('-1 year', 'now');
+
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'phone' => $this->faker->optional(0.7)->phoneNumber(),
-            'birth_date' => $this->faker->optional(0.8)->dateTimeBetween('-60 years', '-18 years')->format('Y-m-d'),
+            'birth_date' => $birthDate ? $birthDate->format('Y-m-d') : null,
             'gender' => $this->faker->optional(0.9)->randomElement(['male', 'female', 'other']),
             'height' => $this->faker->optional(0.8)->numberBetween(150, 200),
             'google_id' => null,
             'auth_provider' => null,
             'password' => static::$password ??= Hash::make('password'),
             'role_id' => 1,
-            'email_verified_at' => $this->faker->optional(0.9)->dateTimeBetween('-1 year', 'now'),
+            'email_verified_at' => $emailVerifiedAt,
             'remember_token' => Str::random(10),
         ];
     }
