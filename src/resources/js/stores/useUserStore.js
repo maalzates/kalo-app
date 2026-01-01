@@ -31,6 +31,10 @@ export const useUserStore = defineStore("userStore", () => {
             token.value = null;
             localStorage.removeItem('access_token');
             localStorage.removeItem('user_data');
+            
+            // Forzar redirección al login después de limpiar el estado
+            // Usar window.location para forzar una recarga completa y limpiar cualquier estado residual
+            window.location.href = '/login';
         }
     };
 

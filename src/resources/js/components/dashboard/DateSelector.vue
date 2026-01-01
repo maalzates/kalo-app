@@ -1,7 +1,7 @@
 <template>
   <v-card variant="flat" class="bg-transparent">
     <v-card-text class="d-flex align-center justify-center pb-0 pt-0">
-      <v-btn icon="mdi-chevron-left" variant="text" @click="changeDay(-1)"></v-btn>
+      <v-btn icon="mdi-chevron-left" variant="text" @click="changeDay(-1)" :disabled="isAtMinDate"></v-btn>
 
       <v-menu :close-on-content-click="false">
         <template v-slot:activator="{ props }">
@@ -20,7 +20,7 @@
         ></v-date-picker>
       </v-menu>
 
-      <v-btn icon="mdi-chevron-right" variant="text" @click="changeDay(1)"></v-btn>
+      <v-btn icon="mdi-chevron-right" variant="text" @click="changeDay(1)" :disabled="isAtMaxDate"></v-btn>
     </v-card-text>
   </v-card>
 </template>
@@ -61,21 +61,48 @@ const formattedDate = computed(() => {
   });
 });
 
+// Normalizar fecha a medianoche para comparaciones
+const normalizeDate = (date) => {
+  const d = date instanceof Date ? new Date(date) : new Date(date);
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
+
+// Verificar si estamos en la fecha máxima (hoy)
+const isAtMaxDate = computed(() => {
+  const today = normalizeDate(new Date());
+  const selected = normalizeDate(selectedDate.value);
+  return selected.getTime() >= today.getTime();
+});
+
+// Verificar si estamos en la fecha mínima (macro más antiguo)
+const isAtMinDate = computed(() => {
+  const oldestMacroDate = macrosStore.getOldestMacroDate();
+  if (!oldestMacroDate) {
+    return false; // Si no hay macros, no hay límite mínimo
+  }
+  const oldest = normalizeDate(oldestMacroDate);
+  const selected = normalizeDate(selectedDate.value);
+  return selected.getTime() <= oldest.getTime();
+});
+
 // Validar que la fecha esté dentro de los límites
 const validateDate = (date) => {
-  const dateToCheck = date instanceof Date ? date : new Date(date);
-  const today = new Date();
-  today.setHours(23, 59, 59, 999); // Fin del día de hoy
+  const dateToCheck = normalizeDate(date);
+  const today = normalizeDate(new Date());
   
-  // No permitir fechas futuras
+  // No permitir fechas futuras (comparar solo fecha, sin hora)
   if (dateToCheck > today) {
     return today;
   }
   
   // No permitir fechas anteriores al macro más antiguo
   const oldestMacroDate = macrosStore.getOldestMacroDate();
-  if (oldestMacroDate && dateToCheck < oldestMacroDate) {
-    return oldestMacroDate;
+  if (oldestMacroDate) {
+    const oldest = normalizeDate(oldestMacroDate);
+    if (dateToCheck < oldest) {
+      return oldest;
+    }
   }
   
   return dateToCheck;

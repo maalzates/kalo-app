@@ -84,9 +84,9 @@ const userInitials = computed(() => {
     .substring(0, 2)
 })
 
-const handleLogout = () => {
-  userStore.logout()
-  router.push('/login')
+const handleLogout = async () => {
+  // El logout ya maneja la redirección internamente
+  await userStore.logout()
 }
 </script>
 
