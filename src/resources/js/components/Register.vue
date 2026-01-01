@@ -19,7 +19,7 @@
         errorMessage.value = "";
     
         try {
-            const response = await axios.post("/api/register", {
+            const response = await axios.post("/register", {
                 name: name.value,
                 email: email.value,
                 password: password.value,

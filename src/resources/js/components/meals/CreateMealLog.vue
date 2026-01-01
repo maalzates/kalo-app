@@ -1,4 +1,5 @@
 <template>
+    <div>
     <v-dialog
         :model-value="modelValue"
         @update:model-value="$emit('update:modelValue', $event)"
@@ -139,6 +140,17 @@
             </v-container>
         </v-card>
     </v-dialog>
+
+    <!-- Diálogos para crear ingrediente o receta -->
+    <AddOrEditIngredient 
+        v-model="isCreateIngredientDialogOpen" 
+        :initial-data="null"
+    />
+    <AddOrEditRecipe 
+        v-model="isCreateRecipeDialogOpen" 
+        :initial-data="null"
+    />
+    </div>
 </template>
 
 <script setup>
@@ -147,6 +159,8 @@ import { useMealLogsStore } from "@/stores/useMealLogsStore";
 import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import { useRecipesStore } from "@/stores/useRecipesStore";
 import { useDateStore } from "@/stores/useDateStore";
+import AddOrEditIngredient from "@/components/ingredients/AddOrEditIngredient.vue";
+import AddOrEditRecipe from "@/components/recipes/AddOrEditRecipe.vue";
 
 const props = defineProps({ modelValue: Boolean });
 const emit = defineEmits(["update:modelValue"]);
@@ -158,6 +172,8 @@ const recipesStore = useRecipesStore();
 
 const activeTab = ref("food");
 const selectedItem = ref(null);
+const isCreateIngredientDialogOpen = ref(false);
+const isCreateRecipeDialogOpen = ref(false);
 
 const initialState = {
     name: "",
@@ -237,7 +253,6 @@ const onFoodSelected = (item) => {
     }
 };
 
-// Watch para recalcular valores cuando cambia la cantidad
 watch(() => form.value.base_amount, (newAmount) => {
     if (form.value.id && form.value.base_amount_ref) {
         const factor = newAmount / form.value.base_amount_ref;
@@ -249,8 +264,28 @@ watch(() => form.value.base_amount, (newAmount) => {
 });
 
 const handleCreateNew = () => {
-    console.log("Crear nuevo elemento para:", activeTab.value);
+    if (activeTab.value === 'food') {
+        isCreateIngredientDialogOpen.value = true;
+    } else {
+        isCreateRecipeDialogOpen.value = true;
+    }
 };
+
+// Watch para detectar cuando se cierra el diálogo de ingrediente y recargar la lista
+watch(() => isCreateIngredientDialogOpen.value, async (isOpen) => {
+    if (!isOpen) {
+        // Cuando se cierra el diálogo, recargar la lista de ingredientes
+        await ingredientsStore.fetchIngredients();
+    }
+});
+
+// Watch para detectar cuando se cierra el diálogo de receta y recargar la lista
+watch(() => isCreateRecipeDialogOpen.value, async (isOpen) => {
+    if (!isOpen) {
+        // Cuando se cierra el diálogo, recargar la lista de recetas
+        await recipesStore.fetchRecipes();
+    }
+});
 
 const saveMeal = async () => {
     try {
@@ -258,15 +293,27 @@ const saveMeal = async () => {
             ? dateStore.selectedDate.toISOString().split('T')[0]
             : dateStore.selectedDate || new Date().toISOString().split('T')[0];
             
+        // Construir el objeto mealData solo con el campo correspondiente
         const mealData = {
-            ingredient_id: activeTab.value === 'food' ? form.value.id : null,
-            recipe_id: activeTab.value === 'recipe' ? form.value.id : null,
             quantity: form.value.base_amount.toString(),
-            unit: form.value.base_unit || 'g',
+            unit: form.value.base_unit || (activeTab.value === 'recipe' ? 'serving' : 'g'),
             logged_at: selectedDate
         };
         
+        if (activeTab.value === 'food') {
+            mealData.ingredient_id = form.value.id;
+        } else {
+            mealData.recipe_id = form.value.id;
+        }
+        
         await mealLogsStore.addMealLog(mealData);
+        
+        // Recargar los meal logs para la fecha seleccionada
+        await mealLogsStore.fetchMealLogs({
+            date_from: selectedDate,
+            date_to: selectedDate
+        });
+        
         emit("update:modelValue", false);
         form.value = { ...initialState };
         selectedItem.value = null;

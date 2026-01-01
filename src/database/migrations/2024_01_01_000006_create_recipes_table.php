@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('total_carb', 6, 2);
             $table->decimal('total_fat', 6, 2);
             $table->foreignId('user_id')
+                ->nullable()
                 ->constrained('users')
                 ->onDelete('cascade');
             $table->timestamps();

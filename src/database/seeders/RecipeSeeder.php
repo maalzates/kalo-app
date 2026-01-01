@@ -20,6 +20,52 @@ class RecipeSeeder extends Seeder
             return;
         }
 
+        // Crear recetas globales (user_id null)
+        // Recetas generales globales
+        Recipe::factory(10)->global()->create()
+            ->each(function ($recipe) use ($globalIngredients) {
+                $ingredientCount = fake()->numberBetween(3, 6);
+                $selectedIngredients = $globalIngredients->random(min($ingredientCount, $globalIngredients->count()));
+
+                foreach ($selectedIngredients as $ingredient) {
+                    $recipe->ingredients()->attach($ingredient->id, [
+                        'amount' => fake()->randomFloat(2, 50, 300),
+                        'unit' => $ingredient->unit,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            });
+
+        // Recetas altas en proteína globales
+        Recipe::factory(5)->global()->highProtein()->create()
+            ->each(function ($recipe) use ($globalIngredients) {
+                $proteinIngredients = $globalIngredients->random(min(4, $globalIngredients->count()));
+                foreach ($proteinIngredients as $ingredient) {
+                    $recipe->ingredients()->attach($ingredient->id, [
+                        'amount' => fake()->randomFloat(2, 80, 250),
+                        'unit' => $ingredient->unit,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            });
+
+        // Recetas bajas en calorías globales
+        Recipe::factory(5)->global()->lowCalorie()->create()
+            ->each(function ($recipe) use ($globalIngredients) {
+                $ingredients = $globalIngredients->random(min(3, $globalIngredients->count()));
+                foreach ($ingredients as $ingredient) {
+                    $recipe->ingredients()->attach($ingredient->id, [
+                        'amount' => fake()->randomFloat(2, 30, 150),
+                        'unit' => $ingredient->unit,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
+            });
+
+        // Crear recetas específicas de usuario
         foreach ($users->take(20) as $user) {
             // Create various recipes using factory states
             Recipe::factory(2)->create(['user_id' => $user->id])

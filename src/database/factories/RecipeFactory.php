@@ -68,5 +68,19 @@ class RecipeFactory extends Factory
             ];
         });
     }
+
+    public function global(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_id' => null,
+        ]);
+    }
+
+    public function userSpecific(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_id' => User::factory(),
+        ]);
+    }
 }
 

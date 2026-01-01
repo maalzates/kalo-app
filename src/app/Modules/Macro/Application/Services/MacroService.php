@@ -41,12 +41,8 @@ class MacroService
 
     public function create(CreateMacroDTO $dto): array
     {
-        $existingMacro = $this->repository->findByUserId($dto->userId);
-
-        if ($existingMacro !== null) {
-            throw DuplicateMacroException::withUserId($dto->userId);
-        }
-
+        // Permitir múltiples macros por usuario para mantener historial
+        // Ya no validamos si existe un macro previo, permitimos crear nuevos
         return $this->repository->create([
             'kcal' => $dto->kcal,
             'prot' => $dto->prot,

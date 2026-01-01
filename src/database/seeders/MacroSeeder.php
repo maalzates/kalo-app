@@ -15,19 +15,31 @@ class MacroSeeder extends Seeder
         $users = User::all();
 
         foreach ($users as $user) {
-            // Randomly assign macro goals using factory states
-            $macroType = fake()->randomElement(['cutting', 'bulking', 'maintenance', 'default']);
+            // Crear dos macros por usuario: uno de hoy y otro de ayer
+            // Macro de ayer (más antiguo)
+            $macroTypeYesterday = fake()->randomElement(['cutting', 'bulking', 'maintenance', 'default']);
+            $macroYesterday = $this->createMacroByType($macroTypeYesterday, $user->id);
+            $macroYesterday->created_at = now()->subDay();
+            $macroYesterday->updated_at = now()->subDay();
+            $macroYesterday->save();
 
-            if ($macroType === 'cutting') {
-                Macro::factory()->cutting()->create(['user_id' => $user->id]);
-            } elseif ($macroType === 'bulking') {
-                Macro::factory()->bulking()->create(['user_id' => $user->id]);
-            } elseif ($macroType === 'maintenance') {
-                Macro::factory()->maintenance()->create(['user_id' => $user->id]);
-            } else {
-                Macro::factory()->create(['user_id' => $user->id]);
-            }
+            // Macro de hoy (más reciente)
+            $macroTypeToday = fake()->randomElement(['cutting', 'bulking', 'maintenance', 'default']);
+            $macroToday = $this->createMacroByType($macroTypeToday, $user->id);
+            $macroToday->created_at = now();
+            $macroToday->updated_at = now();
+            $macroToday->save();
         }
+    }
+
+    private function createMacroByType(string $type, int $userId): Macro
+    {
+        return match ($type) {
+            'cutting' => Macro::factory()->cutting()->make(['user_id' => $userId]),
+            'bulking' => Macro::factory()->bulking()->make(['user_id' => $userId]),
+            'maintenance' => Macro::factory()->maintenance()->make(['user_id' => $userId]),
+            default => Macro::factory()->make(['user_id' => $userId]),
+        };
     }
 }
 

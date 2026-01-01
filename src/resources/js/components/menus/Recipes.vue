@@ -11,7 +11,7 @@
             prepend-icon="mdi-plus"
             rounded="pill"
             variant="flat"
-            class="d-none d-md-flex"
+            class="d-none d-md-flex new-button"
             @click="openDialog(null, false)"
           >
             Nueva Receta
@@ -45,8 +45,16 @@
               </v-avatar>
             </template>
   
-            <v-list-item-title class="font-weight-bold text-subtitle-1">
-              {{ recipe.name }}
+            <v-list-item-title class="font-weight-bold text-subtitle-1 d-flex align-center ga-2">
+              <span>{{ recipe.name }}</span>
+              <v-chip 
+                size="x-small" 
+                :color="recipe.user_id ? 'blue' : 'green'"
+                variant="tonal"
+                class="font-weight-bold"
+              >
+                {{ recipe.user_id ? 'Privada' : 'Pública' }}
+              </v-chip>
             </v-list-item-title>
             
             <v-list-item-subtitle class="text-caption">
@@ -54,7 +62,8 @@
             </v-list-item-subtitle>
   
             <template v-slot:append>
-              <v-menu location="bottom end">
+              <!-- Solo mostrar menú de acciones para recetas privadas (del usuario) -->
+              <v-menu v-if="recipe.user_id" location="bottom end">
                 <template v-slot:activator="{ props }">
                   <v-btn icon="mdi-dots-vertical" variant="text" color="grey-darken-1" v-bind="props" @click.stop></v-btn>
                 </template>
@@ -182,7 +191,16 @@
     }
   };
 
-  onMounted(() => {
-    recipesStore.fetchRecipes();
-  });
-  </script>
+onMounted(() => {
+  recipesStore.fetchRecipes();
+});
+</script>
+
+<style scoped>
+.new-button {
+  font-family: 'Inter', 'Roboto', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: none;
+}
+</style>

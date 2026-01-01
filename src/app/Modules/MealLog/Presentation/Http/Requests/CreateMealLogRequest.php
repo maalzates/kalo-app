@@ -21,13 +21,11 @@ class CreateMealLogRequest extends FormRequest
             'ingredient_id' => [
                 'nullable',
                 'required_without:recipe_id',
-                'prohibited_with:recipe_id',
                 'exists:ingredients,id',
             ],
             'recipe_id' => [
                 'nullable',
                 'required_without:ingredient_id',
-                'prohibited_with:ingredient_id',
                 'exists:recipes,id',
             ],
             'quantity' => ['required', 'numeric', 'min:0.01'],
@@ -36,14 +34,23 @@ class CreateMealLogRequest extends FormRequest
         ];
     }
 
+    protected function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            // Verificar que no se proporcionen ambos campos
+            if ($this->has('ingredient_id') && $this->has('recipe_id')) {
+                $validator->errors()->add('ingredient_id', 'Cannot provide both ingredient_id and recipe_id.');
+                $validator->errors()->add('recipe_id', 'Cannot provide both ingredient_id and recipe_id.');
+            }
+        });
+    }
+
     public function messages(): array
     {
         return [
             'ingredient_id.required_without' => 'Either ingredient_id or recipe_id is required.',
-            'ingredient_id.prohibited_with' => 'Cannot provide both ingredient_id and recipe_id.',
             'ingredient_id.exists' => 'The selected ingredient does not exist.',
             'recipe_id.required_without' => 'Either ingredient_id or recipe_id is required.',
-            'recipe_id.prohibited_with' => 'Cannot provide both ingredient_id and recipe_id.',
             'recipe_id.exists' => 'The selected recipe does not exist.',
             'quantity.required' => 'The quantity field is required.',
             'quantity.numeric' => 'The quantity must be a number.',

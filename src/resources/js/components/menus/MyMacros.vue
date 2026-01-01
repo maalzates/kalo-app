@@ -116,15 +116,15 @@ const manualProtein = ref(0);
 const manualCarbs = ref(0);
 const manualFat = ref(0);
 
-// Cargar macro existente si hay uno
+// Cargar el macro más reciente para mostrar en el formulario
 const loadExistingMacro = () => {
   if (macrosStore.macros.length > 0) {
-    // El backend solo permite un macro por usuario, así que tomamos el primero
-    const existingMacro = macrosStore.macros[0];
-    manualCalories.value = existingMacro.kcal || 0;
-    manualProtein.value = parseFloat(existingMacro.prot) || 0;
-    manualCarbs.value = parseFloat(existingMacro.carb) || 0;
-    manualFat.value = parseFloat(existingMacro.fat) || 0;
+    // Obtener el macro más reciente (el primero después de ordenar por fecha descendente)
+    const latestMacro = macrosStore.macros[0];
+    manualCalories.value = latestMacro.kcal || 0;
+    manualProtein.value = parseFloat(latestMacro.prot) || 0;
+    manualCarbs.value = parseFloat(latestMacro.carb) || 0;
+    manualFat.value = parseFloat(latestMacro.fat) || 0;
   }
 };
 
@@ -137,14 +137,11 @@ const applyMacros = async (data) => {
       fat: data.fat.toString(),
     };
 
-    if (macrosStore.macros.length > 0) {
-      // Si ya existe un macro, actualizarlo
-      const existingMacro = macrosStore.macros[0];
-      await macrosStore.updateMacro(existingMacro.id, macroData);
-    } else {
-      // Si no existe, crear uno nuevo
-      await macrosStore.createMacro(macroData);
-    }
+    // Siempre crear un nuevo macro para mantener el historial
+    await macrosStore.createMacro(macroData);
+    
+    // Recargar la lista de macros para obtener el más reciente
+    await macrosStore.fetchMacros();
     
     // Actualizar los valores manuales para que se reflejen en el formulario
     manualCalories.value = data.calories;
@@ -170,14 +167,11 @@ const saveManual = async () => {
       fat: manualFat.value.toString(),
     };
 
-    if (macrosStore.macros.length > 0) {
-      // Si ya existe un macro, actualizarlo
-      const existingMacro = macrosStore.macros[0];
-      await macrosStore.updateMacro(existingMacro.id, macroData);
-    } else {
-      // Si no existe, crear uno nuevo
-      await macrosStore.createMacro(macroData);
-    }
+    // Siempre crear un nuevo macro para mantener el historial
+    await macrosStore.createMacro(macroData);
+    
+    // Recargar la lista de macros para obtener el más reciente
+    await macrosStore.fetchMacros();
   } catch (error) {
     console.error("Error saving manual macros:", error);
   }

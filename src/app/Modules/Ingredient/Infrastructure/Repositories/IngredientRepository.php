@@ -22,9 +22,15 @@ class IngredientRepository implements IngredientRepositoryInterface
                 $query->where('name', 'like', "%{$search}%");
             }
 
-            // Always filter by user_id from authenticated user
+            // Include user's ingredients AND global ingredients (user_id null)
             if (isset($filters['userId']) && $filters['userId'] !== null) {
-                $query->where('user_id', $filters['userId']);
+                $query->where(function($q) use ($filters) {
+                    $q->where('user_id', $filters['userId'])
+                      ->orWhereNull('user_id');
+                });
+            } else {
+                // If no userId, only show global ingredients
+                $query->whereNull('user_id');
             }
 
             if (isset($filters['unit']) && $filters['unit'] !== null) {
@@ -59,8 +65,12 @@ class IngredientRepository implements IngredientRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
+            // Allow access to user's ingredients OR global ingredients
             $ingredient = Ingredient::where('id', $id)
-                ->where('user_id', $userId)
+                ->where(function($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                      ->orWhereNull('user_id');
+                })
                 ->first();
             return $ingredient ? $ingredient->toArray() : null;
         } catch (Throwable $e) {

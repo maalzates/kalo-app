@@ -16,7 +16,7 @@
                     prepend-icon="mdi-plus"
                     rounded="pill"
                     variant="flat"
-                    class="d-none d-md-flex"
+                    class="d-none d-md-flex new-button"
                     @click="openDialog(null, false)"
                 >
                     Nuevo
@@ -51,8 +51,16 @@
                         </v-avatar>
                     </template>
 
-                    <v-list-item-title class="font-weight-bold text-subtitle-1">
-                        {{ item.name }}
+                    <v-list-item-title class="font-weight-bold text-subtitle-1 d-flex align-center ga-2">
+                        <span>{{ item.name }}</span>
+                        <v-chip 
+                            size="x-small" 
+                            :color="item.user_id ? 'blue' : 'green'"
+                            variant="tonal"
+                            class="font-weight-bold"
+                        >
+                            {{ item.user_id ? 'Privado' : 'Público' }}
+                        </v-chip>
                     </v-list-item-title>
 
                     <v-list-item-subtitle class="text-caption">
@@ -62,7 +70,8 @@
                     </v-list-item-subtitle>
 
                     <template v-slot:append>
-                        <v-menu location="bottom end">
+                        <!-- Solo mostrar menú de acciones para ingredientes privados (del usuario) -->
+                        <v-menu v-if="item.user_id" location="bottom end">
                             <template v-slot:activator="{ props }">
                                 <v-btn
                                     icon="mdi-dots-vertical"
@@ -167,3 +176,12 @@ onMounted(() => {
     ingredientsStore.fetchIngredients();
 });
 </script>
+
+<style scoped>
+.new-button {
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: none;
+}
+</style>

@@ -23,9 +23,15 @@ class RecipeRepository implements RecipeRepositoryInterface
                 $query->where('name', 'like', "%{$search}%");
             }
 
-            // Always filter by user_id from authenticated user
+            // Include user's recipes AND global recipes (user_id null)
             if (isset($filters['userId']) && $filters['userId'] !== null) {
-                $query->where('user_id', $filters['userId']);
+                $query->where(function($q) use ($filters) {
+                    $q->where('user_id', $filters['userId'])
+                      ->orWhereNull('user_id');
+                });
+            } else {
+                // If no userId, only show global recipes
+                $query->whereNull('user_id');
             }
 
             $page = $filters['page'] ?? 1;
@@ -56,9 +62,13 @@ class RecipeRepository implements RecipeRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
+            // Allow access to user's recipes OR global recipes
             $recipe = Recipe::with('ingredients')
                 ->where('id', $id)
-                ->where('user_id', $userId)
+                ->where(function($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                      ->orWhereNull('user_id');
+                })
                 ->first();
             return $recipe ? $recipe->toArray() : null;
         } catch (Throwable $e) {

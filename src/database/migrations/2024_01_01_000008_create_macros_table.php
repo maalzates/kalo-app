@@ -21,7 +21,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->timestamps();
 
-            $table->unique('user_id');
+            // No agregamos restricción única para permitir múltiples macros por usuario (historial)
         });
     }
 

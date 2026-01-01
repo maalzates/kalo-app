@@ -18,7 +18,7 @@
         errorMessage.value = "";
         
         try {
-            const response = await axios.post("/api/login", {
+            const response = await axios.post("/login", {
                 email: email.value,
                 password: password.value,
             });
