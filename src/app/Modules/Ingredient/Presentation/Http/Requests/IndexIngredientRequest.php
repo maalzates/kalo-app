@@ -21,6 +21,7 @@ class IndexIngredientRequest extends FormRequest
             'unit' => ['nullable', 'in:g,ml,un'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'include_public' => ['nullable', 'boolean'],
         ];
     }
 
@@ -32,6 +33,7 @@ class IndexIngredientRequest extends FormRequest
             unit: $this->input('unit'),
             page: $this->input('page') ? (int) $this->input('page') : null,
             perPage: $this->input('per_page') ? (int) $this->input('per_page') : null,
+            includePublic: $this->boolean('include_public', false),
         );
     }
 }

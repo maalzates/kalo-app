@@ -26,6 +26,7 @@ class RecipeService
             'userId' => $filters->userId,
             'page' => $filters->page,
             'perPage' => $filters->perPage,
+            'includePublic' => $filters->includePublic,
         ]);
     }
 

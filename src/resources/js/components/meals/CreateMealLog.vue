@@ -189,13 +189,14 @@ const form = ref({ ...initialState });
 
 const filteredLibrary = computed(() => {
     return activeTab.value === "food"
-        ? ingredientsStore.ingredients
-        : recipesStore.recipes;
+        ? ingredientsStore.ingredientsForMealLog
+        : recipesStore.recipesForMealLog;
 });
 
 onMounted(() => {
-    ingredientsStore.fetchIngredients();
-    recipesStore.fetchRecipes();
+    // Cargar ingredientes y recetas incluyendo elementos públicos para MealLogs
+    ingredientsStore.fetchIngredientsForMealLog();
+    recipesStore.fetchRecipesForMealLog();
 });
 
 const onFoodSelected = (item) => {
@@ -274,16 +275,16 @@ const handleCreateNew = () => {
 // Watch para detectar cuando se cierra el diálogo de ingrediente y recargar la lista
 watch(() => isCreateIngredientDialogOpen.value, async (isOpen) => {
     if (!isOpen) {
-        // Cuando se cierra el diálogo, recargar la lista de ingredientes
-        await ingredientsStore.fetchIngredients();
+        // Cuando se cierra el diálogo, recargar la lista de ingredientes para MealLogs (incluyendo públicos)
+        await ingredientsStore.fetchIngredientsForMealLog();
     }
 });
 
 // Watch para detectar cuando se cierra el diálogo de receta y recargar la lista
 watch(() => isCreateRecipeDialogOpen.value, async (isOpen) => {
     if (!isOpen) {
-        // Cuando se cierra el diálogo, recargar la lista de recetas
-        await recipesStore.fetchRecipes();
+        // Cuando se cierra el diálogo, recargar la lista de recetas para MealLogs (incluyendo públicas)
+        await recipesStore.fetchRecipesForMealLog();
     }
 });
 

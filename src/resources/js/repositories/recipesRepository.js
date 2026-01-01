@@ -7,6 +7,10 @@ const recipesRepository = {
             if (filters.search) params.append('search', filters.search);
             if (filters.page) params.append('page', filters.page);
             if (filters.per_page) params.append('per_page', filters.per_page);
+            if (filters.include_public !== undefined) {
+                // Convertir booleano a "1" o "0" para que Laravel lo reconozca como booleano
+                params.append('include_public', filters.include_public ? '1' : '0');
+            }
 
             const response = await axios.get(`/recipes?${params.toString()}`);
             return response.data.data;

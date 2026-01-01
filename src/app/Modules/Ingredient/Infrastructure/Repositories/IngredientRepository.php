@@ -22,15 +22,24 @@ class IngredientRepository implements IngredientRepositoryInterface
                 $query->where('name', 'like', "%{$search}%");
             }
 
-            // Include user's ingredients AND global ingredients (user_id null)
+            // Filter by user_id: include public items if includePublic is true
+            $includePublic = $filters['includePublic'] ?? false;
             if (isset($filters['userId']) && $filters['userId'] !== null) {
-                $query->where(function($q) use ($filters) {
-                    $q->where('user_id', $filters['userId'])
-                      ->orWhereNull('user_id');
-                });
+                if ($includePublic) {
+                    // Include user's ingredients AND global ingredients (user_id null)
+                    $query->where(function($q) use ($filters) {
+                        $q->where('user_id', $filters['userId'])
+                          ->orWhereNull('user_id');
+                    });
+                } else {
+                    // Only user's private ingredients
+                    $query->where('user_id', $filters['userId']);
+                }
             } else {
-                // If no userId, only show global ingredients
-                $query->whereNull('user_id');
+                // If no userId and includePublic is true, show only global ingredients
+                if ($includePublic) {
+                    $query->whereNull('user_id');
+                }
             }
 
             if (isset($filters['unit']) && $filters['unit'] !== null) {
@@ -65,12 +74,8 @@ class IngredientRepository implements IngredientRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
-            // Allow access to user's ingredients OR global ingredients
             $ingredient = Ingredient::where('id', $id)
-                ->where(function($q) use ($userId) {
-                    $q->where('user_id', $userId)
-                      ->orWhereNull('user_id');
-                })
+                ->where('user_id', $userId)
                 ->first();
             return $ingredient ? $ingredient->toArray() : null;
         } catch (Throwable $e) {

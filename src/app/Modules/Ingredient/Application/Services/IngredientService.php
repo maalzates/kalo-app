@@ -26,6 +26,7 @@ class IngredientService
             'unit' => $filters->unit,
             'page' => $filters->page,
             'perPage' => $filters->perPage,
+            'includePublic' => $filters->includePublic,
         ]);
     }
 

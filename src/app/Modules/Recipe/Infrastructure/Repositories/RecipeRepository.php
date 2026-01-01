@@ -23,15 +23,24 @@ class RecipeRepository implements RecipeRepositoryInterface
                 $query->where('name', 'like', "%{$search}%");
             }
 
-            // Include user's recipes AND global recipes (user_id null)
+            // Filter by user_id: include public items if includePublic is true
+            $includePublic = $filters['includePublic'] ?? false;
             if (isset($filters['userId']) && $filters['userId'] !== null) {
-                $query->where(function($q) use ($filters) {
-                    $q->where('user_id', $filters['userId'])
-                      ->orWhereNull('user_id');
-                });
+                if ($includePublic) {
+                    // Include user's recipes AND global recipes (user_id null)
+                    $query->where(function($q) use ($filters) {
+                        $q->where('user_id', $filters['userId'])
+                          ->orWhereNull('user_id');
+                    });
+                } else {
+                    // Only user's private recipes
+                    $query->where('user_id', $filters['userId']);
+                }
             } else {
-                // If no userId, only show global recipes
-                $query->whereNull('user_id');
+                // If no userId and includePublic is true, show only global recipes
+                if ($includePublic) {
+                    $query->whereNull('user_id');
+                }
             }
 
             $page = $filters['page'] ?? 1;
@@ -62,13 +71,9 @@ class RecipeRepository implements RecipeRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
-            // Allow access to user's recipes OR global recipes
             $recipe = Recipe::with('ingredients')
                 ->where('id', $id)
-                ->where(function($q) use ($userId) {
-                    $q->where('user_id', $userId)
-                      ->orWhereNull('user_id');
-                })
+                ->where('user_id', $userId)
                 ->first();
             return $recipe ? $recipe->toArray() : null;
         } catch (Throwable $e) {

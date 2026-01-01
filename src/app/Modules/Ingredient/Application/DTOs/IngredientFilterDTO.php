@@ -12,6 +12,7 @@ readonly class IngredientFilterDTO
         public ?string $unit,
         public ?int $page,
         public ?int $perPage,
+        public ?bool $includePublic = false,
     ) {
     }
 }

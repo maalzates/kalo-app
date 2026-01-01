@@ -20,6 +20,7 @@ class IndexRecipeRequest extends FormRequest
             'search' => ['nullable', 'string', 'max:255'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'include_public' => ['nullable', 'boolean'],
         ];
     }
 
@@ -30,6 +31,7 @@ class IndexRecipeRequest extends FormRequest
             userId: (string) auth()->id(),
             page: $this->input('page') ? (int) $this->input('page') : null,
             perPage: $this->input('per_page') ? (int) $this->input('per_page') : null,
+            includePublic: $this->boolean('include_public', false),
         );
     }
 }
