@@ -44,6 +44,7 @@ Route::prefix('recipes')->group(function () {
 
 Route::prefix('meal-logs')->group(function () {
     Route::get('/', [MealLogController::class, 'index']);
+    Route::get('user/{user_id}');
     Route::post('/', [MealLogController::class, 'store']);
     Route::get('/{mealLog}', [MealLogController::class, 'show']);
     Route::put('/{mealLog}', [MealLogController::class, 'update']);

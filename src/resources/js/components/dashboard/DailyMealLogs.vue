@@ -61,7 +61,7 @@
   <script setup>
   import { useMealLogsStore } from "@/stores/useMealLogsStore";
   import { useDateStore } from "@/stores/useDateStore";
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import CreateMealLog from '@/components/meals/CreateMealLog.vue';
   const mealLogsStore = useMealLogsStore();
   const dateStore = useDateStore();
@@ -71,4 +71,8 @@
   const openCreateMealLogDialog = () => {
     isCreateMealLogDialogOpen.value = true;
   };
+
+  onMounted(async () => {
+   await mealLogsStore.fetchMealLogs();
+  });
   </script>

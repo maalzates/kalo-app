@@ -63,8 +63,8 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         }
     });
 
-    const fetchMealLogs = () => {
-        mealLogs.value = mealLogsRepository.getMealLogs();
+    const fetchMealLogs = async () => {
+        mealLogs.value = await mealLogsRepository.getMealLogs();
     };
 
     const addMealLog = (mealData) => {

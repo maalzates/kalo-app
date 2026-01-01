@@ -1,8 +1,16 @@
 import { mealLogs } from "@/data/MealLogs";
+import axios from 'axios';
 
 const mealLogsRepository = {
-    getMealLogs() {
-        return mealLogs;
+    async getMealLogs() {
+        try{
+            const response = await axios.get(`/api/meal-logs`);
+            return response;
+        }catch (error) {
+            console.error(error);
+        }finally{
+            console.log(response ?? error);
+        }
     },
 
     deleteMealLog(id) {

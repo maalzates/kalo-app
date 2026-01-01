@@ -1,39 +1,45 @@
 <template>
   <v-app shadow>
-    <v-app-bar color="deep-purple" elevation="0" border="b">
+    <v-app-bar v-if="userStore.isLoggedIn" color="deep-purple" elevation="0" border="b">
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-app-bar-title class="logo">KALO<span class="logo-light">APP</span></v-app-bar-title>
       <v-spacer class="d-md-none"></v-spacer>
       
       <div class="d-md-none mr-4" @click="$router.push('/profile')">
         <v-avatar size="32" color="deep-purple-lighten-4" class="cursor-pointer">
-          <span class="text-caption text-deep-purple font-weight-bold">JD</span>
+          <span class="text-caption text-deep-purple font-weight-bold">
+            {{ userInitials }}
+          </span>
         </v-avatar>
       </div>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" color="deep-purple" theme="dark">
+    <v-navigation-drawer v-if="userStore.isLoggedIn" v-model="drawer" color="deep-purple" theme="dark">
       <v-list nav class="mt-4 main-menu">
         <v-list-item prepend-icon="mdi-view-dashboard" title="Tablero" to="/" class="mb-2" />
         <v-list-item prepend-icon="mdi-food-apple" title="Ingredientes" to="/ingredients" class="mb-2" />
         <v-list-item prepend-icon="mdi-chef-hat" title="Recetas" to="/recipes" class="mb-2" />
-        <v-list-item prepend-icon="mdi-target" title="Macros" to="/macros" />
-        <v-list-item prepend-icon="mdi-login" title="Login" to="/login" />
-        <v-list-item prepend-icon="mdi-register" title="Register" to="/register" />
+        <v-list-item prepend-icon="mdi-target" title="Macros" to="/macros" class="mb-2" />
+        
+        <v-divider class="my-2"></v-divider>
+        
+        <v-list-item prepend-icon="mdi-logout" title="Cerrar Sesión" @click="handleLogout" />
       </v-list>
 
       <template v-slot:append>
         <v-divider></v-divider>
         <v-list-item
           lines="two"
-          title="Juan Dueñas"
-          subtitle="Meta: 2,400 kcal"
+          :title="userStore.user?.name || 'Usuario'"
+          :subtitle="'Meta: ' + (userStore.user?.daily_calories || 0) + ' kcal'"
           class="pa-4 cursor-pointer"
           to="/profile"
         >
           <template v-slot:prepend>
             <v-avatar color="deep-purple-lighten-4" class="mr-n1">
-              <span class="text-body-2 text-deep-purple font-weight-bold">JD</span>
+              <span class="text-body-2 text-deep-purple font-weight-bold">
+                {{ userInitials }}
+              </span>
             </v-avatar>
           </template>
         </v-list-item>
@@ -41,6 +47,7 @@
     </v-navigation-drawer>
 
     <v-btn 
+      v-if="userStore.isLoggedIn"
       icon 
       color="deep-purple" 
       :class="['d-none d-md-flex btn-toggle', { 'is-open': drawer }]"
@@ -50,7 +57,7 @@
     </v-btn>
 
     <v-main>
-      <v-container fluid class="pa-6">
+      <v-container fluid :class="userStore.isLoggedIn ? 'pa-6' : 'pa-0 fill-height'">
         <router-view />
       </v-container>
     </v-main>
@@ -58,8 +65,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/useUserStore'
+
+const router = useRouter()
+const userStore = useUserStore()
 const drawer = ref(true)
+
+// Iniciales del usuario para los avatares
+const userInitials = computed(() => {
+  if (!userStore.user?.name) return 'U'
+  return userStore.user.name
+    .split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .substring(0, 2)
+})
+
+const handleLogout = () => {
+  userStore.logout()
+  router.push('/login')
+}
 </script>
 
 <style scoped>
@@ -84,4 +112,9 @@ const drawer = ref(true)
 .main-menu :deep(.v-list-item) { min-height: 56px !important; }
 .main-menu :deep(.v-list-item-title) { font-size: 1.1rem !important; font-weight: 500; }
 .main-menu :deep(.v-icon) { font-size: 1.5rem !important; }
+
+/* Para que la vista de login ocupe todo el espacio si no hay login */
+.fill-height {
+  height: 100vh;
+}
 </style>
