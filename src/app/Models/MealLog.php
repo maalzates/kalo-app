@@ -17,6 +17,8 @@ class MealLog extends Model
 
     protected $table = 'meal_logs';
 
+    protected $with = ['ingredient', 'recipe'];
+
     protected $fillable = [
         'user_id',
         'ingredient_id',

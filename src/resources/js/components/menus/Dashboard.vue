@@ -19,13 +19,10 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
-import { useMealLogsStore } from "@/stores/useMealLogsStore";
-
+import { ref } from "vue";
 import DailyMacrosSummary from "@/components/dashboard/DailyMacrosSummary.vue";
 import DailyMealLogs from "@/components/dashboard/DailyMealLogs.vue";
 import DateSelector from "@/components/dashboard/DateSelector.vue";
-import { ref } from "vue";
 import CreateMealLog from "@/components/meals/CreateMealLog.vue";
 import MobileFloatingButton from "@/components/common/MobileFloatingButton.vue";
 
@@ -34,10 +31,4 @@ const isCreateMealLogDialogOpen = ref(false);
 const openCreateMealLogDialog = () => {
     isCreateMealLogDialogOpen.value = true;
 };
-
-const mealLogsStore = useMealLogsStore();
-
-onMounted(() => {
-    mealLogsStore.fetchMealLogs();
-});
 </script>

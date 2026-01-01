@@ -19,11 +19,19 @@ export const useUserStore = defineStore("userStore", () => {
         localStorage.setItem('user_data', JSON.stringify(newUserData));
     };
 
-    const logout = () => {
-        user.value = null;
-        token.value = null;
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user_data');
+    const logout = async () => {
+        try {
+            // Llamar al endpoint de logout del backend
+            await window.axios.post('/logout');
+        } catch (error) {
+            console.error('Error during logout:', error);
+        } finally {
+            // Limpiar estado local independientemente del resultado del backend
+            user.value = null;
+            token.value = null;
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_data');
+        }
     };
 
     return {

@@ -20,9 +20,10 @@
     
         try {
             const response = await axios.post("/api/register", {
-                name: name.value || email.value.split('@')[0], // Fallback simple si no pones campo nombre
+                name: name.value,
                 email: email.value,
                 password: password.value,
+                password_confirmation: password.value,
             });
     
             const { access_token, user } = response.data.data;

@@ -98,11 +98,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import DailyGoals from '@/components/common/DailyGoals.vue';
 import { useMacroCalculator } from '@/composables/useMacroCalculator';
+import { useMacrosStore } from '@/stores/useMacrosStore';
 
 const activeTab = ref('auto');
+const macrosStore = useMacrosStore();
 
 const { 
   gender, weight, height, age, activityLevel, goal, 
@@ -114,17 +116,75 @@ const manualProtein = ref(0);
 const manualCarbs = ref(0);
 const manualFat = ref(0);
 
-const applyMacros = (data) => {
-  console.log("Aplicando macros automáticos:", data);
+// Cargar macro existente si hay uno
+const loadExistingMacro = () => {
+  if (macrosStore.macros.length > 0) {
+    // El backend solo permite un macro por usuario, así que tomamos el primero
+    const existingMacro = macrosStore.macros[0];
+    manualCalories.value = existingMacro.kcal || 0;
+    manualProtein.value = parseFloat(existingMacro.prot) || 0;
+    manualCarbs.value = parseFloat(existingMacro.carb) || 0;
+    manualFat.value = parseFloat(existingMacro.fat) || 0;
+  }
 };
 
-const saveManual = () => {
-  const data = {
-    calories: manualCalories.value,
-    protein: manualProtein.value,
-    carbs: manualCarbs.value,
-    fat: manualFat.value
-  };
-  console.log("Guardando macros manuales:", data);
+const applyMacros = async (data) => {
+  try {
+    const macroData = {
+      kcal: data.calories,
+      prot: data.protein.toString(),
+      carb: data.carbs.toString(),
+      fat: data.fat.toString(),
+    };
+
+    if (macrosStore.macros.length > 0) {
+      // Si ya existe un macro, actualizarlo
+      const existingMacro = macrosStore.macros[0];
+      await macrosStore.updateMacro(existingMacro.id, macroData);
+    } else {
+      // Si no existe, crear uno nuevo
+      await macrosStore.createMacro(macroData);
+    }
+    
+    // Actualizar los valores manuales para que se reflejen en el formulario
+    manualCalories.value = data.calories;
+    manualProtein.value = data.protein;
+    manualCarbs.value = data.carbs;
+    manualFat.value = data.fat;
+  } catch (error) {
+    console.error("Error applying macros:", error);
+  }
 };
+
+const saveManual = async () => {
+  if (manualCalories.value <= 0 || manualProtein.value < 0 || manualCarbs.value < 0 || manualFat.value < 0) {
+    console.error("Valores inválidos");
+    return;
+  }
+
+  try {
+    const macroData = {
+      kcal: manualCalories.value,
+      prot: manualProtein.value.toString(),
+      carb: manualCarbs.value.toString(),
+      fat: manualFat.value.toString(),
+    };
+
+    if (macrosStore.macros.length > 0) {
+      // Si ya existe un macro, actualizarlo
+      const existingMacro = macrosStore.macros[0];
+      await macrosStore.updateMacro(existingMacro.id, macroData);
+    } else {
+      // Si no existe, crear uno nuevo
+      await macrosStore.createMacro(macroData);
+    }
+  } catch (error) {
+    console.error("Error saving manual macros:", error);
+  }
+};
+
+onMounted(async () => {
+  await macrosStore.fetchMacros();
+  loadExistingMacro();
+});
 </script>

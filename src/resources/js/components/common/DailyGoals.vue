@@ -1,6 +1,6 @@
 <template>
     <v-card 
-      v-if="user?.current_targets"
+      v-if="user"
       color="deep-purple-lighten-5" 
       rounded="xl" 
       variant="flat"
@@ -32,7 +32,7 @@
           <v-row no-gutters justify="space-around" class="text-center align-center">
             <v-col>
               <div class="text-h6 font-weight-black text-deep-purple-accent-4">
-                {{ user.current_targets.calories }}
+                {{ calories }}
               </div>
               <div class="text-caption font-weight-bold text-deep-purple-lighten-2 text-uppercase">
                 kcal
@@ -57,15 +57,46 @@
   </template>
   
   <script setup>
-  import { computed } from 'vue';
+  import { computed, watch, onMounted } from 'vue';
   import { useUserStore } from "@/stores/useUserStore";
+  import { useMacrosStore } from "@/stores/useMacrosStore";
+  import { useDateStore } from "@/stores/useDateStore";
   
   const userStore = useUserStore();
-  const user = computed(() => userStore.authenticatedUser);
+  const macrosStore = useMacrosStore();
+  const dateStore = useDateStore();
   
+  const user = computed(() => userStore.user);
+  
+  // Obtener el macro para la fecha seleccionada (busca el más cercano hacia atrás)
+  const macroForDate = computed(() => {
+    return macrosStore.getMacroForDate(dateStore.selectedDate);
+  });
+  
+  // Calorías del macro encontrado para la fecha
+  const calories = computed(() => {
+    return macroForDate.value?.kcal || 0;
+  });
+  
+  // Macros del macro encontrado para la fecha
   const macros = computed(() => [
-    { label: 'Prot', value: user.value?.current_targets?.protein || 0 },
-    { label: 'Carb', value: user.value?.current_targets?.carbs || 0 },
-    { label: 'Grasa', value: user.value?.current_targets?.fat || 0 },
+    { label: 'Prot', value: parseFloat(macroForDate.value?.prot) || 0 },
+    { label: 'Carb', value: parseFloat(macroForDate.value?.carb) || 0 },
+    { label: 'Grasa', value: parseFloat(macroForDate.value?.fat) || 0 },
   ]);
+  
+  // Cargar macros al montar y cuando cambie la fecha
+  const loadMacrosForDate = async () => {
+    if (macrosStore.macros.length === 0) {
+      await macrosStore.fetchMacros();
+    }
+  };
+  
+  watch(() => dateStore.selectedDate, () => {
+    loadMacrosForDate();
+  }, { immediate: true });
+  
+  onMounted(() => {
+    loadMacrosForDate();
+  });
   </script>

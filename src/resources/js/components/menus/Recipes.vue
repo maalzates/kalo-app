@@ -50,7 +50,7 @@
             </v-list-item-title>
             
             <v-list-item-subtitle class="text-caption">
-              {{ recipe.calories }} kcal | P: {{ recipe.protein }}g | C: {{ recipe.carbs }}g | F: {{ recipe.fat }}g
+              {{ recipe.total_kcal || 0 }} kcal | P: {{ recipe.total_prot || 0 }}g | C: {{ recipe.total_carb || 0 }}g | F: {{ recipe.total_fat || 0 }}g
             </v-list-item-subtitle>
   
             <template v-slot:append>
@@ -80,21 +80,21 @@
                 <v-divider></v-divider>
               </div>
               <v-row dense>
-                <v-col v-for="ing in recipe.ingredients" :key="ing.id" cols="12">
+                <v-col v-for="(ing, idx) in recipe.ingredients" :key="ing.id || idx" cols="12">
                   <v-sheet border rounded="lg" class="pa-3 d-flex align-center justify-space-between">
                     <div class="d-flex align-center">
                       <v-icon size="small" color="orange-darken-2" class="mr-3">mdi-circle-small</v-icon>
                       <div>
-                        <div class="text-body-2 font-weight-bold">{{ ing.name }}</div>
-                        <div class="text-caption text-grey">Cant: {{ ing.amount }}{{ ing.unit }}</div>
+                        <div class="text-body-2 font-weight-bold">{{ ing.name || ing.ingredient?.name || 'Ingrediente' }}</div>
+                        <div class="text-caption text-grey">Cant: {{ ing.pivot?.amount || ing.amount || 0 }}{{ ing.pivot?.unit || ing.unit || 'g' }}</div>
                       </div>
                     </div>
                     <div class="text-right">
                       <div class="text-body-2 font-weight-medium text-deep-purple">
-                        {{ ing.calories }} <span class="text-caption">kcal</span>
+                        {{ ing.kcal || ing.calories || 0 }} <span class="text-caption">kcal</span>
                       </div>
                       <div class="text-caption text-grey">
-                        {{ ing.protein }}g P • {{ ing.carbs }}g C
+                        {{ ing.prot || ing.protein || 0 }}g P • {{ ing.carb || ing.carbs || 0 }}g C
                       </div>
                     </div>
                   </v-sheet>
@@ -123,7 +123,7 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { useRecipesStore } from '@/stores/useRecipesStore';
   import AddOrEditRecipe from '@/components/recipes/AddOrEditRecipe.vue';
   import MobileFloatingButton from '@/components/common/MobileFloatingButton.vue';
@@ -146,33 +146,43 @@
     expandedId.value = expandedId.value === id ? null : id;
   };
   
-  // Abrir Modal para Crear o Editar
   const openDialog = (item, isEditing = false) => {
     selectedRecipe.value = isEditing ? { ...item } : null;
     isAddOrEditDialogOpen.value = true;
   };
   
-  // Abrir Modal de Confirmación de Borrado
   const openDeleteConfirm = (item) => {
     selectedRecipe.value = item;
     isDeleteDialogOpen.value = true;
   };
   
-  // Manejadores de eventos (Simulación de backend)
-  const handleSaveRecipe = (recipeData) => {
-    if (selectedRecipe.value) {
-      console.log("Actualizando receta:", recipeData);
-      // recipesStore.updateRecipe(recipeData);
-    } else {
-      console.log("Creando nueva receta:", recipeData);
-      // recipesStore.addRecipe(recipeData);
+  const handleSaveRecipe = async (recipeData) => {
+    try {
+      if (selectedRecipe.value) {
+        await recipesStore.updateRecipe(selectedRecipe.value.id, recipeData);
+      } else {
+        await recipesStore.createRecipe(recipeData);
+      }
+      isAddOrEditDialogOpen.value = false;
+      selectedRecipe.value = null;
+    } catch (error) {
+      console.error('Error saving recipe:', error);
     }
-    isAddOrEditDialogOpen.value = false;
   };
   
-  const handleConfirmDelete = () => {
-    console.log("Eliminando receta ID:", selectedRecipe.value?.id);
-    // recipesStore.deleteRecipe(selectedRecipe.value.id);
-    isDeleteDialogOpen.value = false;
+  const handleConfirmDelete = async () => {
+    if (selectedRecipe.value?.id) {
+      try {
+        await recipesStore.deleteRecipe(selectedRecipe.value.id);
+        isDeleteDialogOpen.value = false;
+        selectedRecipe.value = null;
+      } catch (error) {
+        console.error('Error deleting recipe:', error);
+      }
+    }
   };
+
+  onMounted(() => {
+    recipesStore.fetchRecipes();
+  });
   </script>

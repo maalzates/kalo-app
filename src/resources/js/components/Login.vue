@@ -24,7 +24,8 @@
             });
     
             const { access_token, user } = response.data.data;
-    
+            
+            // Asegurar que el token se guarde correctamente
             userStore.setAuth(user, access_token);
     
             router.push("/");

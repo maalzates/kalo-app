@@ -20,7 +20,8 @@
           color="white"
           class="text-deep-purple-accent-4 font-weight-bold rounded-pill px-6"
           @click="handleSubmit"
-          :disabled="!isFormValid"
+          :disabled="!isFormValid || loading"
+          :loading="loading"
         >
           Guardar
         </v-btn>
@@ -49,7 +50,7 @@
           <v-row dense>
             <v-col cols="7">
               <v-text-field
-                v-model.number="form.base_amount"
+                v-model.number="form.amount"
                 label="Cantidad"
                 type="number"
                 variant="outlined"
@@ -60,7 +61,7 @@
             </v-col>
             <v-col cols="5">
               <v-select
-                v-model="form.base_unit"
+                v-model="form.unit"
                 :items="['g', 'ml', 'un']"
                 label="Unidad"
                 variant="outlined"
@@ -82,7 +83,7 @@
           <v-row dense>
             <v-col cols="12" sm="6">
               <v-text-field
-                v-model.number="form.calories"
+                v-model.number="form.kcal"
                 label="Calorías (kcal)"
                 type="number"
                 variant="outlined"
@@ -93,7 +94,7 @@
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
-                v-model.number="form.protein"
+                v-model.number="form.prot"
                 label="Proteína (g)"
                 type="number"
                 variant="outlined"
@@ -104,7 +105,7 @@
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
-                v-model.number="form.carbs"
+                v-model.number="form.carb"
                 label="Carbohidratos (g)"
                 type="number"
                 variant="outlined"
@@ -139,6 +140,7 @@
 
 <script setup>
 import { ref, reactive, watch, computed } from 'vue';
+import { useIngredientsStore } from '@/stores/useIngredientsStore';
 
 const props = defineProps({
   modelValue: Boolean,
@@ -147,28 +149,37 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'save']);
 
+const ingredientsStore = useIngredientsStore();
 const isEditing = ref(false);
+const loading = ref(false);
 
 const form = reactive({
   name: '',
-  base_amount: 100,
-  base_unit: 'g',
-  calories: 0,
-  protein: 0,
-  carbs: 0,
+  amount: 100,
+  unit: 'g',
+  kcal: 0,
+  prot: 0,
+  carb: 0,
   fat: 0
 });
 
 // Validación: El nombre debe existir y la base no puede ser 0
 const isFormValid = computed(() => {
-  return form.name?.trim().length >= 2 && form.base_amount > 0;
+  return form.name?.trim().length >= 2 && form.amount > 0;
 });
 
 watch(() => props.modelValue, (isOpen) => {
   if (isOpen) {
     if (props.initialData) {
       isEditing.value = true;
-      Object.assign(form, JSON.parse(JSON.stringify(props.initialData)));
+      // Mapear datos del backend al formulario
+      form.name = props.initialData.name || '';
+      form.amount = props.initialData.amount || 100;
+      form.unit = props.initialData.unit || 'g';
+      form.kcal = props.initialData.kcal || 0;
+      form.prot = props.initialData.prot || 0;
+      form.carb = props.initialData.carb || 0;
+      form.fat = props.initialData.fat || 0;
     } else {
       isEditing.value = false;
       resetForm();
@@ -178,17 +189,29 @@ watch(() => props.modelValue, (isOpen) => {
 
 const resetForm = () => {
   form.name = '';
-  form.base_amount = 100;
-  form.base_unit = 'g';
-  form.calories = 0;
-  form.protein = 0;
-  form.carbs = 0;
+  form.amount = 100;
+  form.unit = 'g';
+  form.kcal = 0;
+  form.prot = 0;
+  form.carb = 0;
   form.fat = 0;
 };
 
-const handleSubmit = () => {
-  emit('save', { ...form });
-  emit('update:modelValue', false);
+const handleSubmit = async () => {
+  loading.value = true;
+  try {
+    if (isEditing.value && props.initialData?.id) {
+      await ingredientsStore.updateIngredient(props.initialData.id, form);
+    } else {
+      await ingredientsStore.createIngredient(form);
+    }
+    emit('update:modelValue', false);
+    resetForm();
+  } catch (error) {
+    console.error('Error saving ingredient:', error);
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 

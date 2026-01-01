@@ -19,7 +19,8 @@
                     color="white"
                     class="text-deep-purple-accent-4 font-weight-bold rounded-pill px-6"
                     @click="saveRecipe"
-                    :disabled="!isFormValid"
+                    :disabled="!isFormValid || loading"
+                    :loading="loading"
                 >
                     Guardar
                 </v-btn>
@@ -104,7 +105,7 @@
                                     ></v-text-field>
   
                                     <span class="text-caption font-weight-black text-grey-darken-1 mr-2">
-                                        {{ ing.unit || ing.base_unit || "g" }}
+                                        {{ ing.unit || "g" }}
                                     </span>
   
                                     <v-divider vertical class="mx-1 my-2" thickness="2"></v-divider>
@@ -151,8 +152,9 @@
   </template>
   
   <script setup>
-  import { ref, reactive, computed, watch } from "vue";
+  import { ref, reactive, computed, watch, onMounted } from "vue";
   import { useIngredientsStore } from "@/stores/useIngredientsStore";
+  import { useRecipesStore } from "@/stores/useRecipesStore";
   
   const props = defineProps({
     modelValue: Boolean,
@@ -161,14 +163,26 @@
   
   const emit = defineEmits(["update:modelValue", "save"]);
   const ingredientsStore = useIngredientsStore();
+  const recipesStore = useRecipesStore();
   const isEditing = ref(false);
   const selectedIngFromList = ref(null);
+  const loading = ref(false);
   
   const recipeForm = reactive({
     id: null,
     name: "",
-    servings: 1, // Valor inicial de porciones
+    servings: 1,
+    total_kcal: 0,
+    total_prot: 0,
+    total_carb: 0,
+    total_fat: 0,
     ingredients: [],
+  });
+  
+  onMounted(() => {
+    if (ingredientsStore.ingredients.length === 0) {
+      ingredientsStore.fetchIngredients();
+    }
   });
   
   watch(() => props.modelValue, (val) => {
@@ -178,10 +192,16 @@
             recipeForm.id = props.initialData.id;
             recipeForm.name = props.initialData.name;
             recipeForm.servings = props.initialData.servings || 1;
-            recipeForm.ingredients = JSON.parse(JSON.stringify(props.initialData.ingredients || []));
+            // Mapear ingredientes del backend
+            recipeForm.ingredients = (props.initialData.ingredients || []).map(ing => ({
+              ingredient_id: ing.id || ing.ingredient_id,
+              amount: ing.pivot?.amount || ing.amount || 100,
+              unit: ing.pivot?.unit || ing.unit || 'g',
+              ...ing
+            }));
         } else {
             isEditing.value = false;
-            recipeForm.id = Date.now();
+            recipeForm.id = null;
             recipeForm.name = "";
             recipeForm.servings = 1;
             recipeForm.ingredients = [];
@@ -191,10 +211,17 @@
   
   const addIngredientToRecipe = (ing) => {
     if (!ing) return;
-    const defaultAmount = (ing.unit === 'unidad' || ing.base_unit === 'unidad') ? 1 : 100;
+    const defaultAmount = (ing.unit === 'un' || ing.unit === 'unidad') ? 1 : 100;
     recipeForm.ingredients.push({
-        ...JSON.parse(JSON.stringify(ing)),
+        ingredient_id: ing.id,
         amount: defaultAmount,
+        unit: ing.unit || 'g',
+        name: ing.name,
+        base_amount: ing.amount || 100,
+        calories: ing.kcal || 0,
+        protein: ing.prot || 0,
+        carbs: ing.carb || 0,
+        fat: ing.fat || 0,
     });
     selectedIngFromList.value = null;
   };
@@ -205,8 +232,8 @@
   
   const calculateIngCalories = (ing) => {
     const amount = parseFloat(ing.amount) || 0;
-    const baseAmount = parseFloat(ing.base_amount) || 1;
-    const baseCalories = parseFloat(ing.calories) || 0;
+    const baseAmount = parseFloat(ing.base_amount) || parseFloat(ing.amount) || 1;
+    const baseCalories = parseFloat(ing.calories) || parseFloat(ing.kcal) || 0;
     if (amount === 0) return 0;
     const factor = amount / baseAmount;
     return Math.round(baseCalories * factor);
@@ -216,12 +243,12 @@
     return recipeForm.ingredients.reduce(
         (acc, ing) => {
             const amount = parseFloat(ing.amount) || 0;
-            const baseAmount = parseFloat(ing.base_amount) || 1;
+            const baseAmount = parseFloat(ing.base_amount) || parseFloat(ing.amount) || 1;
             const factor = amount / baseAmount;
   
-            acc.calories += (parseFloat(ing.calories) || 0) * factor;
-            acc.protein += (parseFloat(ing.protein) || 0) * factor;
-            acc.carbs += (parseFloat(ing.carbs) || 0) * factor;
+            acc.calories += (parseFloat(ing.calories) || parseFloat(ing.kcal) || 0) * factor;
+            acc.protein += (parseFloat(ing.protein) || parseFloat(ing.prot) || 0) * factor;
+            acc.carbs += (parseFloat(ing.carbs) || parseFloat(ing.carb) || 0) * factor;
             acc.fat += (parseFloat(ing.fat) || 0) * factor;
             return acc;
         },
@@ -234,9 +261,30 @@
     return recipeForm.name?.length > 2 && recipeForm.ingredients.length > 0 && recipeForm.servings > 0;
   });
   
-  const saveRecipe = () => {
-    emit("save", { ...recipeForm, ...totals.value });
-    emit("update:modelValue", false);
+  const saveRecipe = async () => {
+    loading.value = true;
+    try {
+      const recipeData = {
+        name: recipeForm.name,
+        servings: recipeForm.servings,
+        total_kcal: Math.round(totals.value.calories),
+        total_prot: totals.value.protein.toFixed(2),
+        total_carb: totals.value.carbs.toFixed(2),
+        total_fat: totals.value.fat.toFixed(2),
+        ingredients: recipeForm.ingredients.map(ing => ({
+          ingredient_id: ing.ingredient_id || ing.id,
+          amount: ing.amount,
+          unit: ing.unit || 'g'
+        }))
+      };
+      
+      emit("save", recipeData);
+      emit("update:modelValue", false);
+    } catch (error) {
+      console.error('Error saving recipe:', error);
+    } finally {
+      loading.value = false;
+    }
   };
   </script>
   

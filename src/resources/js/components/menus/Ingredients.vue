@@ -56,9 +56,9 @@
                     </v-list-item-title>
 
                     <v-list-item-subtitle class="text-caption">
-                        {{ item.base_amount }}{{ item.base_unit }} •
-                        {{ item.calories }} kcal | P: {{ item.protein }}g | C:
-                        {{ item.carbs }}g | G: {{ item.fat }}g
+                        {{ item.amount || 100 }}{{ item.unit || 'g' }} •
+                        {{ item.kcal || 0 }} kcal | P: {{ item.prot || 0 }}g | C:
+                        {{ item.carb || 0 }}g | G: {{ item.fat || 0 }}g
                     </v-list-item-subtitle>
 
                     <template v-slot:append>
@@ -123,7 +123,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import AddOrEditIngredient from "@/components/ingredients/AddOrEditIngredient.vue";
 import MobileFloatingButton from "@/components/common/MobileFloatingButton.vue";
@@ -132,7 +132,7 @@ import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog.vue";
 const ingredientsStore = useIngredientsStore();
 const search = ref("");
 const isAddOrEditDialogOpen = ref(false);
-const isDeleteDialogOpen = ref(false); // Nueva variable para el diálogo de borrar
+const isDeleteDialogOpen = ref(false);
 const selectedIngredient = ref(null);
 
 const filteredIngredients = computed(() => {
@@ -146,20 +146,24 @@ const openDialog = (item, isEditing = false) => {
     isAddOrEditDialogOpen.value = true;
 };
 
-// Nueva función para abrir la confirmación de borrado
 const openDeleteConfirm = (item) => {
-    selectedIngredient.value = item; // Aquí no necesitamos clonar porque no vamos a editar campos
+    selectedIngredient.value = item;
     isDeleteDialogOpen.value = true;
 };
 
-// Función para ejecutar el borrado real
-const confirmDelete = () => {
+const confirmDelete = async () => {
     if (selectedIngredient.value) {
-        console.log("Deleting ingredient");
-        isDeleteDialogOpen.value = false;
-        selectedIngredient.value = null;
+        try {
+            await ingredientsStore.deleteIngredient(selectedIngredient.value.id);
+            isDeleteDialogOpen.value = false;
+            selectedIngredient.value = null;
+        } catch (error) {
+            console.error('Error deleting ingredient:', error);
+        }
     }
 };
 
-defineEmits(["add", "edit", "delete"]);
+onMounted(() => {
+    ingredientsStore.fetchIngredients();
+});
 </script>

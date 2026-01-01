@@ -148,7 +148,7 @@ import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import { useRecipesStore } from "@/stores/useRecipesStore";
 import { useDateStore } from "@/stores/useDateStore";
 
-defineProps({ modelValue: Boolean });
+const props = defineProps({ modelValue: Boolean });
 const emit = defineEmits(["update:modelValue"]);
 
 const mealLogsStore = useMealLogsStore();
@@ -184,34 +184,109 @@ onMounted(() => {
 
 const onFoodSelected = (item) => {
     if (item) {
-        form.value = { ...initialState, ...JSON.parse(JSON.stringify(item)) };
+        // Mapear datos del backend al formulario
+        const baseAmount = activeTab.value === 'recipe' 
+            ? (item.servings || 1) 
+            : (item.amount || 100);
+        
+        const baseUnit = activeTab.value === 'recipe' 
+            ? 'serving' 
+            : (item.unit || 'g');
+        
+        // Para ingredientes: calcular valores basados en la cantidad base
+        // Para recetas: los valores ya son totales por receta
+        let calories = 0, protein = 0, carbs = 0, fat = 0;
         
         if (activeTab.value === 'recipe') {
-            form.value.base_amount = 1;
-            form.value.base_unit = 'porción';
-        } else if (form.value.base_amount === 0) {
-            form.value.base_amount = 100;
+            calories = item.total_kcal || 0;
+            protein = parseFloat(item.total_prot || 0);
+            carbs = parseFloat(item.total_carb || 0);
+            fat = parseFloat(item.total_fat || 0);
+        } else {
+            // Para ingredientes, los valores son por base_amount
+            const itemBaseAmount = item.amount || 100;
+            const itemKcal = item.kcal || 0;
+            const itemProt = parseFloat(item.prot || 0);
+            const itemCarb = parseFloat(item.carb || 0);
+            const itemFat = parseFloat(item.fat || 0);
+            
+            // Calcular valores para la cantidad base (100g por defecto)
+            const factor = baseAmount / itemBaseAmount;
+            calories = itemKcal * factor;
+            protein = itemProt * factor;
+            carbs = itemCarb * factor;
+            fat = itemFat * factor;
         }
+        
+        form.value = {
+            ...initialState,
+            id: item.id,
+            name: item.name,
+            base_amount: baseAmount,
+            base_unit: baseUnit,
+            calories: Math.round(calories),
+            protein: protein.toFixed(1),
+            carbs: carbs.toFixed(1),
+            fat: fat.toFixed(1),
+            base_amount_ref: item.amount || item.servings || 100, // Para cálculos
+            base_kcal: activeTab.value === 'recipe' ? (item.total_kcal || 0) : (item.kcal || 0),
+            base_prot: activeTab.value === 'recipe' ? parseFloat(item.total_prot || 0) : parseFloat(item.prot || 0),
+            base_carb: activeTab.value === 'recipe' ? parseFloat(item.total_carb || 0) : parseFloat(item.carb || 0),
+            base_fat: activeTab.value === 'recipe' ? parseFloat(item.total_fat || 0) : parseFloat(item.fat || 0),
+        };
     }
 };
+
+// Watch para recalcular valores cuando cambia la cantidad
+watch(() => form.value.base_amount, (newAmount) => {
+    if (form.value.id && form.value.base_amount_ref) {
+        const factor = newAmount / form.value.base_amount_ref;
+        form.value.calories = Math.round(form.value.base_kcal * factor);
+        form.value.protein = (form.value.base_prot * factor).toFixed(1);
+        form.value.carbs = (form.value.base_carb * factor).toFixed(1);
+        form.value.fat = (form.value.base_fat * factor).toFixed(1);
+    }
+});
 
 const handleCreateNew = () => {
     console.log("Crear nuevo elemento para:", activeTab.value);
 };
 
-const saveMeal = () => {
-    mealLogsStore.addMealLog({ 
-        ...form.value,
-        type: activeTab.value 
-    });
-    emit("update:modelValue", false);
-    form.value = { ...initialState };
-    selectedItem.value = null;
+const saveMeal = async () => {
+    try {
+        const selectedDate = dateStore.selectedDate instanceof Date 
+            ? dateStore.selectedDate.toISOString().split('T')[0]
+            : dateStore.selectedDate || new Date().toISOString().split('T')[0];
+            
+        const mealData = {
+            ingredient_id: activeTab.value === 'food' ? form.value.id : null,
+            recipe_id: activeTab.value === 'recipe' ? form.value.id : null,
+            quantity: form.value.base_amount.toString(),
+            unit: form.value.base_unit || 'g',
+            logged_at: selectedDate
+        };
+        
+        await mealLogsStore.addMealLog(mealData);
+        emit("update:modelValue", false);
+        form.value = { ...initialState };
+        selectedItem.value = null;
+    } catch (error) {
+        console.error('Error saving meal log:', error);
+    }
 };
 
 watch(activeTab, () => {
     form.value = { ...initialState };
     selectedItem.value = null;
+});
+
+watch(() => props.modelValue, (isOpen) => {
+    if (!isOpen) {
+        // Resetear formulario al cerrar
+        form.value = { ...initialState };
+        selectedItem.value = null;
+        activeTab.value = "food";
+    }
 });
 </script>
 
