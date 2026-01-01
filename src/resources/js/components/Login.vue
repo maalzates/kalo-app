@@ -28,7 +28,9 @@
             // Asegurar que el token se guarde correctamente
             userStore.setAuth(user, access_token);
     
-            router.push("/");
+            // Redirigir al dashboard usando el nombre de la ruta
+            // El router guard manejará la validación automáticamente
+            router.push({ name: 'dashboard' });
         } catch (error) {
             console.error("Login error:", error);
             errorMessage.value = error.response?.data?.message || "Invalid credentials";

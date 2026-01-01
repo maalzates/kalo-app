@@ -15,6 +15,11 @@ readonly class UpdateUserDTO
         public ?string $gender,
         public ?int $height,
         public ?string $roleId,
+        public ?string $countryCode,
+        public ?string $cellphone,
+        public ?string $activityLevel,
+        public ?string $goalType,
+        public ?string $macroCalculationMode,
     ) {
     }
 }

@@ -34,6 +34,11 @@ class UpdateUserRequest extends FormRequest
             'gender' => ['nullable', 'in:male,female,other'],
             'height' => ['nullable', 'integer', 'min:1', 'max:300'],
             'role_id' => ['nullable', 'integer', 'exists:roles,id'],
+            'country_code' => ['nullable', 'string', 'max:10'],
+            'cellphone' => ['nullable', 'string', 'max:20'],
+            'activity_level' => ['nullable', 'string', 'in:Sedentario,Ligero,Moderado,Muy Activo'],
+            'goal_type' => ['nullable', 'in:cut,maintain,grow'],
+            'macro_calculation_mode' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -64,6 +69,11 @@ class UpdateUserRequest extends FormRequest
             gender: $this->input('gender'),
             height: $this->input('height') ? (int) $this->input('height') : null,
             roleId: $this->input('role_id') ? (string) $this->input('role_id') : null,
+            countryCode: $this->input('country_code'),
+            cellphone: $this->input('cellphone'),
+            activityLevel: $this->input('activity_level'),
+            goalType: $this->input('goal_type'),
+            macroCalculationMode: $this->input('macro_calculation_mode'),
         );
     }
 }

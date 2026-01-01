@@ -17,6 +17,18 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->nullable();
+            $table->date('birth_date')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->integer('height')->nullable();
+            $table->string('country_code')->nullable();
+            $table->string('cellphone')->nullable();
+            $table->string('activity_level')->nullable()->default('Sedentario');
+            $table->enum('goal_type', ['cut', 'maintain', 'grow'])->nullable()->default('maintain');
+            $table->string('macro_calculation_mode')->nullable();
+            $table->string('google_id')->nullable();
+            $table->string('auth_provider')->nullable();
+            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });

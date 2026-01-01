@@ -47,7 +47,7 @@
               </v-col>
               <v-col cols="8">
                 <v-text-field
-                  v-model="form.cellphone"
+                  v-model="form.phone"
                   label="Celular"
                   variant="outlined"
                   rounded="lg"
@@ -108,9 +108,9 @@
               v-model="form.goal_type"
               label="Objetivo"
               :items="[
-                {title: 'Perder Grasa', value: 'fat_loss'},
-                {title: 'Mantener', value: 'maintenance'},
-                {title: 'Ganar Músculo', value: 'muscle_gain'}
+                {title: 'Perder Grasa', value: 'cut'},
+                {title: 'Mantener', value: 'maintain'},
+                {title: 'Ganar Músculo', value: 'grow'}
               ]"
               variant="outlined"
               rounded="lg"
@@ -136,7 +136,7 @@
   const form = reactive({
     name: '',
     country_code: '',
-    cellphone: '',
+    phone: '',
     gender: '',
     height: 0,
     birth_date: '',

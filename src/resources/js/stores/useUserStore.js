@@ -43,7 +43,7 @@ export const useUserStore = defineStore("userStore", () => {
         // PRIORIDAD 2: Redirigir inmediatamente usando router.push
         // Esto ocurre ANTES de la llamada al backend
         if (router) {
-            router.push('/login');
+            router.push({ name: 'login' });
         }
 
         // PRIORIDAD 3: Invalidar token en el servidor (no bloqueante)

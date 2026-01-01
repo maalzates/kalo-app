@@ -115,18 +115,43 @@
   </v-card>
 </template>
 
-  <script setup>
-  import { computed, ref } from 'vue';
-  import { useUserStore } from '@/stores/useUserStore';
-  import EditUserInfo from '@/components/user/EditUserInfo.vue'; // Importación local
-  
-  const userStore = useUserStore();
-  const emit = defineEmits(['open-edit']);
-  const user = computed(() => userStore.authenticatedUser);
-  const isModalOpen = ref(false);
-  
-  const currentWeight = computed(() => {
-    if (!user.value?.biometrics?.length) return '--';
-    return user.value.biometrics[user.value.biometrics.length - 1].weight;
-  });
-  </script>
+<script setup>
+import { computed, ref } from 'vue';
+import { useUserStore } from '@/stores/useUserStore';
+import usersRepository from '@/repositories/usersRepository.js';
+import EditUserInfo from '@/components/user/EditUserInfo.vue';
+
+const userStore = useUserStore();
+const user = computed(() => userStore.user);
+const isModalOpen = ref(false);
+
+const currentWeight = computed(() => {
+  if (!user.value?.biometrics?.length) return '--';
+  return user.value.biometrics[user.value.biometrics.length - 1].weight;
+});
+
+const handleSave = async (userData) => {
+  try {
+    if (!user.value?.id) {
+      console.error('User ID not found');
+      return;
+    }
+    
+    // Mapear phone a cellphone para el backend
+    const dataToSend = {
+      ...userData,
+      cellphone: userData.phone, // El formulario envía 'phone', pero el backend espera 'cellphone'
+    };
+    // Eliminar phone si existe para evitar confusión
+    delete dataToSend.phone;
+    
+    // Actualizar usuario en el backend
+    const updatedUser = await usersRepository.updateUser(user.value.id, dataToSend);
+    
+    // Actualizar el estado en el store
+    userStore.setAuth(updatedUser, userStore.token);
+  } catch (error) {
+    console.error('Error updating user:', error);
+  }
+};
+</script>

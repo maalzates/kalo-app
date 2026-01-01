@@ -49,6 +49,11 @@ const routes = [
         component: MyMacros, 
         meta: {requiresAuth: true}
     },
+    // Ruta comodín: redirige cualquier URL desconocida al Dashboard
+    { 
+        path: '/:pathMatch(.*)*', 
+        redirect: '/'
+    },
 ]
 
 const router = createRouter({
@@ -56,21 +61,36 @@ const router = createRouter({
     routes,
 });
 
+/**
+ * Router Guard: Protección infranqueable de rutas
+ * 
+ * Verifica requiresAuth en todos los niveles usando to.matched.some
+ * Asegura que el estado del usuario se recupera del localStorage antes de verificar
+ * Redirige automáticamente a login si no hay autenticación
+ */
 router.beforeEach((to, from, next) => {
-    const userStore = useUserStore()
+    // Obtener la instancia del store (se inicializa automáticamente con el token del localStorage)
+    const userStore = useUserStore();
     
-    // Si la ruta requiere auth y el usuario NO está logueado
-    if (to.matched.some(record => record.meta.requiresAuth) && !userStore.isLoggedIn) {
-      next({ name: 'login' })
-    } 
-    // Si el usuario ya está logueado e intenta ir al login o register
-    else if (userStore.isLoggedIn && (to.name === 'login' || to.name === 'register')) {
-      next({ name: 'dashboard' })
+    // Verificar si la ruta requiere autenticación en todos los niveles
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    
+    // Si la ruta requiere autenticación y el usuario NO está logueado
+    if (requiresAuth && !userStore.isLoggedIn) {
+        // Redirigir al login
+        next({ name: 'login' });
+        return;
     }
+    
+    // Si el usuario ya está logueado e intenta acceder a login o register
+    if (userStore.isLoggedIn && (to.name === 'login' || to.name === 'register')) {
+        // Redirigir al dashboard
+        next({ name: 'dashboard' });
+        return;
+    }
+    
     // En cualquier otro caso, permitir el paso
-    else {
-      next()
-    }
-  })
+    next();
+});
 
 export default router;

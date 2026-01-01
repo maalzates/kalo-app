@@ -71,6 +71,11 @@ class UserService
             'gender' => $dto->gender,
             'height' => $dto->height,
             'role_id' => $dto->roleId,
+            'country_code' => $dto->countryCode,
+            'cellphone' => $dto->cellphone,
+            'activity_level' => $dto->activityLevel,
+            'goal_type' => $dto->goalType,
+            'macro_calculation_mode' => $dto->macroCalculationMode,
         ], fn ($value) => $value !== null);
 
         $this->repository->update($dto->userId, $updateData);
