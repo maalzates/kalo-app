@@ -20,6 +20,15 @@ const usersRepository = {
             throw error;
         }
     },
+
+    async logout() {
+        try {
+            await axios.post('/logout');
+        } catch (error) {
+            console.error('Error during logout:', error);
+            throw error;
+        }
+    },
 };
 
 export default usersRepository;

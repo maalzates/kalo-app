@@ -1,10 +1,18 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
+import usersRepository from "@/repositories/usersRepository.js";
 
 export const useUserStore = defineStore("userStore", () => {
     // 1. Estado: El token se recupera del localStorage al arrancar
     const token = ref(localStorage.getItem('access_token'));
-    const user = ref(JSON.parse(localStorage.getItem('user_data')));
+    const user = ref((() => {
+        try {
+            const userData = localStorage.getItem('user_data');
+            return userData ? JSON.parse(userData) : null;
+        } catch (error) {
+            return null;
+        }
+    })());
 
     // 2. Getters: El estado de login depende de la existencia del token
     const isLoggedIn = computed(() => !!token.value);
@@ -19,23 +27,32 @@ export const useUserStore = defineStore("userStore", () => {
         localStorage.setItem('user_data', JSON.stringify(newUserData));
     };
 
-    const logout = async () => {
-        try {
-            // Llamar al endpoint de logout del backend
-            await window.axios.post('/logout');
-        } catch (error) {
-            console.error('Error during logout:', error);
-        } finally {
-            // Limpiar estado local independientemente del resultado del backend
-            user.value = null;
-            token.value = null;
-            localStorage.removeItem('access_token');
-            localStorage.removeItem('user_data');
-            
-            // Forzar redirección al login después de limpiar el estado
-            // Usar window.location para forzar una recarga completa y limpiar cualquier estado residual
-            window.location.href = '/login';
+    /**
+     * Logout optimista: Limpia estado primero, redirige inmediatamente, luego invalida token en servidor
+     * Patrón de diseño: Prioridad 1 (UI) > Prioridad 2 (Backend)
+     */
+    const logout = (router) => {
+        // PRIORIDAD 1: Limpiar estado de forma SÍNCRONA e INMEDIATA
+        // Esto debe ocurrir ANTES de cualquier petición al backend
+        // La UI reacciona instantáneamente al cambio de estado reactivo
+        user.value = null;
+        token.value = null;
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_data');
+
+        // PRIORIDAD 2: Redirigir inmediatamente usando router.push
+        // Esto ocurre ANTES de la llamada al backend
+        if (router) {
+            router.push('/login');
         }
+
+        // PRIORIDAD 3: Invalidar token en el servidor (no bloqueante)
+        // Esto se hace en segundo plano y NO debe retrasar la redirección
+        // No esperamos a que termine esta promesa
+        usersRepository.logout().catch(error => {
+            // Silenciar errores del backend, el logout local ya se completó
+            console.error('Error during backend logout (non-blocking):', error);
+        });
     };
 
     return {
