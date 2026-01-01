@@ -7,7 +7,7 @@
     const router = useRouter();
     const userStore = useUserStore();
     
-    const name = ref(""); // Añadido campo nombre ya que el controlador lo pide
+    const name = ref("");
     const email = ref("");
     const password = ref("");
     const showPassword = ref(false);

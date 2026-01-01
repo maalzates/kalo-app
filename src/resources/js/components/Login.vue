@@ -1,7 +1,7 @@
 <script setup>
     import { ref } from "vue";
     import { useRouter } from "vue-router";
-    import { useUserStore } from "@/stores/useUserStore"; // Ajusta la ruta si es necesario
+    import { useUserStore } from "@/stores/useUserStore";
     import axios from "axios";
     
     const router = useRouter();
@@ -23,13 +23,10 @@
                 password: password.value,
             });
     
-            // Extraemos según la estructura de tu JSON: data.data.access_token
             const { access_token, user } = response.data.data;
     
-            // Guardamos en el store y localStorage
             userStore.setAuth(user, access_token);
     
-            // Redirigimos al Dashboard
             router.push("/");
         } catch (error) {
             console.error("Login error:", error);
