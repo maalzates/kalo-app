@@ -2,6 +2,7 @@
 
 return [
     App\Providers\AppServiceProvider::class,
+    App\Modules\Auth\AuthServiceProvider::class,
     App\Modules\User\UserServiceProvider::class,
     App\Modules\Ingredient\IngredientServiceProvider::class,
     App\Modules\Recipe\RecipeServiceProvider::class,

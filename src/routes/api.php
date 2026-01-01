@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Auth\Presentation\Http\Controllers\AuthController;
 use App\Modules\Biometric\Presentation\Http\Controllers\BiometricController;
 use App\Modules\Ingredient\Presentation\Http\Controllers\IngredientController;
 use App\Modules\Macro\Presentation\Http\Controllers\MacroController;
@@ -13,6 +14,15 @@ use App\Modules\Role\Presentation\Http\Controllers\RoleController;
 use App\Modules\Role\Presentation\Http\Controllers\RolePermissionController;
 use App\Modules\User\Presentation\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
+// Public routes (no authentication required)
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected routes (authentication required)
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
 
 Route::prefix('users')->group(function () {
     Route::get('/', [UserController::class, 'index']);
