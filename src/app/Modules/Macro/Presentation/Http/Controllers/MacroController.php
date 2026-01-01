@@ -33,7 +33,11 @@ class MacroController extends ApiController
     public function show(Macro $macro): JsonResponse
     {
         try {
-            $macroData = $this->service->findById((string) $macro->id);
+            // Ensure the macro belongs to the authenticated user
+            if ($macro->user_id !== auth()->id()) {
+                return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
+            }
+            $macroData = $this->service->findById((string) $macro->id, auth()->id());
             return $this->success($macroData);
         } catch (MacroNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -55,7 +59,11 @@ class MacroController extends ApiController
     public function update(UpdateMacroRequest $request, Macro $macro): JsonResponse
     {
         try {
-            $updatedMacro = $this->service->update($request->toDTO());
+            // Ensure the macro belongs to the authenticated user
+            if ($macro->user_id !== auth()->id()) {
+                return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
+            }
+            $updatedMacro = $this->service->update($request->toDTO(), auth()->id());
             return $this->success($updatedMacro, 'Macro updated successfully');
         } catch (MacroNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -67,7 +75,11 @@ class MacroController extends ApiController
     public function destroy(Macro $macro): JsonResponse
     {
         try {
-            $this->service->delete((string) $macro->id);
+            // Ensure the macro belongs to the authenticated user
+            if ($macro->user_id !== auth()->id()) {
+                return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
+            }
+            $this->service->delete((string) $macro->id, auth()->id());
             return $this->success(null, 'Macro deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (MacroNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());

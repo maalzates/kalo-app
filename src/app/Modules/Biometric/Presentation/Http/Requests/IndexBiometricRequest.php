@@ -17,7 +17,6 @@ class IndexBiometricRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['nullable', 'exists:users,id'],
             'date_from' => ['nullable', 'date'],
             'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
             'page' => ['nullable', 'integer', 'min:1'],
@@ -28,7 +27,7 @@ class IndexBiometricRequest extends FormRequest
     public function toDTO(): BiometricFilterDTO
     {
         return new BiometricFilterDTO(
-            userId: $this->input('user_id'),
+            userId: (string) auth()->id(),
             dateFrom: $this->input('date_from'),
             dateTo: $this->input('date_to'),
             page: $this->input('page') ? (int) $this->input('page') : null,

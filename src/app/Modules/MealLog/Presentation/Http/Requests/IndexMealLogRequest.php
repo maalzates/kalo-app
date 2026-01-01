@@ -17,7 +17,6 @@ class IndexMealLogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['nullable', 'exists:users,id'],
             'date_from' => ['nullable', 'date'],
             'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
             'type' => ['nullable', 'in:ingredient,recipe'],
@@ -29,7 +28,7 @@ class IndexMealLogRequest extends FormRequest
     public function toDTO(): MealLogFilterDTO
     {
         return new MealLogFilterDTO(
-            userId: $this->input('user_id'),
+            userId: (string) auth()->id(),
             dateFrom: $this->input('date_from'),
             dateTo: $this->input('date_to'),
             type: $this->input('type'),

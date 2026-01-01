@@ -17,7 +17,6 @@ class CreateBiometricRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'exists:users,id'],
             'weight' => ['required', 'numeric', 'min:0.01', 'max:1000'],
             'fat_percentage' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'clean_mass' => ['nullable', 'numeric', 'min:0.01', 'max:1000'],
@@ -29,8 +28,6 @@ class CreateBiometricRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'The user_id field is required.',
-            'user_id.exists' => 'The selected user does not exist.',
             'weight.required' => 'The weight field is required.',
             'weight.numeric' => 'The weight must be a number.',
             'weight.min' => 'The weight must be at least 0.01 kg.',
@@ -51,7 +48,7 @@ class CreateBiometricRequest extends FormRequest
     public function toDTO(): CreateBiometricDTO
     {
         return new CreateBiometricDTO(
-            userId: (string) $this->input('user_id'),
+            userId: (string) auth()->id(),
             weight: (string) $this->input('weight'),
             fatPercentage: $this->input('fat_percentage') ? (string) $this->input('fat_percentage') : null,
             cleanMass: $this->input('clean_mass') ? (string) $this->input('clean_mass') : null,

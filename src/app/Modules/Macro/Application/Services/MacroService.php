@@ -28,9 +28,9 @@ class MacroService
         ]);
     }
 
-    public function findById(string $id): array
+    public function findById(string $id, int $userId): array
     {
-        $macro = $this->repository->findById($id);
+        $macro = $this->repository->findById($id, $userId);
 
         if ($macro === null) {
             throw MacroNotFoundException::withId($id);
@@ -56,9 +56,9 @@ class MacroService
         ]);
     }
 
-    public function update(UpdateMacroDTO $dto): array
+    public function update(UpdateMacroDTO $dto, int $userId): array
     {
-        $macro = $this->repository->findById($dto->macroId);
+        $macro = $this->repository->findById($dto->macroId, $userId);
 
         if ($macro === null) {
             throw MacroNotFoundException::withId($dto->macroId);
@@ -72,21 +72,21 @@ class MacroService
         ], fn ($value) => $value !== null);
 
         if (count($updateData) > 0) {
-            $this->repository->update($dto->macroId, $updateData);
+            $this->repository->update($dto->macroId, $updateData, $userId);
         }
 
-        return $this->repository->findById($dto->macroId);
+        return $this->repository->findById($dto->macroId, $userId);
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
-        $macro = $this->repository->findById($id);
+        $macro = $this->repository->findById($id, $userId);
 
         if ($macro === null) {
             throw MacroNotFoundException::withId($id);
         }
 
-        return $this->repository->delete($id);
+        return $this->repository->delete($id, $userId);
     }
 }
 

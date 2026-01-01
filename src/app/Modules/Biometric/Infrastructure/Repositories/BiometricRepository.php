@@ -17,6 +17,7 @@ class BiometricRepository implements BiometricRepositoryInterface
         try {
             $query = Biometric::query();
 
+            // Always filter by user_id from authenticated user
             if (isset($filters['userId']) && $filters['userId'] !== null) {
                 $query->where('user_id', $filters['userId']);
             }
@@ -54,10 +55,12 @@ class BiometricRepository implements BiometricRepositoryInterface
         }
     }
 
-    public function findById(string $id): ?array
+    public function findById(string $id, int $userId): ?array
     {
         try {
-            $biometric = Biometric::find($id);
+            $biometric = Biometric::where('id', $id)
+                ->where('user_id', $userId)
+                ->first();
             return $biometric ? $biometric->toArray() : null;
         } catch (Throwable $e) {
             return null;
@@ -74,20 +77,24 @@ class BiometricRepository implements BiometricRepositoryInterface
         }
     }
 
-    public function update(string $id, array $data): bool
+    public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $biometric = Biometric::findOrFail($id);
+            $biometric = Biometric::where('id', $id)
+                ->where('user_id', $userId)
+                ->firstOrFail();
             return $biometric->update($data);
         } catch (Throwable $e) {
             throw BiometricUpdateFailedException::fromException($id, $e);
         }
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
         try {
-            $biometric = Biometric::findOrFail($id);
+            $biometric = Biometric::where('id', $id)
+                ->where('user_id', $userId)
+                ->firstOrFail();
             return $biometric->delete();
         } catch (Throwable $e) {
             return false;

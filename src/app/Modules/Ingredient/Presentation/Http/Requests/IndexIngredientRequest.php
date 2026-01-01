@@ -18,7 +18,6 @@ class IndexIngredientRequest extends FormRequest
     {
         return [
             'search' => ['nullable', 'string', 'max:255'],
-            'user_id' => ['nullable', 'exists:users,id'],
             'unit' => ['nullable', 'in:g,ml,un'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
@@ -29,7 +28,7 @@ class IndexIngredientRequest extends FormRequest
     {
         return new IngredientFilterDTO(
             search: $this->input('search'),
-            userId: $this->input('user_id'),
+            userId: (string) auth()->id(),
             unit: $this->input('unit'),
             page: $this->input('page') ? (int) $this->input('page') : null,
             perPage: $this->input('per_page') ? (int) $this->input('per_page') : null,

@@ -32,7 +32,11 @@ class BiometricController extends ApiController
     public function show(Biometric $biometric): JsonResponse
     {
         try {
-            $biometricData = $this->service->findById((string) $biometric->id);
+            // Ensure the biometric belongs to the authenticated user
+            if ($biometric->user_id !== auth()->id()) {
+                return $this->error('Biometric not found', Response::HTTP_NOT_FOUND);
+            }
+            $biometricData = $this->service->findById((string) $biometric->id, auth()->id());
             return $this->success($biometricData);
         } catch (BiometricNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -52,7 +56,11 @@ class BiometricController extends ApiController
     public function update(UpdateBiometricRequest $request, Biometric $biometric): JsonResponse
     {
         try {
-            $updatedBiometric = $this->service->update($request->toDTO());
+            // Ensure the biometric belongs to the authenticated user
+            if ($biometric->user_id !== auth()->id()) {
+                return $this->error('Biometric not found', Response::HTTP_NOT_FOUND);
+            }
+            $updatedBiometric = $this->service->update($request->toDTO(), auth()->id());
             return $this->success($updatedBiometric, 'Biometric updated successfully');
         } catch (BiometricNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -64,7 +72,11 @@ class BiometricController extends ApiController
     public function destroy(Biometric $biometric): JsonResponse
     {
         try {
-            $this->service->delete((string) $biometric->id);
+            // Ensure the biometric belongs to the authenticated user
+            if ($biometric->user_id !== auth()->id()) {
+                return $this->error('Biometric not found', Response::HTTP_NOT_FOUND);
+            }
+            $this->service->delete((string) $biometric->id, auth()->id());
             return $this->success(null, 'Biometric deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (BiometricNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());

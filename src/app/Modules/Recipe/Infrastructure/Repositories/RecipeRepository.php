@@ -23,6 +23,7 @@ class RecipeRepository implements RecipeRepositoryInterface
                 $query->where('name', 'like', "%{$search}%");
             }
 
+            // Always filter by user_id from authenticated user
             if (isset($filters['userId']) && $filters['userId'] !== null) {
                 $query->where('user_id', $filters['userId']);
             }
@@ -52,10 +53,13 @@ class RecipeRepository implements RecipeRepositoryInterface
         }
     }
 
-    public function findById(string $id): ?array
+    public function findById(string $id, int $userId): ?array
     {
         try {
-            $recipe = Recipe::with('ingredients')->find($id);
+            $recipe = Recipe::with('ingredients')
+                ->where('id', $id)
+                ->where('user_id', $userId)
+                ->first();
             return $recipe ? $recipe->toArray() : null;
         } catch (Throwable $e) {
             return null;
@@ -87,20 +91,24 @@ class RecipeRepository implements RecipeRepositoryInterface
         }
     }
 
-    public function update(string $id, array $data): bool
+    public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $recipe = Recipe::findOrFail($id);
+            $recipe = Recipe::where('id', $id)
+                ->where('user_id', $userId)
+                ->firstOrFail();
             return $recipe->update($data);
         } catch (Throwable $e) {
             throw RecipeUpdateFailedException::fromException($id, $e);
         }
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
         try {
-            $recipe = Recipe::findOrFail($id);
+            $recipe = Recipe::where('id', $id)
+                ->where('user_id', $userId)
+                ->firstOrFail();
             return $recipe->delete();
         } catch (Throwable $e) {
             return false;

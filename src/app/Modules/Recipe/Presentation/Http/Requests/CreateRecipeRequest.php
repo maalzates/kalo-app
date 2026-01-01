@@ -24,7 +24,6 @@ class CreateRecipeRequest extends FormRequest
             'total_prot' => ['required', 'numeric', 'min:0'],
             'total_carb' => ['required', 'numeric', 'min:0'],
             'total_fat' => ['required', 'numeric', 'min:0'],
-            'user_id' => ['required', 'exists:users,id'],
             'ingredients' => ['nullable', 'array'],
             'ingredients.*.ingredient_id' => ['required_with:ingredients', 'exists:ingredients,id'],
             'ingredients.*.amount' => ['required_with:ingredients', 'numeric', 'min:0.01'],
@@ -51,8 +50,6 @@ class CreateRecipeRequest extends FormRequest
             'total_fat.required' => 'The total_fat field is required.',
             'total_fat.numeric' => 'The total_fat must be a number.',
             'total_fat.min' => 'The total_fat must be at least 0.',
-            'user_id.required' => 'The user_id field is required.',
-            'user_id.exists' => 'The selected user does not exist.',
             'ingredients.*.ingredient_id.required_with' => 'Each ingredient must have an ingredient_id.',
             'ingredients.*.ingredient_id.exists' => 'One or more selected ingredients do not exist.',
             'ingredients.*.amount.required_with' => 'Each ingredient must have an amount.',
@@ -83,7 +80,7 @@ class CreateRecipeRequest extends FormRequest
             totalProt: (string) $this->input('total_prot'),
             totalCarb: (string) $this->input('total_carb'),
             totalFat: (string) $this->input('total_fat'),
-            userId: (string) $this->input('user_id'),
+            userId: (string) auth()->id(),
             ingredients: $ingredients,
         );
     }

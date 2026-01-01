@@ -33,7 +33,11 @@ class MealLogController extends ApiController
     public function show(MealLog $mealLog): JsonResponse
     {
         try {
-            $mealLogData = $this->service->findById((string) $mealLog->id);
+            // Ensure the meal log belongs to the authenticated user
+            if ($mealLog->user_id !== auth()->id()) {
+                return $this->error('Meal log not found', Response::HTTP_NOT_FOUND);
+            }
+            $mealLogData = $this->service->findById((string) $mealLog->id, auth()->id());
             return $this->success($mealLogData);
         } catch (MealLogNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -55,7 +59,11 @@ class MealLogController extends ApiController
     public function update(UpdateMealLogRequest $request, MealLog $mealLog): JsonResponse
     {
         try {
-            $updatedMealLog = $this->service->update($request->toDTO());
+            // Ensure the meal log belongs to the authenticated user
+            if ($mealLog->user_id !== auth()->id()) {
+                return $this->error('Meal log not found', Response::HTTP_NOT_FOUND);
+            }
+            $updatedMealLog = $this->service->update($request->toDTO(), auth()->id());
             return $this->success($updatedMealLog, 'Meal log updated successfully');
         } catch (MealLogNotFoundException|InvalidMealLogException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -67,7 +75,11 @@ class MealLogController extends ApiController
     public function destroy(MealLog $mealLog): JsonResponse
     {
         try {
-            $this->service->delete((string) $mealLog->id);
+            // Ensure the meal log belongs to the authenticated user
+            if ($mealLog->user_id !== auth()->id()) {
+                return $this->error('Meal log not found', Response::HTTP_NOT_FOUND);
+            }
+            $this->service->delete((string) $mealLog->id, auth()->id());
             return $this->success(null, 'Meal log deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (MealLogNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());

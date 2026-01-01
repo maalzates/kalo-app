@@ -29,9 +29,9 @@ class RecipeService
         ]);
     }
 
-    public function findById(string $id): array
+    public function findById(string $id, int $userId): array
     {
-        $recipe = $this->repository->findById($id);
+        $recipe = $this->repository->findById($id, $userId);
 
         if ($recipe === null) {
             throw RecipeNotFoundException::withId($id);
@@ -65,9 +65,9 @@ class RecipeService
         ]);
     }
 
-    public function update(UpdateRecipeDTO $dto): array
+    public function update(UpdateRecipeDTO $dto, int $userId): array
     {
-        $recipe = $this->repository->findById($dto->recipeId);
+        $recipe = $this->repository->findById($dto->recipeId, $userId);
 
         if ($recipe === null) {
             throw RecipeNotFoundException::withId($dto->recipeId);
@@ -82,20 +82,20 @@ class RecipeService
             'total_fat' => $dto->totalFat,
         ], fn ($value) => $value !== null);
 
-        $this->repository->update($dto->recipeId, $updateData);
+        $this->repository->update($dto->recipeId, $updateData, $userId);
 
-        return $this->repository->findById($dto->recipeId);
+        return $this->repository->findById($dto->recipeId, $userId);
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
-        $recipe = $this->repository->findById($id);
+        $recipe = $this->repository->findById($id, $userId);
 
         if ($recipe === null) {
             throw RecipeNotFoundException::withId($id);
         }
 
-        return $this->repository->delete($id);
+        return $this->repository->delete($id, $userId);
     }
 
     public function attachIngredient(AttachIngredientDTO $dto): bool

@@ -18,7 +18,6 @@ class CreateMealLogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'exists:users,id'],
             'ingredient_id' => [
                 'nullable',
                 'required_without:recipe_id',
@@ -40,8 +39,6 @@ class CreateMealLogRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'user_id.required' => 'The user_id field is required.',
-            'user_id.exists' => 'The selected user does not exist.',
             'ingredient_id.required_without' => 'Either ingredient_id or recipe_id is required.',
             'ingredient_id.prohibited_with' => 'Cannot provide both ingredient_id and recipe_id.',
             'ingredient_id.exists' => 'The selected ingredient does not exist.',
@@ -60,7 +57,7 @@ class CreateMealLogRequest extends FormRequest
     public function toDTO(): CreateMealLogDTO
     {
         return new CreateMealLogDTO(
-            userId: (string) $this->input('user_id'),
+            userId: (string) auth()->id(),
             ingredientId: $this->input('ingredient_id') ? (string) $this->input('ingredient_id') : null,
             recipeId: $this->input('recipe_id') ? (string) $this->input('recipe_id') : null,
             quantity: (string) $this->input('quantity'),

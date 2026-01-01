@@ -22,77 +22,76 @@ Route::post('/login', [AuthController::class, 'login']);
 // Protected routes (authentication required)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-});
 
-Route::prefix('users')->group(function () {
-    Route::get('/', [UserController::class, 'index']);
-    Route::post('/', [UserController::class, 'store']);
-    Route::get('/{user}', [UserController::class, 'show']);
-    Route::put('/{user}', [UserController::class, 'update']);
-    Route::delete('/{user}', [UserController::class, 'destroy']);
-});
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::post('/', [UserController::class, 'store']);
+        Route::get('/{user}', [UserController::class, 'show']);
+        Route::put('/{user}', [UserController::class, 'update']);
+        Route::delete('/{user}', [UserController::class, 'destroy']);
+    });
 
-Route::prefix('ingredients')->group(function () {
-    Route::get('/', [IngredientController::class, 'index']);
-    Route::post('/', [IngredientController::class, 'store']);
-    Route::get('/{ingredient}', [IngredientController::class, 'show']);
-    Route::put('/{ingredient}', [IngredientController::class, 'update']);
-    Route::delete('/{ingredient}', [IngredientController::class, 'destroy']);
-});
+    Route::prefix('ingredients')->group(function () {
+        Route::get('/', [IngredientController::class, 'index']);
+        Route::post('/', [IngredientController::class, 'store']);
+        Route::get('/{ingredient}', [IngredientController::class, 'show']);
+        Route::put('/{ingredient}', [IngredientController::class, 'update']);
+        Route::delete('/{ingredient}', [IngredientController::class, 'destroy']);
+    });
 
-Route::prefix('recipes')->group(function () {
-    Route::get('/', [RecipeController::class, 'index']);
-    Route::post('/', [RecipeController::class, 'store']);
-    Route::get('/{recipe}', [RecipeController::class, 'show']);
-    Route::put('/{recipe}', [RecipeController::class, 'update']);
-    Route::delete('/{recipe}', [RecipeController::class, 'destroy']);
+    Route::prefix('recipes')->group(function () {
+        Route::get('/', [RecipeController::class, 'index']);
+        Route::post('/', [RecipeController::class, 'store']);
+        Route::get('/{recipe}', [RecipeController::class, 'show']);
+        Route::put('/{recipe}', [RecipeController::class, 'update']);
+        Route::delete('/{recipe}', [RecipeController::class, 'destroy']);
 
-    Route::post('/{recipe}/ingredients', [RecipeIngredientController::class, 'attach']);
-    Route::delete('/{recipe}/ingredients/{ingredient}', [RecipeIngredientController::class, 'detach']);
-    Route::put('/{recipe}/ingredients/{ingredient}', [RecipeIngredientController::class, 'updatePivot']);
-});
+        Route::post('/{recipe}/ingredients', [RecipeIngredientController::class, 'attach']);
+        Route::delete('/{recipe}/ingredients/{ingredient}', [RecipeIngredientController::class, 'detach']);
+        Route::put('/{recipe}/ingredients/{ingredient}', [RecipeIngredientController::class, 'updatePivot']);
+    });
 
-Route::prefix('meal-logs')->group(function () {
-    Route::get('/', [MealLogController::class, 'index']);
-    Route::get('user/{user_id}');
-    Route::post('/', [MealLogController::class, 'store']);
-    Route::get('/{mealLog}', [MealLogController::class, 'show']);
-    Route::put('/{mealLog}', [MealLogController::class, 'update']);
-    Route::delete('/{mealLog}', [MealLogController::class, 'destroy']);
-});
+    Route::prefix('meal-logs')->group(function () {
+        Route::get('/', [MealLogController::class, 'index']);
+        Route::post('/', [MealLogController::class, 'store']);
+        Route::get('/{mealLog}', [MealLogController::class, 'show']);
+        Route::put('/{mealLog}', [MealLogController::class, 'update']);
+        Route::delete('/{mealLog}', [MealLogController::class, 'destroy']);
+    });
 
-Route::prefix('biometrics')->group(function () {
-    Route::get('/', [BiometricController::class, 'index']);
-    Route::post('/', [BiometricController::class, 'store']);
-    Route::get('/{biometric}', [BiometricController::class, 'show']);
-    Route::put('/{biometric}', [BiometricController::class, 'update']);
-    Route::delete('/{biometric}', [BiometricController::class, 'destroy']);
-});
+    Route::prefix('biometrics')->group(function () {
+        Route::get('/', [BiometricController::class, 'index']);
+        Route::post('/', [BiometricController::class, 'store']);
+        Route::get('/{biometric}', [BiometricController::class, 'show']);
+        Route::put('/{biometric}', [BiometricController::class, 'update']);
+        Route::delete('/{biometric}', [BiometricController::class, 'destroy']);
+    });
 
-Route::prefix('roles')->group(function () {
-    Route::get('/', [RoleController::class, 'index']);
-    Route::post('/', [RoleController::class, 'store']);
-    Route::get('/{role}', [RoleController::class, 'show']);
-    Route::put('/{role}', [RoleController::class, 'update']);
-    Route::delete('/{role}', [RoleController::class, 'destroy']);
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RoleController::class, 'index']);
+        Route::post('/', [RoleController::class, 'store']);
+        Route::get('/{role}', [RoleController::class, 'show']);
+        Route::put('/{role}', [RoleController::class, 'update']);
+        Route::delete('/{role}', [RoleController::class, 'destroy']);
 
-    Route::post('/{role}/permissions', [RolePermissionController::class, 'attach']);
-    Route::delete('/{role}/permissions/{permission}', [RolePermissionController::class, 'detach']);
-});
+        Route::post('/{role}/permissions', [RolePermissionController::class, 'attach']);
+        Route::delete('/{role}/permissions/{permission}', [RolePermissionController::class, 'detach']);
+    });
 
-Route::prefix('permissions')->group(function () {
-    Route::get('/', [PermissionController::class, 'index']);
-    Route::post('/', [PermissionController::class, 'store']);
-    Route::get('/{permission}', [PermissionController::class, 'show']);
-    Route::put('/{permission}', [PermissionController::class, 'update']);
-    Route::delete('/{permission}', [PermissionController::class, 'destroy']);
-});
+    Route::prefix('permissions')->group(function () {
+        Route::get('/', [PermissionController::class, 'index']);
+        Route::post('/', [PermissionController::class, 'store']);
+        Route::get('/{permission}', [PermissionController::class, 'show']);
+        Route::put('/{permission}', [PermissionController::class, 'update']);
+        Route::delete('/{permission}', [PermissionController::class, 'destroy']);
+    });
 
-Route::prefix('macros')->group(function () {
-    Route::get('/', [MacroController::class, 'index']);
-    Route::post('/', [MacroController::class, 'store']);
-    Route::get('/{macro}', [MacroController::class, 'show']);
-    Route::put('/{macro}', [MacroController::class, 'update']);
-    Route::delete('/{macro}', [MacroController::class, 'destroy']);
+    Route::prefix('macros')->group(function () {
+        Route::get('/', [MacroController::class, 'index']);
+        Route::post('/', [MacroController::class, 'store']);
+        Route::get('/{macro}', [MacroController::class, 'show']);
+        Route::put('/{macro}', [MacroController::class, 'update']);
+        Route::delete('/{macro}', [MacroController::class, 'destroy']);
+    });
 });
 

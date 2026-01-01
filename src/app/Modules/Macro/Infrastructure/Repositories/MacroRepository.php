@@ -17,6 +17,7 @@ class MacroRepository implements MacroRepositoryInterface
         try {
             $query = Macro::query();
 
+            // Always filter by user_id from authenticated user
             if (isset($filters['user_id']) && $filters['user_id'] !== null) {
                 $query->where('user_id', $filters['user_id']);
             }
@@ -46,10 +47,13 @@ class MacroRepository implements MacroRepositoryInterface
         }
     }
 
-    public function findById(string $id): ?array
+    public function findById(string $id, int $userId): ?array
     {
         try {
-            $macro = Macro::with('user')->find($id);
+            $macro = Macro::with('user')
+                ->where('id', $id)
+                ->where('user_id', $userId)
+                ->first();
             return $macro ? $macro->toArray() : null;
         } catch (Throwable $e) {
             return null;
@@ -76,20 +80,24 @@ class MacroRepository implements MacroRepositoryInterface
         }
     }
 
-    public function update(string $id, array $data): bool
+    public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $macro = Macro::findOrFail($id);
+            $macro = Macro::where('id', $id)
+                ->where('user_id', $userId)
+                ->firstOrFail();
             return $macro->update($data);
         } catch (Throwable $e) {
             throw MacroUpdateFailedException::fromException($id, $e);
         }
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
         try {
-            $macro = Macro::findOrFail($id);
+            $macro = Macro::where('id', $id)
+                ->where('user_id', $userId)
+                ->firstOrFail();
             return $macro->delete();
         } catch (Throwable $e) {
             return false;

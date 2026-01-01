@@ -31,9 +31,9 @@ class MealLogService
         ]);
     }
 
-    public function findById(string $id): array
+    public function findById(string $id, int $userId): array
     {
-        $mealLog = $this->repository->findById($id);
+        $mealLog = $this->repository->findById($id, $userId);
 
         if ($mealLog === null) {
             throw MealLogNotFoundException::withId($id);
@@ -62,9 +62,9 @@ class MealLogService
         ]);
     }
 
-    public function update(UpdateMealLogDTO $dto): array
+    public function update(UpdateMealLogDTO $dto, int $userId): array
     {
-        $mealLog = $this->repository->findById($dto->mealLogId);
+        $mealLog = $this->repository->findById($dto->mealLogId, $userId);
 
         if ($mealLog === null) {
             throw MealLogNotFoundException::withId($dto->mealLogId);
@@ -92,20 +92,20 @@ class MealLogService
             'logged_at' => $dto->loggedAt,
         ], fn ($value) => $value !== null);
 
-        $this->repository->update($dto->mealLogId, $updateData);
+        $this->repository->update($dto->mealLogId, $updateData, $userId);
 
-        return $this->repository->findById($dto->mealLogId);
+        return $this->repository->findById($dto->mealLogId, $userId);
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
-        $mealLog = $this->repository->findById($id);
+        $mealLog = $this->repository->findById($id, $userId);
 
         if ($mealLog === null) {
             throw MealLogNotFoundException::withId($id);
         }
 
-        return $this->repository->delete($id);
+        return $this->repository->delete($id, $userId);
     }
 }
 

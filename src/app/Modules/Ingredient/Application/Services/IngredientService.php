@@ -29,9 +29,9 @@ class IngredientService
         ]);
     }
 
-    public function findById(string $id): array
+    public function findById(string $id, int $userId): array
     {
-        $ingredient = $this->repository->findById($id);
+        $ingredient = $this->repository->findById($id, $userId);
 
         if ($ingredient === null) {
             throw IngredientNotFoundException::withId($id);
@@ -54,9 +54,9 @@ class IngredientService
         ]);
     }
 
-    public function update(UpdateIngredientDTO $dto): array
+    public function update(UpdateIngredientDTO $dto, int $userId): array
     {
-        $ingredient = $this->repository->findById($dto->ingredientId);
+        $ingredient = $this->repository->findById($dto->ingredientId, $userId);
 
         if ($ingredient === null) {
             throw IngredientNotFoundException::withId($dto->ingredientId);
@@ -72,20 +72,20 @@ class IngredientService
             'fat' => $dto->fat,
         ], fn ($value) => $value !== null);
 
-        $this->repository->update($dto->ingredientId, $updateData);
+        $this->repository->update($dto->ingredientId, $updateData, $userId);
 
-        return $this->repository->findById($dto->ingredientId);
+        return $this->repository->findById($dto->ingredientId, $userId);
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
-        $ingredient = $this->repository->findById($id);
+        $ingredient = $this->repository->findById($id, $userId);
 
         if ($ingredient === null) {
             throw IngredientNotFoundException::withId($id);
         }
 
-        return $this->repository->delete($id);
+        return $this->repository->delete($id, $userId);
     }
 }
 

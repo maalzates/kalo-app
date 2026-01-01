@@ -21,7 +21,6 @@ class CreateMacroRequest extends FormRequest
             'prot' => ['required', 'numeric', 'min:0'],
             'carb' => ['required', 'numeric', 'min:0'],
             'fat' => ['required', 'numeric', 'min:0'],
-            'user_id' => ['required', 'integer', 'exists:users,id', 'unique:macros,user_id'],
         ];
     }
 
@@ -40,9 +39,6 @@ class CreateMacroRequest extends FormRequest
             'fat.required' => 'The fat field is required.',
             'fat.numeric' => 'The fat must be a number.',
             'fat.min' => 'The fat must be at least 0.',
-            'user_id.required' => 'The user_id field is required.',
-            'user_id.exists' => 'The selected user does not exist.',
-            'user_id.unique' => 'This user already has macro goals defined.',
         ];
     }
 
@@ -53,7 +49,7 @@ class CreateMacroRequest extends FormRequest
             prot: (string) $this->input('prot'),
             carb: (string) $this->input('carb'),
             fat: (string) $this->input('fat'),
-            userId: (string) $this->input('user_id'),
+            userId: (string) auth()->id(),
         );
     }
 }

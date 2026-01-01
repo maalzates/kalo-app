@@ -32,7 +32,11 @@ class RecipeController extends ApiController
     public function show(Recipe $recipe): JsonResponse
     {
         try {
-            $recipeData = $this->service->findById((string) $recipe->id);
+            // Ensure the recipe belongs to the authenticated user
+            if ($recipe->user_id !== auth()->id()) {
+                return $this->error('Recipe not found', Response::HTTP_NOT_FOUND);
+            }
+            $recipeData = $this->service->findById((string) $recipe->id, auth()->id());
             return $this->success($recipeData);
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -52,7 +56,11 @@ class RecipeController extends ApiController
     public function update(UpdateRecipeRequest $request, Recipe $recipe): JsonResponse
     {
         try {
-            $updatedRecipe = $this->service->update($request->toDTO());
+            // Ensure the recipe belongs to the authenticated user
+            if ($recipe->user_id !== auth()->id()) {
+                return $this->error('Recipe not found', Response::HTTP_NOT_FOUND);
+            }
+            $updatedRecipe = $this->service->update($request->toDTO(), auth()->id());
             return $this->success($updatedRecipe, 'Recipe updated successfully');
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -64,7 +72,11 @@ class RecipeController extends ApiController
     public function destroy(Recipe $recipe): JsonResponse
     {
         try {
-            $this->service->delete((string) $recipe->id);
+            // Ensure the recipe belongs to the authenticated user
+            if ($recipe->user_id !== auth()->id()) {
+                return $this->error('Recipe not found', Response::HTTP_NOT_FOUND);
+            }
+            $this->service->delete((string) $recipe->id, auth()->id());
             return $this->success(null, 'Recipe deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (RecipeNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());

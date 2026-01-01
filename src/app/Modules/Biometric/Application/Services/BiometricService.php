@@ -29,9 +29,9 @@ class BiometricService
         ]);
     }
 
-    public function findById(string $id): array
+    public function findById(string $id, int $userId): array
     {
-        $biometric = $this->repository->findById($id);
+        $biometric = $this->repository->findById($id, $userId);
 
         if ($biometric === null) {
             throw BiometricNotFoundException::withId($id);
@@ -52,9 +52,9 @@ class BiometricService
         ]);
     }
 
-    public function update(UpdateBiometricDTO $dto): array
+    public function update(UpdateBiometricDTO $dto, int $userId): array
     {
-        $biometric = $this->repository->findById($dto->biometricId);
+        $biometric = $this->repository->findById($dto->biometricId, $userId);
 
         if ($biometric === null) {
             throw BiometricNotFoundException::withId($dto->biometricId);
@@ -68,20 +68,20 @@ class BiometricService
             'measured_at' => $dto->measuredAt,
         ], fn ($value) => $value !== null);
 
-        $this->repository->update($dto->biometricId, $updateData);
+        $this->repository->update($dto->biometricId, $updateData, $userId);
 
-        return $this->repository->findById($dto->biometricId);
+        return $this->repository->findById($dto->biometricId, $userId);
     }
 
-    public function delete(string $id): bool
+    public function delete(string $id, int $userId): bool
     {
-        $biometric = $this->repository->findById($id);
+        $biometric = $this->repository->findById($id, $userId);
 
         if ($biometric === null) {
             throw BiometricNotFoundException::withId($id);
         }
 
-        return $this->repository->delete($id);
+        return $this->repository->delete($id, $userId);
     }
 }
 

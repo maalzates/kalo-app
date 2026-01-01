@@ -24,7 +24,6 @@ class CreateIngredientRequest extends FormRequest
             'prot' => ['required', 'numeric', 'min:0'],
             'carb' => ['required', 'numeric', 'min:0'],
             'fat' => ['required', 'numeric', 'min:0'],
-            'user_id' => ['nullable', 'exists:users,id'],
         ];
     }
 
@@ -49,7 +48,6 @@ class CreateIngredientRequest extends FormRequest
             'fat.required' => 'The fat field is required.',
             'fat.numeric' => 'The fat must be a number.',
             'fat.min' => 'The fat must be at least 0.',
-            'user_id.exists' => 'The selected user does not exist.',
         ];
     }
 
@@ -63,7 +61,7 @@ class CreateIngredientRequest extends FormRequest
             prot: (string) $this->input('prot'),
             carb: (string) $this->input('carb'),
             fat: (string) $this->input('fat'),
-            userId: $this->input('user_id'),
+            userId: (string) auth()->id(),
         );
     }
 }

@@ -17,7 +17,6 @@ class IndexMacroRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['nullable', 'integer', 'exists:users,id'],
             'page' => ['nullable', 'integer', 'min:1'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
         ];
@@ -26,7 +25,7 @@ class IndexMacroRequest extends FormRequest
     public function toDTO(): MacroFilterDTO
     {
         return new MacroFilterDTO(
-            userId: $this->input('user_id') ? (string) $this->input('user_id') : null,
+            userId: (string) auth()->id(),
             page: $this->input('page') ? (int) $this->input('page') : null,
             perPage: $this->input('per_page') ? (int) $this->input('per_page') : null,
         );

@@ -32,7 +32,11 @@ class IngredientController extends ApiController
     public function show(Ingredient $ingredient): JsonResponse
     {
         try {
-            $ingredientData = $this->service->findById((string) $ingredient->id);
+            // Ensure the ingredient belongs to the authenticated user
+            if ($ingredient->user_id !== auth()->id()) {
+                return $this->error('Ingredient not found', Response::HTTP_NOT_FOUND);
+            }
+            $ingredientData = $this->service->findById((string) $ingredient->id, auth()->id());
             return $this->success($ingredientData);
         } catch (IngredientNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -52,7 +56,11 @@ class IngredientController extends ApiController
     public function update(UpdateIngredientRequest $request, Ingredient $ingredient): JsonResponse
     {
         try {
-            $updatedIngredient = $this->service->update($request->toDTO());
+            // Ensure the ingredient belongs to the authenticated user
+            if ($ingredient->user_id !== auth()->id()) {
+                return $this->error('Ingredient not found', Response::HTTP_NOT_FOUND);
+            }
+            $updatedIngredient = $this->service->update($request->toDTO(), auth()->id());
             return $this->success($updatedIngredient, 'Ingredient updated successfully');
         } catch (IngredientNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
@@ -64,7 +72,11 @@ class IngredientController extends ApiController
     public function destroy(Ingredient $ingredient): JsonResponse
     {
         try {
-            $this->service->delete((string) $ingredient->id);
+            // Ensure the ingredient belongs to the authenticated user
+            if ($ingredient->user_id !== auth()->id()) {
+                return $this->error('Ingredient not found', Response::HTTP_NOT_FOUND);
+            }
+            $this->service->delete((string) $ingredient->id, auth()->id());
             return $this->success(null, 'Ingredient deleted successfully', Response::HTTP_NO_CONTENT);
         } catch (IngredientNotFoundException $e) {
             return $this->error($e->getMessage(), $e->getHttpStatusCode());
