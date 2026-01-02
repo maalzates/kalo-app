@@ -28,7 +28,6 @@ return new class extends Migration
             $table->string('macro_calculation_mode')->nullable();
             $table->string('google_id')->nullable();
             $table->string('auth_provider')->nullable();
-            $table->foreignId('role_id')->nullable()->constrained('roles')->onDelete('set null');
             $table->rememberToken();
             $table->timestamps();
         });
