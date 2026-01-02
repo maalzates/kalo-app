@@ -55,7 +55,7 @@ const routes = [
         name: 'progress', 
         component: Progress, 
         meta: {requiresAuth: true}
-    }
+    },
     // Ruta comodín: redirige cualquier URL desconocida al Dashboard
     { 
         path: '/:pathMatch(.*)*', 

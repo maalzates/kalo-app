@@ -20,6 +20,11 @@ const vuetify = createVuetify({
 
 const app = createApp(App);
 
+// Dentro de WeightChart.vue o MacrosChart.vue
+import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement)
+
 
 app.use(vuetify);
 app.use(router);
