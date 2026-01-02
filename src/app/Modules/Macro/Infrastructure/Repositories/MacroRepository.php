@@ -25,6 +25,11 @@ class MacroRepository implements MacroRepositoryInterface
             $page = $filters['page'] ?? 1;
             $perPage = $filters['perPage'] ?? 15;
 
+            // Ordenar por created_at descendente y luego por id descendente para garantizar orden consistente
+            // incluso cuando hay múltiples registros con el mismo timestamp
+            $query->orderBy('created_at', 'desc')
+                  ->orderBy('id', 'desc');
+
             $paginated = $query->with('user')->paginate($perPage, ['*'], 'page', $page);
 
             return [
