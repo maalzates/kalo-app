@@ -5,7 +5,7 @@ const biometricsRepository = {
         try {
             // Convertimos los filtros en query params
             const response = await axios.get('/biometrics', { params: filters });
-            return response.data; // Retorna { data: [...], meta: {...} }
+            return response.data.data; // Retorna { data: [...], meta: {...} }
         } catch (error) {
             console.error('Error fetching biometrics:', error);
             throw error;

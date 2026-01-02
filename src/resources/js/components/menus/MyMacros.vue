@@ -102,9 +102,11 @@ import { ref, onMounted, watch } from 'vue';
 import DailyGoals from '@/components/common/DailyGoals.vue';
 import { useMacroCalculator } from '@/composables/useMacroCalculator';
 import { useMacrosStore } from '@/stores/useMacrosStore';
+import { useBiometricsStore } from '@/stores/useBiometricsStore';
 
 const activeTab = ref('auto');
 const macrosStore = useMacrosStore();
+const biometricsStore = useBiometricsStore();
 
 const { 
   gender, weight, height, age, activityLevel, goal, 
