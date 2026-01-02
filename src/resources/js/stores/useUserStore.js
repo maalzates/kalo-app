@@ -17,6 +17,17 @@ export const useUserStore = defineStore("userStore", () => {
     // 2. Getters: El estado de login depende de la existencia del token
     const isLoggedIn = computed(() => !!token.value);
 
+    // Iniciales del usuario para los avatares
+    const userInitials = computed(() => {
+        if (!user.value?.name) return 'U';
+        return user.value.name
+            .split(' ')
+            .map(n => n[0])
+            .join('')
+            .toUpperCase()
+            .substring(0, 2);
+    });
+
     // 3. Acciones: Para gestionar el ciclo de vida de la sesión
     const setAuth = (newUserData, newToken) => {
         user.value = newUserData;
@@ -59,6 +70,7 @@ export const useUserStore = defineStore("userStore", () => {
         user,
         token,
         isLoggedIn,
+        userInitials,
         setAuth,
         logout
     };

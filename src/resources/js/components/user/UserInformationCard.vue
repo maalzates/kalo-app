@@ -5,8 +5,10 @@
         <v-col cols="12" md="4">
           <v-card rounded="lg" class="fill-height border-0 pa-6" elevation="0">
             <div class="d-flex flex-column align-center text-center">
-              <v-avatar size="100" color="deep-purple-lighten-5" class="mb-4" border>
-                <v-img src="https://randomuser.me/api/portraits/men/1.jpg"></v-img>
+              <v-avatar size="100" color="deep-purple-lighten-4" class="mb-4" border>
+                <span class="text-h4 text-deep-purple font-weight-bold">
+                  {{ userStore.userInitials }}
+                </span>
               </v-avatar>
               
               <h2 class="text-h5 font-weight-bold mb-0 text-grey-darken-4">{{ user.name }}</h2>

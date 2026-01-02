@@ -8,7 +8,7 @@
       <div class="d-md-none mr-4" @click="$router.push('/profile')">
         <v-avatar size="32" color="deep-purple-lighten-4" class="cursor-pointer">
           <span class="text-caption text-deep-purple font-weight-bold">
-            {{ userInitials }}
+            {{ userStore.userInitials }}
           </span>
         </v-avatar>
       </div>
@@ -38,7 +38,7 @@
           <template v-slot:prepend>
             <v-avatar color="deep-purple-lighten-4" class="mr-n1">
               <span class="text-body-2 text-deep-purple font-weight-bold">
-                {{ userInitials }}
+                {{ userStore.userInitials }}
               </span>
             </v-avatar>
           </template>
@@ -65,24 +65,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/useUserStore'
 
 const router = useRouter()
 const userStore = useUserStore()
 const drawer = ref(true)
-
-// Iniciales del usuario para los avatares
-const userInitials = computed(() => {
-  if (!userStore.user?.name) return 'U'
-  return userStore.user.name
-    .split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase()
-    .substring(0, 2)
-})
 
 const handleLogout = () => {
   // El logout maneja todo: limpieza de estado, redirección y llamada al backend
