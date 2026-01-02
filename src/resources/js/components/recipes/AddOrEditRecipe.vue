@@ -154,7 +154,6 @@
   <script setup>
   import { ref, reactive, computed, watch, onMounted } from "vue";
   import { useIngredientsStore } from "@/stores/useIngredientsStore";
-  import { useRecipesStore } from "@/stores/useRecipesStore";
   
   const props = defineProps({
     modelValue: Boolean,
@@ -163,7 +162,6 @@
   
   const emit = defineEmits(["update:modelValue", "save"]);
   const ingredientsStore = useIngredientsStore();
-  const recipesStore = useRecipesStore();
   const isEditing = ref(false);
   const selectedIngFromList = ref(null);
   const loading = ref(false);
