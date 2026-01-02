@@ -9,6 +9,7 @@ use App\Modules\User\Domain\Exceptions\UserCreationFailedException;
 use App\Modules\User\Domain\Exceptions\UserUpdateFailedException;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Hash;
 use Throwable;
 
 class UserRepository implements UserRepositoryInterface
@@ -58,18 +59,47 @@ class UserRepository implements UserRepositoryInterface
     public function findById(string $id): ?array
     {
         try {
-            $user = User::find($id);
-            return $user ? $user->toArray() : null;
+            return ($user = User::find($id)) ? $user->toArray() : null;
         } catch (Throwable $e) {
             return null;
+        }
+    }
+
+    public function findByIdWithRelations(string $id): ?array
+    {
+        try {
+            return ($user = User::with(['macros', 'biometrics'])->find($id)) ? $user->toArray() : null;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    public function findUserForPasswordValidation(string $id): ?array
+    {
+        try {
+            return ($user = User::find($id)) ? $user->toArray() : null;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    public function validatePassword(string $id, string $password): bool
+    {
+        try {
+            $user = User::find($id);
+            if ($user === null) {
+                return false;
+            }
+            return Hash::check($password, $user->password);
+        } catch (Throwable $e) {
+            return false;
         }
     }
 
     public function findByEmail(string $email): ?array
     {
         try {
-            $user = User::where('email', $email)->first();
-            return $user ? $user->toArray() : null;
+            return ($user = User::where('email', $email)->first()) ? $user->toArray() : null;
         } catch (Throwable $e) {
             return null;
         }
@@ -78,8 +108,7 @@ class UserRepository implements UserRepositoryInterface
     public function create(array $data): array
     {
         try {
-            $user = User::create($data);
-            return $user->toArray();
+            return User::create($data)->toArray();
         } catch (Throwable $e) {
             throw UserCreationFailedException::fromException($e);
         }
@@ -88,8 +117,7 @@ class UserRepository implements UserRepositoryInterface
     public function update(string $id, array $data): bool
     {
         try {
-            $user = User::findOrFail($id);
-            return $user->update($data);
+            return User::findOrFail($id)->update($data);
         } catch (Throwable $e) {
             throw UserUpdateFailedException::fromException($id, $e);
         }
@@ -98,8 +126,7 @@ class UserRepository implements UserRepositoryInterface
     public function delete(string $id): bool
     {
         try {
-            $user = User::findOrFail($id);
-            return $user->delete();
+            return User::findOrFail($id)->delete();
         } catch (Throwable $e) {
             return false;
         }

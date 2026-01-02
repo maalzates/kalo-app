@@ -27,8 +27,15 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('root'),
                 'role_id' => $adminRole->id ?? 2,
                 'email_verified_at' => now(),
+                'phone' => '1234567890',
+                'birth_date' => '1985-03-15',
+                'gender' => 'male',
+                'height' => 180,
                 'weight' => 75.50,
+                'country_code' => '+57',
+                'activity_level' => 'Moderado',
                 'goal_type' => 'maintain',
+                'macro_calculation_mode' => 'auto',
             ]
         );
 
@@ -40,8 +47,15 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('root'),
                 'role_id' => $userRole->id ?? 1,
                 'email_verified_at' => now(),
+                'phone' => '1234567891',
+                'birth_date' => '1990-07-22',
+                'gender' => 'female',
+                'height' => 165,
                 'weight' => 70.25,
+                'country_code' => '+57',
+                'activity_level' => 'Ligero',
                 'goal_type' => 'cut',
+                'macro_calculation_mode' => 'tdee',
             ]
         );
 
@@ -53,21 +67,24 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('root'),
                 'role_id' => $premiumRole->id ?? 4,
                 'email_verified_at' => now(),
+                'phone' => '1234567892',
+                'birth_date' => '1992-11-08',
+                'gender' => 'male',
+                'height' => 175,
                 'weight' => 80.00,
+                'country_code' => '+57',
+                'activity_level' => 'Muy Activo',
                 'goal_type' => 'grow',
+                'macro_calculation_mode' => 'manual',
             ]
         );
 
-        // Crear usuarios aleatorios usando factory
         User::factory(15)->create();
 
-        // Crear usuarios premium aleatorios
         User::factory(5)->withRole($premiumRole->id ?? 4)->create();
 
-        // Crear usuarios con Google auth
         User::factory(3)->withGoogle()->create();
 
-        // Crear usuarios específicos por género
         User::factory(5)->male()->create();
         User::factory(5)->female()->create();
     }

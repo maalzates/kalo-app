@@ -1,7 +1,6 @@
 <template>
   <v-card v-if="user" rounded="xl" elevation="0" border class="mx-auto bg-grey-lighten-4">
     <v-card-text class="pa-4 pa-md-6">
-      {{ userStore.user }}
       <v-row>
         <v-col cols="12" md="4">
           <v-card rounded="lg" class="fill-height border-0 pa-6" elevation="0">

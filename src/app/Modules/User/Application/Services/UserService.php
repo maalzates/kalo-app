@@ -9,7 +9,8 @@ use App\Modules\User\Application\DTOs\UpdateUserDTO;
 use App\Modules\User\Application\DTOs\UserFilterDTO;
 use App\Modules\User\Domain\Contracts\UserRepositoryInterface;
 use App\Modules\User\Domain\Exceptions\UserNotFoundException;
-use Throwable;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserService
 {
@@ -63,6 +64,15 @@ class UserService
             throw UserNotFoundException::withId($dto->userId);
         }
 
+        // Validar y actualizar contraseña si se proporciona
+        if ($dto->newPassword) {
+            if (!$dto->currentPassword || !$this->repository->validatePassword($dto->userId, $dto->currentPassword)) {
+                throw ValidationException::withMessages([
+                    'current_password' => ['The current password is incorrect.'],
+                ]);
+            }
+        }
+
         $updateData = array_filter([
             'name' => $dto->name,
             'email' => $dto->email,
@@ -76,11 +86,19 @@ class UserService
             'activity_level' => $dto->activityLevel,
             'goal_type' => $dto->goalType,
             'macro_calculation_mode' => $dto->macroCalculationMode,
+            'password' => $dto->newPassword ? Hash::make($dto->newPassword) : null,
         ], fn ($value) => $value !== null);
 
         $this->repository->update($dto->userId, $updateData);
 
-        return $this->repository->findById($dto->userId);
+        // Recargar usuario con relaciones desde el repositorio
+        $updatedUser = $this->repository->findByIdWithRelations($dto->userId);
+        
+        if ($updatedUser === null) {
+            throw UserNotFoundException::withId($dto->userId);
+        }
+
+        return $updatedUser;
     }
 
     public function delete(string $id): bool

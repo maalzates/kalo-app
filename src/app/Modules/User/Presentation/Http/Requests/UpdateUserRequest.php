@@ -39,6 +39,9 @@ class UpdateUserRequest extends FormRequest
             'activity_level' => ['nullable', 'string', 'in:Sedentario,Ligero,Moderado,Muy Activo'],
             'goal_type' => ['nullable', 'in:cut,maintain,grow'],
             'macro_calculation_mode' => ['nullable', 'string', 'max:255'],
+            'current_password' => ['required_with:new_password', 'string'],
+            'new_password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'new_password_confirmation' => ['nullable', 'string'],
         ];
     }
 
@@ -74,6 +77,8 @@ class UpdateUserRequest extends FormRequest
             activityLevel: $this->input('activity_level'),
             goalType: $this->input('goal_type'),
             macroCalculationMode: $this->input('macro_calculation_mode'),
+            currentPassword: $this->input('current_password'),
+            newPassword: $this->input('new_password'),
         );
     }
 }

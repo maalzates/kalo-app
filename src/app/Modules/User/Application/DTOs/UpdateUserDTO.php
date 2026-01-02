@@ -20,6 +20,8 @@ readonly class UpdateUserDTO
         public ?string $activityLevel,
         public ?string $goalType,
         public ?string $macroCalculationMode,
+        public ?string $currentPassword,
+        public ?string $newPassword,
     ) {
     }
 }

@@ -53,8 +53,12 @@ class AuthRepository implements AuthRepositoryInterface
                 throw InvalidCredentialsException::forLogin($dto);
             }
 
-            $authenticatedUser = Auth::user();
-            $user = User::with(['macros', 'biometrics'])->findOrFail($authenticatedUser->id);
+            // Get user directly from database by email to avoid session conflicts
+            // Don't use Auth::user() as it touches the session
+            $user = User::with(['macros', 'biometrics'])
+                ->where('email', $dto->email)
+                ->firstOrFail();
+            
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return [

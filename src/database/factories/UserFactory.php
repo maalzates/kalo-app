@@ -19,6 +19,10 @@ class UserFactory extends Factory
     {
         $birthDate = $this->faker->optional(0.8)->dateTimeBetween('-60 years', '-18 years');
         $emailVerifiedAt = $this->faker->optional(0.9)->dateTimeBetween('-1 year', 'now');
+        $countryCodes = ['+1', '+57', '+52', '+34', '+44', '+33', '+49', '+39', '+55', '+54'];
+        $activityLevels = ['Sedentario', 'Ligero', 'Moderado', 'Muy Activo'];
+        $goalTypes = ['cut', 'maintain', 'grow'];
+        $macroCalculationModes = ['auto', 'manual', 'tdee', 'bmr'];
 
         return [
             'name' => $this->faker->name(),
@@ -28,6 +32,10 @@ class UserFactory extends Factory
             'gender' => $this->faker->optional(0.9)->randomElement(['male', 'female', 'other']),
             'height' => $this->faker->optional(0.8)->numberBetween(150, 200),
             'weight' => $this->faker->optional(0.8)->randomFloat(2, 40, 150),
+            'country_code' => $this->faker->optional(0.7)->randomElement($countryCodes),
+            'activity_level' => $this->faker->optional(0.8)->randomElement($activityLevels),
+            'goal_type' => $this->faker->optional(0.8)->randomElement($goalTypes),
+            'macro_calculation_mode' => $this->faker->optional(0.7)->randomElement($macroCalculationModes),
             'google_id' => null,
             'auth_provider' => null,
             'password' => static::$password ??= Hash::make('password'),
