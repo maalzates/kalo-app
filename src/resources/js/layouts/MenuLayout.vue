@@ -31,7 +31,7 @@
             </template>
   
             <v-list-item-title class="font-weight-bold">{{ userStore.user?.name }}</v-list-item-title>
-            <v-list-item-subtitle>Meta: {{ userStore.user?.macros?.[0]?.kcal || 0 }} kcal</v-list-item-subtitle>
+            <v-list-item-subtitle>Meta: {{ currentMacroCalories }} kcal</v-list-item-subtitle>
   
             <template v-slot:append>
               <v-menu location="top end" transition="slide-y-reverse-transition">
@@ -86,14 +86,35 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/stores/useUserStore'
+  import { useMacrosStore } from '@/stores/useMacrosStore'
+  import { useDateStore } from '@/stores/useDateStore'
   
   const userStore = useUserStore()
+  const macrosStore = useMacrosStore()
+  const dateStore = useDateStore()
   const router = useRouter()
   const drawer = ref(true)
   const showLogoutDialog = ref(false)
+  
+  // Obtener el macro para la fecha actual (busca el más cercano hacia atrás)
+  const macroForDate = computed(() => {
+    return macrosStore.getMacroForDate(dateStore.selectedDate);
+  });
+  
+  // Calorías del macro encontrado para la fecha actual
+  const currentMacroCalories = computed(() => {
+    return macroForDate.value?.kcal || 0;
+  });
+  
+  // Cargar macros al montar si no están cargados
+  onMounted(async () => {
+    if (macrosStore.macros.length === 0) {
+      await macrosStore.fetchMacros();
+    }
+  });
   
   const confirmLogout = () => {
     showLogoutDialog.value = false
