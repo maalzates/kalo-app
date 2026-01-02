@@ -35,7 +35,7 @@ class PermissionRepository implements PermissionRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -50,9 +50,8 @@ class PermissionRepository implements PermissionRepositoryInterface
     public function findById(string $id): ?array
     {
         try {
-            $permission = Permission::with('roles')->find($id);
-            return $permission ? $permission->toArray() : null;
-        } catch (Throwable $e) {
+            return ($permission = Permission::with('roles')->find($id)) ? $permission->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -60,29 +59,26 @@ class PermissionRepository implements PermissionRepositoryInterface
     public function create(array $data): array
     {
         try {
-            $permission = Permission::create($data);
-            return $permission->toArray();
-        } catch (Throwable $e) {
-            throw PermissionCreationFailedException::fromException($e);
+            return Permission::create($data)->toArray();
+        } catch (Throwable $exception) {
+            throw PermissionCreationFailedException::fromException($exception);
         }
     }
 
     public function update(string $id, array $data): bool
     {
         try {
-            $permission = Permission::findOrFail($id);
-            return $permission->update($data);
-        } catch (Throwable $e) {
-            throw PermissionUpdateFailedException::fromException($id, $e);
+            return Permission::findOrFail($id)->update($data);
+        } catch (Throwable $exception) {
+            throw PermissionUpdateFailedException::fromException($id, $exception);
         }
     }
 
     public function delete(string $id): bool
     {
         try {
-            $permission = Permission::findOrFail($id);
-            return $permission->delete();
-        } catch (Throwable $e) {
+            return Permission::findOrFail($id)->delete();
+        } catch (Throwable $exception) {
             return false;
         }
     }
@@ -90,9 +86,8 @@ class PermissionRepository implements PermissionRepositoryInterface
     public function hasRoles(string $permissionId): bool
     {
         try {
-            $permission = Permission::findOrFail($permissionId);
-            return $permission->roles()->count() > 0;
-        } catch (Throwable $e) {
+            return Permission::findOrFail($permissionId)->roles()->count() > 0;
+        } catch (Throwable $exception) {
             return false;
         }
     }

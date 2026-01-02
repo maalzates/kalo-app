@@ -8,9 +8,7 @@ use App\Modules\Macro\Application\DTOs\CreateMacroDTO;
 use App\Modules\Macro\Application\DTOs\MacroFilterDTO;
 use App\Modules\Macro\Application\DTOs\UpdateMacroDTO;
 use App\Modules\Macro\Domain\Contracts\MacroRepositoryInterface;
-use App\Modules\Macro\Domain\Exceptions\DuplicateMacroException;
 use App\Modules\Macro\Domain\Exceptions\MacroNotFoundException;
-use Throwable;
 
 class MacroService
 {

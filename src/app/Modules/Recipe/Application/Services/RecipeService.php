@@ -10,7 +10,6 @@ use App\Modules\Recipe\Application\DTOs\RecipeFilterDTO;
 use App\Modules\Recipe\Application\DTOs\UpdateRecipeDTO;
 use App\Modules\Recipe\Domain\Contracts\RecipeRepositoryInterface;
 use App\Modules\Recipe\Domain\Exceptions\RecipeNotFoundException;
-use Throwable;
 
 class RecipeService
 {
@@ -99,9 +98,9 @@ class RecipeService
         return $this->repository->delete($id, $userId);
     }
 
-    public function attachIngredient(AttachIngredientDTO $dto): bool
+    public function attachIngredient(AttachIngredientDTO $dto, int $userId): bool
     {
-        $recipe = $this->repository->findById($dto->recipeId);
+        $recipe = $this->repository->findById($dto->recipeId, $userId);
 
         if ($recipe === null) {
             throw RecipeNotFoundException::withId($dto->recipeId);
@@ -117,9 +116,9 @@ class RecipeService
         );
     }
 
-    public function detachIngredient(string $recipeId, string $ingredientId): bool
+    public function detachIngredient(string $recipeId, string $ingredientId, int $userId): bool
     {
-        $recipe = $this->repository->findById($recipeId);
+        $recipe = $this->repository->findById($recipeId, $userId);
 
         if ($recipe === null) {
             throw RecipeNotFoundException::withId($recipeId);
@@ -128,9 +127,9 @@ class RecipeService
         return $this->repository->detachIngredient($recipeId, $ingredientId);
     }
 
-    public function updatePivot(AttachIngredientDTO $dto): bool
+    public function updatePivot(AttachIngredientDTO $dto, int $userId): bool
     {
-        $recipe = $this->repository->findById($dto->recipeId);
+        $recipe = $this->repository->findById($dto->recipeId, $userId);
 
         if ($recipe === null) {
             throw RecipeNotFoundException::withId($dto->recipeId);

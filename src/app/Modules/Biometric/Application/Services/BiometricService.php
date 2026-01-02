@@ -9,7 +9,6 @@ use App\Modules\Biometric\Application\DTOs\CreateBiometricDTO;
 use App\Modules\Biometric\Application\DTOs\UpdateBiometricDTO;
 use App\Modules\Biometric\Domain\Contracts\BiometricRepositoryInterface;
 use App\Modules\Biometric\Domain\Exceptions\BiometricNotFoundException;
-use Throwable;
 
 class BiometricService
 {

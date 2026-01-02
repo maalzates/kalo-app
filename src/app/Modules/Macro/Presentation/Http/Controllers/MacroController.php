@@ -6,15 +6,12 @@ namespace App\Modules\Macro\Presentation\Http\Controllers;
 
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\Macro\Application\Services\MacroService;
-use App\Modules\Macro\Domain\Exceptions\DuplicateMacroException;
-use App\Modules\Macro\Domain\Exceptions\MacroNotFoundException;
 use App\Models\Macro;
 use App\Modules\Macro\Presentation\Http\Requests\CreateMacroRequest;
 use App\Modules\Macro\Presentation\Http\Requests\IndexMacroRequest;
 use App\Modules\Macro\Presentation\Http\Requests\UpdateMacroRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Throwable;
 
 class MacroController extends ApiController
 {
@@ -25,67 +22,36 @@ class MacroController extends ApiController
 
     public function index(IndexMacroRequest $request): JsonResponse
     {
-        $results = $this->service->findAll($request->toDTO());
-
-        return $this->success($results);
+        return $this->success($this->service->findAll($request->toDTO()));
     }
 
     public function show(Macro $macro): JsonResponse
     {
-        try {
-            // Ensure the macro belongs to the authenticated user
-            if ($macro->user_id !== auth()->id()) {
-                return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
-            }
-            $macroData = $this->service->findById((string) $macro->id, auth()->id());
-            return $this->success($macroData);
-        } catch (MacroNotFoundException $e) {
-            return $this->error($e->getMessage(), $e->getHttpStatusCode());
+        if ($macro->user_id !== auth()->id()) {
+            return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
         }
+        return $this->success($this->service->findById((string) $macro->id, auth()->id()));
     }
 
     public function store(CreateMacroRequest $request): JsonResponse
     {
-        try {
-            $macro = $this->service->create($request->toDTO());
-            return $this->success($macro, 'Macro created successfully', Response::HTTP_CREATED);
-        } catch (DuplicateMacroException $e) {
-            return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (Throwable $e) {
-            return $this->error('Failed to create macro', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->success($this->service->create($request->toDTO()), 'Macro created successfully', Response::HTTP_CREATED);
     }
 
     public function update(UpdateMacroRequest $request, Macro $macro): JsonResponse
     {
-        try {
-            // Ensure the macro belongs to the authenticated user
-            if ($macro->user_id !== auth()->id()) {
-                return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
-            }
-            $updatedMacro = $this->service->update($request->toDTO(), auth()->id());
-            return $this->success($updatedMacro, 'Macro updated successfully');
-        } catch (MacroNotFoundException $e) {
-            return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (Throwable $e) {
-            return $this->error('Failed to update macro', Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($macro->user_id !== auth()->id()) {
+            return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
         }
+        return $this->success($this->service->update($request->toDTO(), auth()->id()), 'Macro updated successfully');
     }
 
     public function destroy(Macro $macro): JsonResponse
     {
-        try {
-            // Ensure the macro belongs to the authenticated user
-            if ($macro->user_id !== auth()->id()) {
-                return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
-            }
-            $this->service->delete((string) $macro->id, auth()->id());
-            return $this->success(null, 'Macro deleted successfully', Response::HTTP_NO_CONTENT);
-        } catch (MacroNotFoundException $e) {
-            return $this->error($e->getMessage(), $e->getHttpStatusCode());
-        } catch (Throwable $e) {
-            return $this->error('Failed to delete macro', Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($macro->user_id !== auth()->id()) {
+            return $this->error('Macro not found', Response::HTTP_NOT_FOUND);
         }
+        return $this->success($this->service->delete((string) $macro->id, auth()->id()), 'Macro deleted successfully', Response::HTTP_NO_CONTENT);
     }
 }
 

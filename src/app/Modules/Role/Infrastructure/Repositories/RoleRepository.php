@@ -36,7 +36,7 @@ class RoleRepository implements RoleRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -51,9 +51,8 @@ class RoleRepository implements RoleRepositoryInterface
     public function findById(string $id): ?array
     {
         try {
-            $role = Role::with('permissions')->find($id);
-            return $role ? $role->toArray() : null;
-        } catch (Throwable $e) {
+            return ($role = Role::with('permissions')->find($id)) ? $role->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -71,27 +70,25 @@ class RoleRepository implements RoleRepositoryInterface
             }
 
             return $role->load('permissions')->toArray();
-        } catch (Throwable $e) {
-            throw RoleCreationFailedException::fromException($e);
+        } catch (Throwable $exception) {
+            throw RoleCreationFailedException::fromException($exception);
         }
     }
 
     public function update(string $id, array $data): bool
     {
         try {
-            $role = Role::findOrFail($id);
-            return $role->update($data);
-        } catch (Throwable $e) {
-            throw RoleUpdateFailedException::fromException($id, $e);
+            return Role::findOrFail($id)->update($data);
+        } catch (Throwable $exception) {
+            throw RoleUpdateFailedException::fromException($id, $exception);
         }
     }
 
     public function delete(string $id): bool
     {
         try {
-            $role = Role::findOrFail($id);
-            return $role->delete();
-        } catch (Throwable $e) {
+            return Role::findOrFail($id)->delete();
+        } catch (Throwable $exception) {
             return false;
         }
     }
@@ -99,21 +96,19 @@ class RoleRepository implements RoleRepositoryInterface
     public function attachPermission(string $roleId, string $permissionId): bool
     {
         try {
-            $role = Role::findOrFail($roleId);
-            $role->permissions()->syncWithoutDetaching([$permissionId]);
+            Role::findOrFail($roleId)->permissions()->syncWithoutDetaching([$permissionId]);
             return true;
-        } catch (Throwable $e) {
-            throw PermissionAttachmentFailedException::fromException($roleId, $permissionId, $e);
+        } catch (Throwable $exception) {
+            throw PermissionAttachmentFailedException::fromException($roleId, $permissionId, $exception);
         }
     }
 
     public function detachPermission(string $roleId, string $permissionId): bool
     {
         try {
-            $role = Role::findOrFail($roleId);
-            $role->permissions()->detach($permissionId);
+            Role::findOrFail($roleId)->permissions()->detach($permissionId);
             return true;
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return false;
         }
     }
@@ -121,9 +116,8 @@ class RoleRepository implements RoleRepositoryInterface
     public function hasUsers(string $roleId): bool
     {
         try {
-            $role = Role::findOrFail($roleId);
-            return $role->users()->count() > 0;
-        } catch (Throwable $e) {
+            return Role::findOrFail($roleId)->users()->count() > 0;
+        } catch (Throwable $exception) {
             return false;
         }
     }

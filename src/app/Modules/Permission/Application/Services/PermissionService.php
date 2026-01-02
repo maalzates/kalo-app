@@ -10,7 +10,6 @@ use App\Modules\Permission\Application\DTOs\UpdatePermissionDTO;
 use App\Modules\Permission\Domain\Contracts\PermissionRepositoryInterface;
 use App\Modules\Permission\Domain\Exceptions\PermissionInUseException;
 use App\Modules\Permission\Domain\Exceptions\PermissionNotFoundException;
-use Throwable;
 
 class PermissionService
 {

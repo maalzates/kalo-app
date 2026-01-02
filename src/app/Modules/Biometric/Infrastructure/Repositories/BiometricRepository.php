@@ -43,7 +43,7 @@ class BiometricRepository implements BiometricRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -58,11 +58,10 @@ class BiometricRepository implements BiometricRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
-            $biometric = Biometric::where('id', $id)
+            return ($biometric = Biometric::where('id', $id)
                 ->where('user_id', $userId)
-                ->first();
-            return $biometric ? $biometric->toArray() : null;
-        } catch (Throwable $e) {
+                ->first()) ? $biometric->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -70,33 +69,32 @@ class BiometricRepository implements BiometricRepositoryInterface
     public function create(array $data): array
     {
         try {
-            $biometric = Biometric::create($data);
-            return $biometric->toArray();
-        } catch (Throwable $e) {
-            throw BiometricCreationFailedException::fromException($e);
+            return Biometric::create($data)->toArray();
+        } catch (Throwable $exception) {
+            throw BiometricCreationFailedException::fromException($exception);
         }
     }
 
     public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $biometric = Biometric::where('id', $id)
+            return Biometric::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $biometric->update($data);
-        } catch (Throwable $e) {
-            throw BiometricUpdateFailedException::fromException($id, $e);
+                ->firstOrFail()
+                ->update($data);
+        } catch (Throwable $exception) {
+            throw BiometricUpdateFailedException::fromException($id, $exception);
         }
     }
 
     public function delete(string $id, int $userId): bool
     {
         try {
-            $biometric = Biometric::where('id', $id)
+            return Biometric::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $biometric->delete();
-        } catch (Throwable $e) {
+                ->firstOrFail()
+                ->delete();
+        } catch (Throwable $exception) {
             return false;
         }
     }

@@ -41,7 +41,7 @@ class AuthRepository implements AuthRepositoryInterface
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ];
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             throw RegistrationFailedException::forUserRegistration($dto);
         }
     }
@@ -68,7 +68,7 @@ class AuthRepository implements AuthRepositoryInterface
             ];
         } catch (InvalidCredentialsException $exception) {
             throw $exception;
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             throw InvalidCredentialsException::forLogin($dto);
         }
     }
@@ -76,11 +76,9 @@ class AuthRepository implements AuthRepositoryInterface
     public function logout(int $userId): bool
     {
         try {
-            $user = User::findOrFail($userId);
-            $user->currentAccessToken()->delete();
-
+            User::findOrFail($userId)->currentAccessToken()->delete();
             return true;
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             throw LogoutFailedException::forUser($userId);
         }
     }

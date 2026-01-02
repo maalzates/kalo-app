@@ -11,7 +11,6 @@ use App\Modules\Role\Application\DTOs\UpdateRoleDTO;
 use App\Modules\Role\Domain\Contracts\RoleRepositoryInterface;
 use App\Modules\Role\Domain\Exceptions\RoleInUseException;
 use App\Modules\Role\Domain\Exceptions\RoleNotFoundException;
-use Throwable;
 
 class RoleService
 {

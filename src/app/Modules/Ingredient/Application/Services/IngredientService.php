@@ -9,7 +9,6 @@ use App\Modules\Ingredient\Application\DTOs\IngredientFilterDTO;
 use App\Modules\Ingredient\Application\DTOs\UpdateIngredientDTO;
 use App\Modules\Ingredient\Domain\Contracts\IngredientRepositoryInterface;
 use App\Modules\Ingredient\Domain\Exceptions\IngredientNotFoundException;
-use Throwable;
 
 class IngredientService
 {

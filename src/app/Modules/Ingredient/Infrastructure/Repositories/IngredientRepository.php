@@ -59,7 +59,7 @@ class IngredientRepository implements IngredientRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -74,11 +74,10 @@ class IngredientRepository implements IngredientRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
-            $ingredient = Ingredient::where('id', $id)
+            return ($ingredient = Ingredient::where('id', $id)
                 ->where('user_id', $userId)
-                ->first();
-            return $ingredient ? $ingredient->toArray() : null;
-        } catch (Throwable $e) {
+                ->first()) ? $ingredient->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -86,33 +85,32 @@ class IngredientRepository implements IngredientRepositoryInterface
     public function create(array $data): array
     {
         try {
-            $ingredient = Ingredient::create($data);
-            return $ingredient->toArray();
-        } catch (Throwable $e) {
-            throw IngredientCreationFailedException::fromException($e);
+            return Ingredient::create($data)->toArray();
+        } catch (Throwable $exception) {
+            throw IngredientCreationFailedException::fromException($exception);
         }
     }
 
     public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $ingredient = Ingredient::where('id', $id)
+            return Ingredient::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $ingredient->update($data);
-        } catch (Throwable $e) {
-            throw IngredientUpdateFailedException::fromException($id, $e);
+                ->firstOrFail()
+                ->update($data);
+        } catch (Throwable $exception) {
+            throw IngredientUpdateFailedException::fromException($id, $exception);
         }
     }
 
     public function delete(string $id, int $userId): bool
     {
         try {
-            $ingredient = Ingredient::where('id', $id)
+            return Ingredient::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $ingredient->delete();
-        } catch (Throwable $e) {
+                ->firstOrFail()
+                ->delete();
+        } catch (Throwable $exception) {
             return false;
         }
     }

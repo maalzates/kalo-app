@@ -51,7 +51,7 @@ class MealLogRepository implements MealLogRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -66,11 +66,10 @@ class MealLogRepository implements MealLogRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
-            $mealLog = MealLog::where('id', $id)
+            return ($mealLog = MealLog::where('id', $id)
                 ->where('user_id', $userId)
-                ->first();
-            return $mealLog ? $mealLog->toArray() : null;
-        } catch (Throwable $e) {
+                ->first()) ? $mealLog->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -78,33 +77,32 @@ class MealLogRepository implements MealLogRepositoryInterface
     public function create(array $data): array
     {
         try {
-            $mealLog = MealLog::create($data);
-            return $mealLog->toArray();
-        } catch (Throwable $e) {
-            throw MealLogCreationFailedException::fromException($e);
+            return MealLog::create($data)->toArray();
+        } catch (Throwable $exception) {
+            throw MealLogCreationFailedException::fromException($exception);
         }
     }
 
     public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $mealLog = MealLog::where('id', $id)
+            return MealLog::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $mealLog->update($data);
-        } catch (Throwable $e) {
-            throw MealLogUpdateFailedException::fromException($id, $e);
+                ->firstOrFail()
+                ->update($data);
+        } catch (Throwable $exception) {
+            throw MealLogUpdateFailedException::fromException($id, $exception);
         }
     }
 
     public function delete(string $id, int $userId): bool
     {
         try {
-            $mealLog = MealLog::where('id', $id)
+            return MealLog::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $mealLog->delete();
-        } catch (Throwable $e) {
+                ->firstOrFail()
+                ->delete();
+        } catch (Throwable $exception) {
             return false;
         }
     }

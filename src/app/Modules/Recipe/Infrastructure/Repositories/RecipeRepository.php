@@ -56,7 +56,7 @@ class RecipeRepository implements RecipeRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -71,12 +71,11 @@ class RecipeRepository implements RecipeRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
-            $recipe = Recipe::with('ingredients')
+            return ($recipe = Recipe::with('ingredients')
                 ->where('id', $id)
                 ->where('user_id', $userId)
-                ->first();
-            return $recipe ? $recipe->toArray() : null;
-        } catch (Throwable $e) {
+                ->first()) ? $recipe->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -101,31 +100,31 @@ class RecipeRepository implements RecipeRepositoryInterface
             }
 
             return $recipe->load('ingredients')->toArray();
-        } catch (Throwable $e) {
-            throw RecipeCreationFailedException::fromException($e);
+        } catch (Throwable $exception) {
+            throw RecipeCreationFailedException::fromException($exception);
         }
     }
 
     public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $recipe = Recipe::where('id', $id)
+            return Recipe::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $recipe->update($data);
-        } catch (Throwable $e) {
-            throw RecipeUpdateFailedException::fromException($id, $e);
+                ->firstOrFail()
+                ->update($data);
+        } catch (Throwable $exception) {
+            throw RecipeUpdateFailedException::fromException($id, $exception);
         }
     }
 
     public function delete(string $id, int $userId): bool
     {
         try {
-            $recipe = Recipe::where('id', $id)
+            return Recipe::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $recipe->delete();
-        } catch (Throwable $e) {
+                ->firstOrFail()
+                ->delete();
+        } catch (Throwable $exception) {
             return false;
         }
     }
@@ -133,21 +132,19 @@ class RecipeRepository implements RecipeRepositoryInterface
     public function attachIngredient(string $recipeId, string $ingredientId, array $pivotData): bool
     {
         try {
-            $recipe = Recipe::findOrFail($recipeId);
-            $recipe->ingredients()->attach($ingredientId, $pivotData);
+            Recipe::findOrFail($recipeId)->ingredients()->attach($ingredientId, $pivotData);
             return true;
-        } catch (Throwable $e) {
-            throw IngredientAttachmentFailedException::fromException($recipeId, $ingredientId, $e);
+        } catch (Throwable $exception) {
+            throw IngredientAttachmentFailedException::fromException($recipeId, $ingredientId, $exception);
         }
     }
 
     public function detachIngredient(string $recipeId, string $ingredientId): bool
     {
         try {
-            $recipe = Recipe::findOrFail($recipeId);
-            $recipe->ingredients()->detach($ingredientId);
+            Recipe::findOrFail($recipeId)->ingredients()->detach($ingredientId);
             return true;
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return false;
         }
     }
@@ -155,11 +152,10 @@ class RecipeRepository implements RecipeRepositoryInterface
     public function updatePivot(string $recipeId, string $ingredientId, array $pivotData): bool
     {
         try {
-            $recipe = Recipe::findOrFail($recipeId);
-            $recipe->ingredients()->updateExistingPivot($ingredientId, $pivotData);
+            Recipe::findOrFail($recipeId)->ingredients()->updateExistingPivot($ingredientId, $pivotData);
             return true;
-        } catch (Throwable $e) {
-            throw IngredientAttachmentFailedException::fromException($recipeId, $ingredientId, $e);
+        } catch (Throwable $exception) {
+            throw IngredientAttachmentFailedException::fromException($recipeId, $ingredientId, $exception);
         }
     }
 }

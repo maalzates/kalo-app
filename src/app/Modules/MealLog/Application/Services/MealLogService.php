@@ -10,7 +10,6 @@ use App\Modules\MealLog\Application\DTOs\UpdateMealLogDTO;
 use App\Modules\MealLog\Domain\Contracts\MealLogRepositoryInterface;
 use App\Modules\MealLog\Domain\Exceptions\InvalidMealLogException;
 use App\Modules\MealLog\Domain\Exceptions\MealLogNotFoundException;
-use Throwable;
 
 class MealLogService
 {

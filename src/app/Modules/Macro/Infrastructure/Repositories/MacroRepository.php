@@ -35,7 +35,7 @@ class MacroRepository implements MacroRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -50,12 +50,11 @@ class MacroRepository implements MacroRepositoryInterface
     public function findById(string $id, int $userId): ?array
     {
         try {
-            $macro = Macro::with('user')
+            return ($macro = Macro::with('user')
                 ->where('id', $id)
                 ->where('user_id', $userId)
-                ->first();
-            return $macro ? $macro->toArray() : null;
-        } catch (Throwable $e) {
+                ->first()) ? $macro->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -63,9 +62,8 @@ class MacroRepository implements MacroRepositoryInterface
     public function findByUserId(string $userId): ?array
     {
         try {
-            $macro = Macro::where('user_id', $userId)->with('user')->first();
-            return $macro ? $macro->toArray() : null;
-        } catch (Throwable $e) {
+            return ($macro = Macro::where('user_id', $userId)->with('user')->first()) ? $macro->toArray() : null;
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -73,33 +71,32 @@ class MacroRepository implements MacroRepositoryInterface
     public function create(array $data): array
     {
         try {
-            $macro = Macro::create($data);
-            return $macro->load('user')->toArray();
-        } catch (Throwable $e) {
-            throw MacroCreationFailedException::fromException($e);
+            return Macro::create($data)->load('user')->toArray();
+        } catch (Throwable $exception) {
+            throw MacroCreationFailedException::fromException($exception);
         }
     }
 
     public function update(string $id, array $data, int $userId): bool
     {
         try {
-            $macro = Macro::where('id', $id)
+            return Macro::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $macro->update($data);
-        } catch (Throwable $e) {
-            throw MacroUpdateFailedException::fromException($id, $e);
+                ->firstOrFail()
+                ->update($data);
+        } catch (Throwable $exception) {
+            throw MacroUpdateFailedException::fromException($id, $exception);
         }
     }
 
     public function delete(string $id, int $userId): bool
     {
         try {
-            $macro = Macro::where('id', $id)
+            return Macro::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail();
-            return $macro->delete();
-        } catch (Throwable $e) {
+                ->firstOrFail()
+                ->delete();
+        } catch (Throwable $exception) {
             return false;
         }
     }

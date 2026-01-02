@@ -44,7 +44,7 @@ class UserRepository implements UserRepositoryInterface
                     'total' => $paginated->total(),
                 ],
             ];
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return [
                 'data' => [],
                 'meta' => [
@@ -60,7 +60,7 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             return ($user = User::find($id)) ? $user->toArray() : null;
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -69,7 +69,7 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             return ($user = User::with(['macros', 'biometrics'])->find($id)) ? $user->toArray() : null;
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -78,7 +78,7 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             return ($user = User::find($id)) ? $user->toArray() : null;
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -86,12 +86,8 @@ class UserRepository implements UserRepositoryInterface
     public function validatePassword(string $id, string $password): bool
     {
         try {
-            $user = User::find($id);
-            if ($user === null) {
-                return false;
-            }
-            return Hash::check($password, $user->password);
-        } catch (Throwable $e) {
+            return ($user = User::find($id)) && Hash::check($password, $user->password);
+        } catch (Throwable $exception) {
             return false;
         }
     }
@@ -100,7 +96,7 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             return ($user = User::where('email', $email)->first()) ? $user->toArray() : null;
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return null;
         }
     }
@@ -109,8 +105,8 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             return User::create($data)->toArray();
-        } catch (Throwable $e) {
-            throw UserCreationFailedException::fromException($e);
+        } catch (Throwable $exception) {
+            throw UserCreationFailedException::fromException($exception);
         }
     }
 
@@ -118,8 +114,8 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             return User::findOrFail($id)->update($data);
-        } catch (Throwable $e) {
-            throw UserUpdateFailedException::fromException($id, $e);
+        } catch (Throwable $exception) {
+            throw UserUpdateFailedException::fromException($id, $exception);
         }
     }
 
@@ -127,7 +123,7 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             return User::findOrFail($id)->delete();
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             return false;
         }
     }
