@@ -189,13 +189,13 @@ const form = ref({ ...initialState });
 
 const filteredLibrary = computed(() => {
     return activeTab.value === "food"
-        ? ingredientsStore.ingredientsForMealLog
+        ? ingredientsStore.publicAndPrivateIngredients
         : recipesStore.recipesForMealLog;
 });
 
 onMounted(() => {
-    // Cargar ingredientes y recetas incluyendo elementos públicos para MealLogs
-    ingredientsStore.fetchIngredientsForMealLog();
+    // Cargar ingredientes y recetas incluyendo elementos públicos
+    ingredientsStore.fetchPublicAndPrivateIngredients();
     recipesStore.fetchRecipesForMealLog();
 });
 
@@ -275,8 +275,8 @@ const handleCreateNew = () => {
 // Watch para detectar cuando se cierra el diálogo de ingrediente y recargar la lista
 watch(() => isCreateIngredientDialogOpen.value, async (isOpen) => {
     if (!isOpen) {
-        // Cuando se cierra el diálogo, recargar la lista de ingredientes para MealLogs (incluyendo públicos)
-        await ingredientsStore.fetchIngredientsForMealLog();
+        // Cuando se cierra el diálogo, recargar la lista de ingredientes (incluyendo públicos)
+        await ingredientsStore.fetchPublicAndPrivateIngredients();
     }
 });
 

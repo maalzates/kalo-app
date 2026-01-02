@@ -62,7 +62,7 @@
                     </div>
                     <v-autocomplete
                         v-model="selectedIngFromList"
-                        :items="ingredientsStore.ingredients"
+                        :items="ingredientsStore.publicAndPrivateIngredients"
                         item-title="name"
                         return-object
                         label="Buscar en mis ingredientes..."
@@ -180,8 +180,8 @@
   });
   
   onMounted(() => {
-    if (ingredientsStore.ingredients.length === 0) {
-      ingredientsStore.fetchIngredients();
+    if (ingredientsStore.publicAndPrivateIngredients.length === 0) {
+      ingredientsStore.fetchPublicAndPrivateIngredients();
     }
   });
   

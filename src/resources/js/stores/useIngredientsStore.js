@@ -4,7 +4,7 @@ import ingredientsRepository from "@/repositories/ingredientsRepository.js";
 
 export const useIngredientsStore = defineStore("ingredientsStore", () => {
     const ingredients = ref([]);
-    const ingredientsForMealLog = ref([]); // Variable separada para CreateMealLog (incluye públicos)
+    const publicAndPrivateIngredients = ref([]); // Variable que incluye ingredientes privados y públicos
     const loading = ref(false);
     const error = ref(null);
 
@@ -30,24 +30,24 @@ export const useIngredientsStore = defineStore("ingredientsStore", () => {
         }
     };
 
-    const fetchIngredientsForMealLog = async (filters = {}) => {
+    const fetchPublicAndPrivateIngredients = async (filters = {}) => {
         loading.value = true;
         error.value = null;
         try {
-            // Siempre incluir elementos públicos para MealLogs
+            // Siempre incluir elementos públicos
             const response = await ingredientsRepository.getAll({ ...filters, include_public: true });
             // Manejar respuesta paginada o directa
             if (response && Array.isArray(response)) {
-                ingredientsForMealLog.value = response;
+                publicAndPrivateIngredients.value = response;
             } else if (response?.data && Array.isArray(response.data)) {
-                ingredientsForMealLog.value = response.data;
+                publicAndPrivateIngredients.value = response.data;
             } else {
-                ingredientsForMealLog.value = [];
+                publicAndPrivateIngredients.value = [];
             }
         } catch (err) {
             error.value = err.response?.data?.message || 'Error al cargar ingredientes';
-            console.error('Error fetching ingredients for meal log:', err);
-            ingredientsForMealLog.value = [];
+            console.error('Error fetching public and private ingredients:', err);
+            publicAndPrivateIngredients.value = [];
         } finally {
             loading.value = false;
         }
@@ -59,8 +59,8 @@ export const useIngredientsStore = defineStore("ingredientsStore", () => {
         try {
             const newIngredient = await ingredientsRepository.create(ingredientData);
             ingredients.value.push(newIngredient);
-            // También agregar a ingredientsForMealLog si es del usuario actual
-            ingredientsForMealLog.value.push(newIngredient);
+            // También agregar a publicAndPrivateIngredients si es del usuario actual
+            publicAndPrivateIngredients.value.push(newIngredient);
             return newIngredient;
         } catch (err) {
             error.value = err.response?.data?.message || 'Error al crear ingrediente';
@@ -105,11 +105,11 @@ export const useIngredientsStore = defineStore("ingredientsStore", () => {
 
     return {
         ingredients,
-        ingredientsForMealLog,
+        publicAndPrivateIngredients,
         loading,
         error,
         fetchIngredients,
-        fetchIngredientsForMealLog,
+        fetchPublicAndPrivateIngredients,
         createIngredient,
         updateIngredient,
         deleteIngredient,
