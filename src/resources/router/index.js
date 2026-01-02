@@ -3,6 +3,7 @@ import Dashboard from '@/components/menus/Dashboard.vue';
 import Ingredients from '@/components/menus/Ingredients.vue';
 import Recipes from '@/components/menus/Recipes.vue';
 import Profile from '@/components/user/Profile.vue';
+import Progress from '@/components/menus/Progress.vue';
 import MyMacros from '@/components/menus/MyMacros.vue';
 import Login from '@/components/Login.vue';
 import Register from '@/components/Register.vue';
@@ -49,6 +50,12 @@ const routes = [
         component: MyMacros, 
         meta: {requiresAuth: true}
     },
+    {
+        path: '/progress', 
+        name: 'progress', 
+        component: Progress, 
+        meta: {requiresAuth: true}
+    }
     // Ruta comodín: redirige cualquier URL desconocida al Dashboard
     { 
         path: '/:pathMatch(.*)*', 

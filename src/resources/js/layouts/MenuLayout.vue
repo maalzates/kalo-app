@@ -18,6 +18,7 @@
           <v-list-item prepend-icon="mdi-food-apple" title="Ingredientes" to="/ingredients" />
           <v-list-item prepend-icon="mdi-chef-hat" title="Recetas" to="/recipes" />
           <v-list-item prepend-icon="mdi-target" title="Macros" to="/macros" />
+          <v-list-item prepend-icon="mdi-trending-up" title="Progreso" to="/progress" />
         </v-list>
   
         <template v-slot:append>
