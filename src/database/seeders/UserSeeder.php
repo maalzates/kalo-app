@@ -27,6 +27,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('root'),
                 'role_id' => $adminRole->id ?? 2,
                 'email_verified_at' => now(),
+                'weight' => 75.50,
+                'goal_type' => 'maintain',
             ]
         );
 
@@ -38,6 +40,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('root'),
                 'role_id' => $userRole->id ?? 1,
                 'email_verified_at' => now(),
+                'weight' => 70.25,
+                'goal_type' => 'cut',
             ]
         );
 
@@ -49,6 +53,8 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('root'),
                 'role_id' => $premiumRole->id ?? 4,
                 'email_verified_at' => now(),
+                'weight' => 80.00,
+                'goal_type' => 'grow',
             ]
         );
 

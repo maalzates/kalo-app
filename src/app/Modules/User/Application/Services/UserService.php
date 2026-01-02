@@ -70,6 +70,7 @@ class UserService
             'birth_date' => $dto->birthDate,
             'gender' => $dto->gender,
             'height' => $dto->height,
+            'weight' => $dto->weight,
             'role_id' => $dto->roleId,
             'country_code' => $dto->countryCode,
             'cellphone' => $dto->cellphone,

@@ -27,6 +27,7 @@ class UserFactory extends Factory
             'birth_date' => $birthDate ? $birthDate->format('Y-m-d') : null,
             'gender' => $this->faker->optional(0.9)->randomElement(['male', 'female', 'other']),
             'height' => $this->faker->optional(0.8)->numberBetween(150, 200),
+            'weight' => $this->faker->optional(0.8)->randomFloat(2, 40, 150),
             'google_id' => null,
             'auth_provider' => null,
             'password' => static::$password ??= Hash::make('password'),
@@ -66,6 +67,7 @@ class UserFactory extends Factory
                 'name' => $this->faker->name('male'),
                 'gender' => 'male',
                 'height' => $this->faker->numberBetween(165, 195),
+                'weight' => $this->faker->randomFloat(2, 60, 100),
             ];
         });
     }
@@ -77,6 +79,7 @@ class UserFactory extends Factory
                 'name' => $this->faker->name('female'),
                 'gender' => 'female',
                 'height' => $this->faker->numberBetween(152, 180),
+                'weight' => $this->faker->randomFloat(2, 45, 80),
             ];
         });
     }

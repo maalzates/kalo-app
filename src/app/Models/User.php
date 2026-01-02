@@ -8,6 +8,7 @@ use App\Models\Biometric;
 use App\Models\Ingredient;
 use App\Models\MealLog;
 use App\Models\Recipe;
+use App\Models\Macro;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -27,6 +28,7 @@ class User extends Authenticatable
         'birth_date',
         'gender',
         'height',
+        'weight',
         'country_code',
         'cellphone',
         'activity_level',
@@ -50,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'birth_date' => 'date',
             'password' => 'hashed',
+            'weight' => 'decimal:2',
         ];
     }
 

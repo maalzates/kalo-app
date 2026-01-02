@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->integer('height')->nullable();
+            $table->decimal('weight', 5, 2)->nullable();
             $table->string('country_code')->nullable();
             $table->string('cellphone')->nullable();
             $table->string('activity_level')->nullable()->default('Sedentario');

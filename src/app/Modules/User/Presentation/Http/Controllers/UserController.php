@@ -29,6 +29,16 @@ class UserController extends ApiController
         return $this->success($results);
     }
 
+    public function me(): JsonResponse
+    {
+        try {
+            $userData = $this->service->findCurrentUser();
+            return $this->success($userData);
+        } catch (UserNotFoundException $e) {
+            return $this->error($e->getMessage(), $e->getHttpStatusCode());
+        }
+    }
+
     public function show(User $user): JsonResponse
     {
         try {

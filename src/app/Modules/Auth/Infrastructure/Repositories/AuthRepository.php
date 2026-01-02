@@ -13,6 +13,7 @@ use App\Modules\Auth\Domain\Exceptions\LogoutFailedException;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Throwable;
 
 class AuthRepository implements AuthRepositoryInterface
 {
@@ -38,7 +39,7 @@ class AuthRepository implements AuthRepositoryInterface
                 'access_token' => $token,
                 'token_type' => 'Bearer',
             ];
-        } catch (\Throwable) {
+        } catch (Throwable) {
             throw RegistrationFailedException::forUserRegistration($dto);
         }
     }
@@ -60,7 +61,7 @@ class AuthRepository implements AuthRepositoryInterface
             ];
         } catch (InvalidCredentialsException $exception) {
             throw $exception;
-        } catch (\Throwable) {
+        } catch (Throwable) {
             throw InvalidCredentialsException::forLogin($dto);
         }
     }
@@ -72,7 +73,7 @@ class AuthRepository implements AuthRepositoryInterface
             $user->currentAccessToken()->delete();
 
             return true;
-        } catch (\Throwable) {
+        } catch (Throwable) {
             throw LogoutFailedException::forUser($userId);
         }
     }
