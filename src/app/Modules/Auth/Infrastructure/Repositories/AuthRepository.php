@@ -32,6 +32,8 @@ class AuthRepository implements AuthRepositoryInterface
                 'email_verified_at' => now(),
             ]);
 
+            // Reload user with relationships from database to avoid session conflicts
+            $user = User::with(['macros', 'biometrics'])->findOrFail($user->id);
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return [
@@ -51,7 +53,8 @@ class AuthRepository implements AuthRepositoryInterface
                 throw InvalidCredentialsException::forLogin($dto);
             }
 
-            $user = Auth::user();
+            $authenticatedUser = Auth::user();
+            $user = User::with(['macros', 'biometrics'])->findOrFail($authenticatedUser->id);
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return [

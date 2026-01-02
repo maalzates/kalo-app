@@ -17,7 +17,6 @@ readonly class UpdateUserDTO
         public ?float $weight,
         public ?string $roleId,
         public ?string $countryCode,
-        public ?string $cellphone,
         public ?string $activityLevel,
         public ?string $goalType,
         public ?string $macroCalculationMode,

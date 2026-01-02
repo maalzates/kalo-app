@@ -30,7 +30,6 @@ class User extends Authenticatable
         'height',
         'weight',
         'country_code',
-        'cellphone',
         'activity_level',
         'goal_type',
         'macro_calculation_mode',
@@ -74,6 +73,11 @@ class User extends Authenticatable
     public function biometrics(): HasMany
     {
         return $this->hasMany(Biometric::class);
+    }
+
+    public function macros(): HasMany
+    {
+        return $this->hasMany(Macro::class);
     }
 }
 

@@ -1,6 +1,7 @@
 <template>
   <v-card v-if="user" rounded="xl" elevation="0" border class="mx-auto bg-grey-lighten-4">
     <v-card-text class="pa-4 pa-md-6">
+      {{ userStore.user }}
       <v-row>
         <v-col cols="12" md="4">
           <v-card rounded="lg" class="fill-height border-0 pa-6" elevation="0">
@@ -33,7 +34,7 @@
                   </v-avatar>
                   <div>
                     <div class="text-caption text-grey">Teléfono</div>
-                    <div class="text-body-2 font-weight-bold">{{ user.country_code }} {{ user.cellphone }}</div>
+                    <div class="text-body-2 font-weight-bold">{{ user.country_code }} {{ user.phone }}</div>
                   </div>
                 </div>
 
@@ -137,13 +138,10 @@ const handleSave = async (userData) => {
       return;
     }
     
-    // Mapear phone a cellphone para el backend
+    // Enviar datos directamente con phone
     const dataToSend = {
       ...userData,
-      cellphone: userData.phone, // El formulario envía 'phone', pero el backend espera 'cellphone'
     };
-    // Eliminar phone si existe para evitar confusión
-    delete dataToSend.phone;
     
     // Actualizar usuario en el backend
     const updatedUser = await usersRepository.updateUser(user.value.id, dataToSend);

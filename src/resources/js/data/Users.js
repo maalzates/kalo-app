@@ -9,7 +9,7 @@ export const users = [
       activity_level: 'moderate',
       goal_type: 'fat_loss',
       country_code: '+57',
-      cellphone: '3113334567', 
+      phone: '3113334567', 
       macro_calculation_mode: 'auto',
       current_targets: {
         calories: 2250,

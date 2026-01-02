@@ -1,6 +1,5 @@
 <template>
   <UserInformationCard class="mb-2" maxWidth="1800px"/>
-    
   </template>
 
   <script setup>

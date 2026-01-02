@@ -16,14 +16,13 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('phone')->nullable();
             $table->date('birth_date')->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->integer('height')->nullable();
             $table->decimal('weight', 5, 2)->nullable();
             $table->string('country_code')->nullable();
-            $table->string('cellphone')->nullable();
             $table->string('activity_level')->nullable()->default('Sedentario');
             $table->enum('goal_type', ['cut', 'maintain', 'grow'])->nullable()->default('maintain');
             $table->string('macro_calculation_mode')->nullable();

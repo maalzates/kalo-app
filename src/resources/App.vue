@@ -28,11 +28,10 @@
 
       <template v-slot:append>
         <v-divider></v-divider>
-
         <v-list-item
           lines="two"
           :title="userStore.user?.name || 'Usuario'"
-          :subtitle="'Meta: ' + (userStore.user?.biometrics || 0) + ' kcal'"
+          :subtitle="'Meta: ' + (userStore.user.macros[0].kcal || 0) + ' kcal'"
           class="pa-4 cursor-pointer"
           to="/profile"
         >
