@@ -10,14 +10,12 @@
                 <v-btn icon @click="$emit('update:modelValue', false)">
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
-                <v-toolbar-title class="text-body-1 font-weight-bold">
-                    Registrar Consumo
-                </v-toolbar-title>
+                <v-toolbar-title class="text-body-1 font-weight-bold">Registrar Consumo</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn
                     variant="flat"
                     color="white"
-                    class="text-deep-purple font-weight-bold rounded-pill px-4"
+                    class="text-deep-purple font-weight-bold rounded-pill px-6"
                     :disabled="!form.name || form.base_amount <= 0"
                     @click="saveMeal"
                 >
@@ -28,27 +26,46 @@
             <v-container class="pa-2 pa-sm-4" style="max-width: 800px">
                 <v-card rounded="xl" class="pa-2 mb-3" elevation="1">
                     <v-tabs v-model="activeTab" grow color="deep-purple-accent-4" density="comfortable">
+                        <v-tab value="ai" class="text-caption font-weight-bold">
+                            <v-icon start size="18">mdi-auto-fix</v-icon>IA Cámara
+                        </v-tab>
                         <v-tab value="food" class="text-caption font-weight-bold">Alimentos</v-tab>
                         <v-tab value="recipe" class="text-caption font-weight-bold">Recetas</v-tab>
-                        <v-tab value="ai" class="text-caption font-weight-bold">
-                            <v-icon start size="16">mdi-auto-fix</v-icon>IA
-                        </v-tab>
                     </v-tabs>
                 </v-card>
 
-                <v-window v-model="activeTab">
+                <v-window v-model="activeTab" :touch="false">
                     <v-window-item value="ai" class="pb-3">
-                        <v-card rounded="xl" class="overflow-hidden" border="sm">
+                        <v-card rounded="xl" class="overflow-hidden mb-2" border="sm">
                             <AddFoodPhoto @analysis-finished="onAiAnalysisFinished" />
                         </v-card>
+                        <p class="text-center text-caption text-grey-darken-1 px-4 mt-2">
+                            Analiza automáticamente los macros de tu plato con una foto.
+                        </p>
                     </v-window-item>
 
                     <v-window-item v-for="tab in ['food', 'recipe']" :key="tab" :value="tab">
                         <v-card rounded="xl" class="pa-4 mb-3" border="sm">
+                            <div class="d-flex align-center justify-space-between mb-3">
+                                <span class="text-subtitle-2 font-weight-bold text-grey-darken-2 text-uppercase">
+                                    {{ tab === 'food' ? 'Mis Alimentos' : 'Mis Recetas' }}
+                                </span>
+                                <v-btn 
+                                    variant="text" 
+                                    color="deep-purple-accent-4" 
+                                    density="compact" 
+                                    class="text-caption font-weight-bold"
+                                    prepend-icon="mdi-plus-circle"
+                                    @click="handleCreateNew(tab)"
+                                >
+                                    Crear nuevo
+                                </v-btn>
+                            </div>
+                            
                             <v-autocomplete
                                 v-model="selectedItem"
-                                :label="activeTab === 'food' ? 'Buscar alimento...' : 'Buscar receta...'"
-                                :items="filteredLibrary"
+                                :label="tab === 'food' ? 'Buscar en la lista...' : 'Buscar receta...'"
+                                :items="tab === 'food' ? ingredientsStore.publicAndPrivateIngredients : recipesStore.recipesForMealLog"
                                 item-title="name"
                                 return-object
                                 variant="outlined"
@@ -59,12 +76,9 @@
                                 @update:model-value="onFoodSelected"
                             >
                                 <template v-slot:no-data>
-                                    <v-list-item @click="handleCreateNew" class="py-2">
-                                        <v-list-item-title class="text-deep-purple font-weight-bold text-body-2">
-                                            <v-icon start size="18">mdi-plus-circle</v-icon>
-                                            Crear nuevo registro
-                                        </v-list-item-title>
-                                    </v-list-item>
+                                    <div class="pa-4 text-center text-caption text-grey">
+                                        No se encontró nada con ese nombre.
+                                    </div>
                                 </template>
                             </v-autocomplete>
                         </v-card>
@@ -73,15 +87,11 @@
 
                 <v-expand-transition>
                     <div v-if="form.name">
-                        <div class="text-overline mb-1 ml-2 text-deep-purple-accent-4 font-weight-bold">
-                            Detalles del Registro
-                        </div>
-
-                        <v-card rounded="xl" class="pa-4 pa-sm-5 mb-4" border="sm">
+                        <div class="text-overline mb-1 ml-2 text-deep-purple-accent-4 font-weight-bold">Revisar detalles</div>
+                        <v-card rounded="xl" class="pa-4 mb-4" border="sm">
                             <div class="text-subtitle-1 font-weight-black mb-4 text-deep-purple-darken-4">
                                 {{ form.name }}
                             </div>
-
                             <v-row dense>
                                 <v-col :cols="activeTab === 'recipe' ? 12 : 7">
                                     <v-text-field
@@ -90,7 +100,6 @@
                                         type="number"
                                         variant="outlined"
                                         rounded="lg"
-                                        density="comfortable"
                                         color="deep-purple-accent-4"
                                         hide-details
                                     ></v-text-field>
@@ -102,7 +111,6 @@
                                         label="Unidad"
                                         variant="outlined"
                                         rounded="lg"
-                                        density="comfortable"
                                         color="deep-purple-accent-4"
                                         hide-details
                                     ></v-select>
@@ -111,9 +119,9 @@
 
                             <v-card variant="tonal" color="deep-purple-accent-4" rounded="lg" class="mt-4 pa-3">
                                 <v-row no-gutters class="text-center">
-                                    <v-col v-for="metric in metrics" :key="metric.label">
-                                        <div class="text-subtitle-1 font-weight-black">{{ form[metric.key] }}{{ metric.unit }}</div>
-                                        <div class="text-caption font-weight-bold text-uppercase">{{ metric.label }}</div>
+                                    <v-col v-for="m in metrics" :key="m.label">
+                                        <div class="text-subtitle-1 font-weight-black">{{ form[m.key] }}{{ m.unit }}</div>
+                                        <div class="text-caption font-weight-bold text-uppercase" style="font-size: 0.6rem !important">{{ m.label }}</div>
                                     </v-col>
                                 </v-row>
                             </v-card>
@@ -129,7 +137,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useMealLogsStore } from "@/stores/useMealLogsStore";
 import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import { useRecipesStore } from "@/stores/useRecipesStore";
@@ -147,7 +155,7 @@ const dateStore = useDateStore();
 const ingredientsStore = useIngredientsStore();
 const recipesStore = useRecipesStore();
 
-const activeTab = ref("food");
+const activeTab = ref("ai");
 const selectedItem = ref(null);
 const isCreateIngredientDialogOpen = ref(false);
 const isCreateRecipeDialogOpen = ref(false);
@@ -166,12 +174,6 @@ const initialState = {
 };
 
 const form = ref({ ...initialState });
-
-const filteredLibrary = computed(() => {
-    return activeTab.value === "food"
-        ? ingredientsStore.publicAndPrivateIngredients
-        : recipesStore.recipesForMealLog;
-});
 
 const onAiAnalysisFinished = (aiResult) => {
     form.value = {
@@ -193,32 +195,31 @@ const onAiAnalysisFinished = (aiResult) => {
 
 const onFoodSelected = (item) => {
     if (!item) return;
-    const isRecipe = activeTab.value === 'recipe';
-    const amount = isRecipe ? (item.servings || 1) : (item.amount || 100);
-    
+    const isRec = activeTab.value === 'recipe';
+    const amount = isRec ? (item.servings || 1) : (item.amount || 100);
     form.value = {
         ...initialState,
         id: item.id, name: item.name, base_amount: amount,
-        base_unit: isRecipe ? 'serving' : (item.unit || 'g'),
-        calories: Math.round(isRecipe ? item.total_kcal : item.kcal),
-        protein: parseFloat(isRecipe ? item.total_prot : item.prot).toFixed(1),
-        carbs: parseFloat(isRecipe ? item.total_carb : item.carb).toFixed(1),
-        fat: parseFloat(isRecipe ? item.total_fat : item.fat).toFixed(1),
+        base_unit: isRec ? 'serving' : (item.unit || 'g'),
+        calories: Math.round(isRec ? item.total_kcal : item.kcal),
+        protein: parseFloat(isRec ? item.total_prot : item.prot).toFixed(1),
+        carbs: parseFloat(isRec ? item.total_carb : item.carb).toFixed(1),
+        fat: parseFloat(isRec ? item.total_fat : item.fat).toFixed(1),
         base_amount_ref: amount,
-        base_kcal: isRecipe ? item.total_kcal : item.kcal,
-        base_prot: isRecipe ? item.total_prot : item.prot,
-        base_carb: isRecipe ? item.total_carb : item.carb,
-        base_fat: isRecipe ? item.total_fat : item.fat,
+        base_kcal: isRec ? item.total_kcal : item.kcal,
+        base_prot: isRec ? item.total_prot : item.prot,
+        base_carb: isRec ? item.total_carb : item.carb,
+        base_fat: isRec ? item.total_fat : item.fat,
     };
 };
 
-watch(() => form.value.base_amount, (newVal) => {
+watch(() => form.value.base_amount, (val) => {
     if (form.value.base_amount_ref > 0) {
-        const factor = newVal / form.value.base_amount_ref;
-        form.value.calories = Math.round(form.value.base_kcal * factor);
-        form.value.protein = (form.value.base_prot * factor).toFixed(1);
-        form.value.carbs = (form.value.base_carb * factor).toFixed(1);
-        form.value.fat = (form.value.base_fat * factor).toFixed(1);
+        const f = val / form.value.base_amount_ref;
+        form.value.calories = Math.round(form.value.base_kcal * f);
+        form.value.protein = (form.value.base_prot * f).toFixed(1);
+        form.value.carbs = (form.value.base_carb * f).toFixed(1);
+        form.value.fat = (form.value.base_fat * f).toFixed(1);
     }
 });
 
@@ -229,12 +230,17 @@ const saveMeal = async () => {
             quantity: form.value.base_amount.toString(),
             unit: form.value.base_unit || 'g',
             logged_at: date,
-            ...(activeTab.value === 'food' ? { ingredient_id: form.value.id } : { recipe_id: form.value.id })
+            ...(activeTab.value === 'food' && { ingredient_id: form.value.id }),
+            ...(activeTab.value === 'recipe' && { recipe_id: form.value.id }),
         };
         await mealLogsStore.addMealLog(mealData);
         await mealLogsStore.fetchMealLogs({ date_from: date, date_to: date });
         emit("update:modelValue", false);
     } catch (e) { console.error(e); }
+};
+
+const handleCreateNew = (type) => {
+    type === 'food' ? isCreateIngredientDialogOpen.value = true : isCreateRecipeDialogOpen.value = true;
 };
 
 watch(activeTab, () => {
@@ -250,6 +256,6 @@ onMounted(() => {
 
 <style scoped>
 .z-index-10 { z-index: 10; }
-.line-height-1 { line-height: 1.2; }
-:deep(.v-tab) { text-transform: none !important; letter-spacing: 0; }
+.text-uppercase { text-transform: uppercase; letter-spacing: 0.5px; }
+:deep(.v-tab) { text-transform: none !important; }
 </style>

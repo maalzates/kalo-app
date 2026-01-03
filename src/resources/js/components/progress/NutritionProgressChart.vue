@@ -75,7 +75,7 @@
   <template>
     <v-card class="pa-6" rounded="xl" border elevation="0">
       <div class="d-flex justify-space-between align-center mb-6">
-        <span class="text-subtitle-1 font-weight-bold">Nutrición</span>
+        <span class="text-subtitle-1 font-weight-bold">Llegaste a tus requerimientos?</span>
         <v-select
           v-model="selectedMetric"
           :items="metrics"

@@ -1,5 +1,11 @@
 <template>
     <div class="camera-wrapper bg-black rounded-xl overflow-hidden position-relative">
+      <div class="instruction-overlay pa-4 text-center">
+        <div class="text-white font-weight-bold text-body-2 shadow-text">
+          Encuadra tu plato para analizar macros
+        </div>
+      </div>
+  
       <video 
         v-show="!capturedImage" 
         ref="videoPlayer" 
@@ -17,16 +23,16 @@
   
       <v-overlay v-model="mealStore.isAnalyzing" contained class="align-center justify-center text-center px-4">
         <v-progress-circular indeterminate color="white" size="64"></v-progress-circular>
-        <div class="mt-4 text-white font-weight-bold text-body-2">Analizando plato...</div>
+        <div class="mt-4 text-white font-weight-bold text-body-1 shadow-text">Analizando composición...</div>
       </v-overlay>
   
-      <div class="controls-overlay pa-4 d-flex justify-center align-center">
+      <div class="controls-overlay pa-6 d-flex justify-center align-center">
         <v-btn
           v-if="isStreamActive && !capturedImage"
           icon="mdi-camera"
-          size="72"
+          size="80"
           color="white"
-          elevation="8"
+          elevation="12"
           class="shutter-button"
           @click="takePhoto"
         ></v-btn>
@@ -126,9 +132,8 @@
   <style scoped>
   .camera-wrapper {
     width: 100%;
-    /* Mantiene la proporción 4:3 típica de cámaras móviles */
     aspect-ratio: 3 / 4; 
-    max-height: 70vh;
+    max-height: 65vh;
     position: relative;
   }
   
@@ -138,17 +143,30 @@
     object-fit: cover;
   }
   
+  .instruction-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+    z-index: 2;
+  }
+  
   .controls-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
     z-index: 2;
   }
   
   .shutter-button {
-    border: 4px solid rgba(255,255,255,0.3) !important;
+    border: 6px solid rgba(255,255,255,0.3) !important;
+  }
+  
+  .shadow-text {
+    text-shadow: 0px 2px 4px rgba(0,0,0,0.8);
   }
   
   .max-width-mobile {
@@ -157,7 +175,7 @@
   
   @media (min-width: 600px) {
     .camera-wrapper {
-      aspect-ratio: 16 / 9; /* En escritorio es mejor panorámico */
+      aspect-ratio: 16 / 9;
     }
   }
   </style>
