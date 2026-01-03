@@ -1,39 +1,42 @@
 <template>
-  <v-container fluid class="pa-6">
-    <header class="mb-8">
-      <h1 class="text-h4 font-weight-black">Mi Progreso</h1>
-      <p class="text-body-2 text-grey">Visualización de métricas corporales y nutrición</p>
-    </header>
+  <v-container fluid class="pa-4 pa-sm-6">
+    <v-row align="center" class="mb-6">
+      <v-col cols="12" sm="6" class="text-center text-sm-left">
+        <h1 class="text-h4 font-weight-black">Mi Progreso</h1>
+      </v-col>
+      
+      <v-col cols="12" sm="6" class="d-flex justify-center justify-sm-end">
+        <v-btn-toggle
+          v-model="periodo"
+          color="primary"
+          variant="outlined"
+          divided
+          mandatory
+          density="comfortable"
+          class="bg-surface"
+        >
+          <v-btn value="7">7D</v-btn>
+          <v-btn value="30">1M</v-btn>
+          <v-btn value="90">3M</v-btn>
+          <v-btn value="365">1A</v-btn>
+          <v-btn value="all">Todo</v-btn>
+        </v-btn-toggle>
+      </v-col>
+    </v-row>
 
     <v-row v-if="!loading">
       <v-col cols="12" md="6">
-        <v-card class="pa-6" rounded="xl" border elevation="0">
-          <div class="d-flex align-center mb-4">
-            <v-icon icon="mdi-scale-bathroom" color="deep-purple-accent-4" class="mr-2"></v-icon>
-            <span class="text-subtitle-1 font-weight-bold">Evolución de Peso (kg)</span>
-          </div>
-          <div style="height: 300px;">
-            <Line v-if="biometrics.length > 0" :data="weightChartData" :options="chartOptions" />
-            <v-sheet v-else class="d-flex align-center justify-center fill-height bg-grey-lighten-4 rounded-lg text-grey">
-              Sin datos de peso registrados
-            </v-sheet>
-          </div>
-        </v-card>
+        <WeightChart 
+          :data="biometricsFiltrados" 
+          :key="`weight-${periodo}`" 
+        />
       </v-col>
-
+      
       <v-col cols="12" md="6">
-        <v-card class="pa-6" rounded="xl" border elevation="0">
-          <div class="d-flex align-center mb-4">
-            <v-icon icon="mdi-fire" color="orange-darken-2" class="mr-2"></v-icon>
-            <span class="text-subtitle-1 font-weight-bold">Consumo Calórico (kcal)</span>
-          </div>
-          <div style="height: 300px;">
-            <Bar v-if="macros.length > 0" :data="macroChartData" :options="chartOptions" />
-            <v-sheet v-else class="d-flex align-center justify-center fill-height bg-grey-lighten-4 rounded-lg text-grey">
-              Sin datos de calorías registrados
-            </v-sheet>
-          </div>
-        </v-card>
+        <MacrosChart 
+          :data="macrosFiltrados" 
+          :key="`macros-${periodo}`" 
+        />
       </v-col>
     </v-row>
 
@@ -47,80 +50,39 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
-import { Line, Bar } from 'vue-chartjs';
 import { useBiometricsStore } from '@/stores/useBiometricsStore';
 import { useMacrosStore } from '@/stores/useMacrosStore';
-import { 
-  Chart as ChartJS, Title, Tooltip, Legend, LineElement, BarElement, 
-  CategoryScale, LinearScale, PointElement, Filler 
-} from 'chart.js';
-
-ChartJS.register(Title, Tooltip, Legend, LineElement, BarElement, CategoryScale, LinearScale, PointElement, Filler);
+import WeightChart from '@/components/progress/WeightChart.vue';
+import MacrosChart from '@/components/progress/MacrosChart.vue';
 
 const bioStore = useBiometricsStore();
 const macroStore = useMacrosStore();
 const loading = ref(true);
 
-// --- ACCESO A DATOS (YA SON ARRAYS) ---
-const biometrics = computed(() => bioStore.biometrics);
-const macros = computed(() => macroStore.macros);
+const periodo = ref('30');
 
-// Configuración Gráfico de Peso
-const weightChartData = computed(() => {
-  // Ordenar de más antiguo a más reciente para el eje X
-  const sorted = [...biometrics.value].sort((a, b) => new Date(a.measured_at) - new Date(b.measured_at));
+const filtrarPorDias = (lista, campoFecha, dias) => {
+  if (dias === 'all') return lista;
+  const hoy = new Date();
+  hoy.setHours(23, 59, 59, 999);
+  const fechaLimite = new Date();
+  fechaLimite.setDate(hoy.getDate() - parseInt(dias));
+  fechaLimite.setHours(0, 0, 0, 0);
   
-  return {
-    labels: sorted.map(i => new Date(i.measured_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })),
-    datasets: [{
-      label: 'Peso (kg)',
-      borderColor: '#6200EA',
-      backgroundColor: 'rgba(98, 0, 234, 0.1)',
-      data: sorted.map(i => parseFloat(i.weight)),
-      fill: true,
-      tension: 0.4,
-      pointRadius: 4
-    }]
-  };
-});
-
-// Configuración Gráfico de Calorías
-const macroChartData = computed(() => {
-  // Ordenar de más antiguo a más reciente
-  const sorted = [...macros.value].sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-  
-  return {
-    labels: sorted.map(i => new Date(i.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })),
-    datasets: [{
-      label: 'Calorías',
-      backgroundColor: '#D1C4E9',
-      data: sorted.map(i => i.kcal),
-      borderRadius: 6
-    }]
-  };
-});
-
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    y: { 
-      beginAtZero: false, // El peso se aprecia mejor si no empieza en 0
-      grid: { color: 'rgba(0,0,0,0.05)' } 
-    },
-    x: { grid: { display: false } }
-  },
-  plugins: { 
-    legend: { display: false },
-    tooltip: { padding: 12 }
-  }
+  return lista.filter(item => {
+    const fechaItem = new Date(item[campoFecha]);
+    return fechaItem >= fechaLimite;
+  });
 };
+
+const biometricsFiltrados = computed(() => filtrarPorDias(bioStore.biometrics, 'measured_at', periodo.value));
+const macrosFiltrados = computed(() => filtrarPorDias(macroStore.macros, 'created_at', periodo.value));
 
 onMounted(async () => {
   loading.value = true;
   await Promise.all([
-    bioStore.fetchBiometrics(),
-    macroStore.fetchMacros()
+    bioStore.fetchBiometrics({ perPage: 200 }),
+    macroStore.fetchMacros({ perPage: 200 })
   ]);
   loading.value = false;
 });
