@@ -4,6 +4,7 @@
             <DateSelector />
         </v-col>
         <v-col cols="12" md="6">
+            <DailyGoals class="mb-1" />
             <DailyMacrosSummary />
         </v-col>
 
@@ -22,6 +23,7 @@
 import { ref } from "vue";
 import DailyMacrosSummary from "@/components/dashboard/DailyMacrosSummary.vue";
 import DailyMealLogs from "@/components/dashboard/DailyMealLogs.vue";
+import DailyGoals from "@/components/common/DailyGoals.vue";
 import DateSelector from "@/components/dashboard/DateSelector.vue";
 import CreateMealLog from "@/components/meals/CreateMealLog.vue";
 import MobileFloatingButton from "@/components/common/MobileFloatingButton.vue";

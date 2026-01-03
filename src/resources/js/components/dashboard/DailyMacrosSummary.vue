@@ -1,6 +1,5 @@
 <template>
     <v-card class="pa-6 text-center" elevation="2" rounded="xl">
-      <DailyGoals />
       <v-card-title class="text-h5 mb-4">Resumen Diario</v-card-title>
   
       <v-progress-circular
@@ -83,7 +82,6 @@
   import { useMacrosStore } from '@/stores/useMacrosStore';
   import { useDateStore } from '@/stores/useDateStore';
   import { computed, watch, onMounted } from 'vue';
-  import DailyGoals from '@/components/common/DailyGoals.vue';
   
   const mealLogsStore = useMealLogsStore();
   const macrosStore = useMacrosStore();
