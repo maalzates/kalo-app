@@ -19,6 +19,8 @@ class Recipe extends Model
 
     protected $table = 'recipes';
 
+    protected $with = ['ingredients'];
+
     protected $fillable = [
         'name',
         'servings',

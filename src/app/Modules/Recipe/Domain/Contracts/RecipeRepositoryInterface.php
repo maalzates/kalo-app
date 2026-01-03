@@ -12,7 +12,7 @@ interface RecipeRepositoryInterface
 
     public function create(array $data): array;
 
-    public function update(string $id, array $data, int $userId): bool;
+    public function update(string $id, array $data, ?array $ingredients, int $userId): bool;
 
     public function delete(string $id, int $userId): bool;
 

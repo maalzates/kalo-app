@@ -14,6 +14,7 @@ readonly class UpdateRecipeDTO
         public ?string $totalProt,
         public ?string $totalCarb,
         public ?string $totalFat,
+        public ?array $ingredients,
     ) {
     }
 }

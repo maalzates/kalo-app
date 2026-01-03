@@ -82,7 +82,19 @@ class RecipeService
             'total_fat' => $dto->totalFat,
         ], fn ($value) => $value !== null);
 
-        $this->repository->update($dto->recipeId, $updateData, $userId);
+        $ingredients = null;
+        if ($dto->ingredients !== null) {
+            $ingredients = [];
+            foreach ($dto->ingredients as $ingredient) {
+                $ingredients[] = [
+                    'ingredient_id' => $ingredient['ingredient_id'],
+                    'amount' => $ingredient['amount'],
+                    'unit' => $ingredient['unit'],
+                ];
+            }
+        }
+
+        $this->repository->update($dto->recipeId, $updateData, $ingredients, $userId);
 
         return $this->repository->findById($dto->recipeId, $userId);
     }

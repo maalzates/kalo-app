@@ -31,6 +31,10 @@ class UpdateRecipeRequest extends FormRequest
             'total_prot' => ['sometimes', 'numeric', 'min:0'],
             'total_carb' => ['sometimes', 'numeric', 'min:0'],
             'total_fat' => ['sometimes', 'numeric', 'min:0'],
+            'ingredients' => ['sometimes', 'array'],
+            'ingredients.*.ingredient_id' => ['required_with:ingredients', 'integer', 'exists:ingredients,id'],
+            'ingredients.*.amount' => ['required_with:ingredients', 'numeric', 'min:0'],
+            'ingredients.*.unit' => ['required_with:ingredients', 'string', 'max:10'],
         ];
     }
 
@@ -63,6 +67,7 @@ class UpdateRecipeRequest extends FormRequest
             totalProt: $this->input('total_prot') ? (string) $this->input('total_prot') : null,
             totalCarb: $this->input('total_carb') ? (string) $this->input('total_carb') : null,
             totalFat: $this->input('total_fat') ? (string) $this->input('total_fat') : null,
+            ingredients: $this->input('ingredients'),
         );
     }
 }

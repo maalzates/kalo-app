@@ -105,13 +105,31 @@ class RecipeRepository implements RecipeRepositoryInterface
         }
     }
 
-    public function update(string $id, array $data, int $userId): bool
+    public function update(string $id, array $data, ?array $ingredients, int $userId): bool
     {
         try {
-            return Recipe::where('id', $id)
+            $recipe = Recipe::where('id', $id)
                 ->where('user_id', $userId)
-                ->firstOrFail()
-                ->update($data);
+                ->firstOrFail();
+
+            $recipe->update($data);
+
+            // Si se proporcionan ingredientes (no null y no vacío), sincronizar la relación
+            // Esto reemplaza todos los ingredientes existentes con los nuevos
+            if ($ingredients !== null && !empty($ingredients)) {
+                $pivotData = [];
+                foreach ($ingredients as $ingredient) {
+                    $pivotData[$ingredient['ingredient_id']] = [
+                        'amount' => $ingredient['amount'],
+                        'unit' => $ingredient['unit'],
+                    ];
+                }
+                $recipe->ingredients()->sync($pivotData);
+            }
+            // Si ingredients es null, no hacer nada (mantener los ingredientes existentes)
+            // Si ingredients es array vacío [], eliminar todos los ingredientes
+
+            return true;
         } catch (Throwable $exception) {
             throw RecipeUpdateFailedException::fromException($id, $exception);
         }

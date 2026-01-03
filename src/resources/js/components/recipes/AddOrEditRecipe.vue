@@ -191,12 +191,26 @@
             recipeForm.name = props.initialData.name;
             recipeForm.servings = props.initialData.servings || 1;
             // Mapear ingredientes del backend
-            recipeForm.ingredients = (props.initialData.ingredients || []).map(ing => ({
-              ingredient_id: ing.id || ing.ingredient_id,
-              amount: ing.pivot?.amount || ing.amount || 100,
-              unit: ing.pivot?.unit || ing.unit || 'g',
-              ...ing
-            }));
+            recipeForm.ingredients = (props.initialData.ingredients || []).map(ing => {
+              const ingredientId = ing.id || ing.ingredient_id;
+              const amount = ing.pivot?.amount || ing.amount || 100;
+              const unit = ing.pivot?.unit || ing.unit || 'g';
+              
+              return {
+                ingredient_id: ingredientId,
+                id: ingredientId, // Asegurar que id también esté presente
+                amount: parseFloat(amount) || 100,
+                unit: unit,
+                name: ing.name,
+                base_amount: parseFloat(ing.amount) || parseFloat(ing.base_amount) || 100,
+                calories: parseFloat(ing.kcal) || parseFloat(ing.calories) || 0,
+                protein: parseFloat(ing.prot) || parseFloat(ing.protein) || 0,
+                carbs: parseFloat(ing.carb) || parseFloat(ing.carbs) || 0,
+                fat: parseFloat(ing.fat) || 0,
+                // Incluir todas las propiedades del ingrediente original
+                ...ing
+              };
+            });
         } else {
             isEditing.value = false;
             recipeForm.id = null;

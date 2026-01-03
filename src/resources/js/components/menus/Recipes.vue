@@ -156,7 +156,13 @@
   };
   
   const openDialog = (item, isEditing = false) => {
-    selectedRecipe.value = isEditing ? { ...item } : null;
+    if (isEditing && item) {
+      // Buscar la receta actualizada en el store para asegurar que tenemos los datos más recientes
+      const recipeFromStore = recipesStore.recipes.find(r => r.id === item.id);
+      selectedRecipe.value = recipeFromStore ? { ...recipeFromStore } : { ...item };
+    } else {
+      selectedRecipe.value = null;
+    }
     isAddOrEditDialogOpen.value = true;
   };
   
@@ -168,12 +174,15 @@
   const handleSaveRecipe = async (recipeData) => {
     try {
       if (selectedRecipe.value) {
-        await recipesStore.updateRecipe(selectedRecipe.value.id, recipeData);
+        const updatedRecipe = await recipesStore.updateRecipe(selectedRecipe.value.id, recipeData);
+        // Actualizar selectedRecipe con la respuesta del backend para que si se vuelve a abrir tenga los datos actualizados
+        selectedRecipe.value = updatedRecipe;
       } else {
         await recipesStore.createRecipe(recipeData);
       }
       isAddOrEditDialogOpen.value = false;
-      selectedRecipe.value = null;
+      // No limpiar selectedRecipe aquí para mantener los datos actualizados si se vuelve a abrir
+      // selectedRecipe.value = null;
     } catch (error) {
       console.error('Error saving recipe:', error);
     }
