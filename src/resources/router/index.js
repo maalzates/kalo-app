@@ -3,8 +3,9 @@ import Dashboard from '@/components/menus/Dashboard.vue';
 import Ingredients from '@/components/menus/Ingredients.vue';
 import Recipes from '@/components/menus/Recipes.vue';
 import Profile from '@/components/user/Profile.vue';
-import Progress from '@/components/menus/Progress.vue';
 import MyMacros from '@/components/menus/MyMacros.vue';
+import FoodManager from '@/components/menus/FoodManager.vue';
+import Progress from '@/components/menus/Progress.vue';
 import Login from '@/components/Login.vue';
 import Register from '@/components/Register.vue';
 import { useUserStore } from '../js/stores/useUserStore';
@@ -61,6 +62,15 @@ const routes = [
         path: '/:pathMatch(.*)*', 
         redirect: '/'
     },
+    {
+        path: '/foods',
+        name: 'Foods',
+        component: FoodManager, // Verifica la ruta de tu archivo
+        meta: { 
+          requiresAuth: true,
+          title: 'Gestion de alimentos' 
+        }
+      },
 ]
 
 const router = createRouter({
