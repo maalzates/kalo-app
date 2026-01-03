@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import mealLogsRepository from "../repositories/mealLogsRepository";
-import { useUserStore } from "./useUserStore";
 
 export const useMealLogsStore = defineStore("mealLogsStore", () => {
     const mealLogs = ref([]);
     const loading = ref(false);
     const error = ref(null);
-    const userStore = useUserStore();
+    const isAnalyzing = ref(null); // Nuevo estado para la cámara
+    const analysisResult = ref(null); // Resultado temporal de la IA
 
     // Metas de macros (se pueden obtener del usuario o de macros)
     const calorieGoal = ref(2000);
@@ -155,6 +155,21 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         }
     };
 
+    const analyzeMealImage = async (imageBlob) => {
+        isAnalyzing.value = true;
+        error.value = null;
+        try {
+            const result = await mealLogsRepository.analyzeImage(imageBlob);
+            analysisResult.value = result;
+            return result;
+        } catch (err) {
+            error.value = err.response?.data?.message || 'Error al analizar la imagen';
+            throw err;
+        } finally {
+            isAnalyzing.value = false;
+        }
+    };
+
     return {
         mealLogs,
         loading,
@@ -173,9 +188,11 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         fatUsagePercentage,
         remainingCalories,
         calorieColor,
+        analysisResult,
         fetchMealLogs,
         addMealLog,
         updateMealLog,
+        analyzeMealImage,
         removeMealLog,
     };
 });

@@ -57,6 +57,11 @@ const mealLogsRepository = {
             throw error;
         }
     },
+    async analyzeFoodImage(imageBlob) {
+        const formData = new FormData();
+        formData.append('image', imageBlob, 'capture.jpg');
+        return axios.post('/meals/analyze-image', formData);
+    }
 };
 
 export default mealLogsRepository;
