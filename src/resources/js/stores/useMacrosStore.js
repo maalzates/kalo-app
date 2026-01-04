@@ -79,6 +79,10 @@ export const useMacrosStore = defineStore("macrosStore", () => {
     };
 
     const fetchMacros = async (filters = {}) => {
+        // Evitar llamadas duplicadas concurrentes
+        if (loading.value) {
+            return;
+        }
         loading.value = true;
         error.value = null;
         try {

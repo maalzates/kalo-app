@@ -81,7 +81,7 @@
   import { useMealLogsStore } from '@/stores/useMealLogsStore';
   import { useMacrosStore } from '@/stores/useMacrosStore';
   import { useDateStore } from '@/stores/useDateStore';
-  import { computed, watch, onMounted } from 'vue';
+  import { computed, watch } from 'vue';
   
   const mealLogsStore = useMealLogsStore();
   const macrosStore = useMacrosStore();
@@ -271,7 +271,7 @@
     return (totalFatForDate.value / fatGoalForDate.value) * 100;
   });
 
-  // Cargar macros al montar y cuando cambie la fecha
+  // Cargar macros cuando cambie la fecha
   const loadMacrosForDate = async () => {
     if (macrosStore.macros.length === 0) {
       await macrosStore.fetchMacros();
@@ -281,8 +281,4 @@
   watch(() => dateStore.selectedDate, () => {
     loadMacrosForDate();
   }, { immediate: true });
-
-  onMounted(() => {
-    loadMacrosForDate();
-  });
   </script>

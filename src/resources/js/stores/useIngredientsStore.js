@@ -31,6 +31,14 @@ export const useIngredientsStore = defineStore("ingredientsStore", () => {
     };
 
     const fetchPublicAndPrivateIngredients = async (filters = {}) => {
+        // Evitar llamadas duplicadas concurrentes
+        if (loading.value) {
+            return;
+        }
+        // Si ya hay datos cargados y no hay filtros específicos, no recargar
+        if (publicAndPrivateIngredients.value.length > 0 && Object.keys(filters).length === 0) {
+            return;
+        }
         loading.value = true;
         error.value = null;
         try {

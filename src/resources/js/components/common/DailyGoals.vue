@@ -57,7 +57,7 @@
   </template>
   
   <script setup>
-  import { computed, watch, onMounted } from 'vue';
+  import { computed, watch } from 'vue';
   import { useUserStore } from "@/stores/useUserStore";
   import { useMacrosStore } from "@/stores/useMacrosStore";
   import { useDateStore } from "@/stores/useDateStore";
@@ -85,7 +85,7 @@
     { label: 'Grasa', value: parseFloat(macroForDate.value?.fat) || 0 },
   ]);
   
-  // Cargar macros al montar y cuando cambie la fecha
+  // Cargar macros cuando cambie la fecha
   const loadMacrosForDate = async () => {
     if (macrosStore.macros.length === 0) {
       await macrosStore.fetchMacros();
@@ -95,8 +95,4 @@
   watch(() => dateStore.selectedDate, () => {
     loadMacrosForDate();
   }, { immediate: true });
-  
-  onMounted(() => {
-    loadMacrosForDate();
-  });
   </script>

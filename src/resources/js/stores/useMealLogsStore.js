@@ -86,6 +86,11 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
     });
 
     const fetchMealLogs = async (filters = {}) => {
+        // Evitar llamadas duplicadas concurrentes con los mismos filtros
+        if (loading.value) {
+            // Si ya hay una llamada en curso, esperar a que termine
+            return;
+        }
         loading.value = true;
         error.value = null;
         try {

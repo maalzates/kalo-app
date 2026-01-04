@@ -74,7 +74,7 @@
   <script setup>
   import { useMealLogsStore } from "@/stores/useMealLogsStore";
   import { useDateStore } from "@/stores/useDateStore";
-  import { ref, computed, watch, onMounted } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import CreateMealLog from '@/components/meals/CreateMealLog.vue';
   
   const mealLogsStore = useMealLogsStore();
@@ -274,8 +274,4 @@
   watch(() => dateStore.selectedDate, () => {
     fetchMealLogsForDate();
   }, { immediate: true });
-
-  onMounted(() => {
-    fetchMealLogsForDate();
-  });
   </script>

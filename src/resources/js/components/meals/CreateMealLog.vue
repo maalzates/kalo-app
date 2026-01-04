@@ -143,7 +143,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { useMealLogsStore } from "@/stores/useMealLogsStore";
 import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import { useRecipesStore } from "@/stores/useRecipesStore";
@@ -280,10 +280,16 @@ watch(activeTab, () => {
     selectedIngredient.value = null;
 });
 
-onMounted(() => {
-    ingredientsStore.fetchPublicAndPrivateIngredients();
-    recipesStore.fetchRecipesForMealLog();
-});
+// Cargar datos solo cuando el modal se abre
+watch(() => props.modelValue, async (isOpen) => {
+    if (isOpen) {
+        // Cargar datos solo cuando el modal está abierto
+        await Promise.all([
+            ingredientsStore.fetchPublicAndPrivateIngredients(),
+            recipesStore.fetchRecipesForMealLog()
+        ]);
+    }
+}, { immediate: true });
 </script>
 
 <style scoped>
