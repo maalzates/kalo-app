@@ -10,7 +10,14 @@
             Confirmar Análisis
           </v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn variant="flat" color="white" class="text-deep-purple font-weight-bold rounded-pill px-6" @click="handleSave">
+          <v-btn 
+            variant="flat" 
+            color="white" 
+            class="text-deep-purple font-weight-bold rounded-pill px-6" 
+            :loading="isSaving"
+            :disabled="isSaving || !isFormValid"
+            @click="handleSave"
+          >
             Confirmar
           </v-btn>
         </v-toolbar>
@@ -22,21 +29,30 @@
               color="deep-purple-accent-4" density="comfortable"></v-text-field>
   
             <v-row v-if="localData.type === 'recipe'" dense>
-              <v-col cols="12">
+              <v-col cols="6">
                 <v-text-field v-model.number="localData.servings" label="Porciones que rinde" type="number"
                   variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
                   prepend-inner-icon="mdi-account-group"></v-text-field>
               </v-col>
+              <v-col cols="6">
+                <v-text-field v-model.number="consumedQuantity" label="Porciones consumidas" type="number"
+                  variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
+                  prepend-inner-icon="mdi-food"></v-text-field>
+              </v-col>
             </v-row>
   
             <v-row v-if="localData.type === 'ingredient'" dense>
-              <v-col cols="7">
-                <v-text-field v-model.number="localData.amount" label="Cantidad" type="number" variant="outlined"
+              <v-col cols="6">
+                <v-text-field v-model.number="localData.amount" label="Cantidad base" type="number" variant="outlined"
                   rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
               </v-col>
-              <v-col cols="5">
-                <v-select v-model="localData.unit" :items="['g', 'ml', 'un']" label="Unidad" variant="outlined"
+              <v-col cols="3">
+                <v-select v-model="localData.unit" :items="['g', 'ml', 'un']" label="Unidad base" variant="outlined"
                   rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-select>
+              </v-col>
+              <v-col cols="3">
+                <v-text-field v-model.number="consumedQuantity" label="Cantidad consumida" type="number"
+                  variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
               </v-col>
             </v-row>
           </v-card>
@@ -111,6 +127,8 @@
   
   <script setup>
   import { ref, computed, watch } from 'vue';
+  import { useMealLogsStore } from '@/stores/useMealLogsStore';
+  import { useDateStore } from '@/stores/useDateStore';
   
   const props = defineProps({
     modelValue: Boolean,
@@ -118,6 +136,11 @@
   });
   
   const emit = defineEmits(['update:modelValue', 'confirmed']);
+  
+  const mealLogsStore = useMealLogsStore();
+  const dateStore = useDateStore();
+  const isSaving = ref(false);
+  const consumedQuantity = ref(0);
   
   // Clonamos la data para que sea editable localmente sin mutar el prop
   const localData = ref({
@@ -136,8 +159,23 @@
   watch(() => props.analysisData, (newVal) => {
     if (newVal) {
       localData.value = JSON.parse(JSON.stringify(newVal));
+      // Inicializar cantidad consumida con los valores base
+      if (newVal.type === 'ingredient') {
+        consumedQuantity.value = newVal.amount || 0;
+      } else if (newVal.type === 'recipe') {
+        consumedQuantity.value = newVal.servings || 1;
+      }
     }
   }, { immediate: true });
+
+  // Validar que el formulario esté completo
+  const isFormValid = computed(() => {
+    if (!localData.value.name || !localData.value.name.trim()) return false;
+    if (consumedQuantity.value <= 0) return false;
+    if (localData.value.type === 'ingredient' && !localData.value.amount) return false;
+    if (localData.value.type === 'recipe' && !localData.value.servings) return false;
+    return true;
+  });
   
   // Totales computados: si es receta suma ingredientes, si no usa los del objeto base
   const totals = computed(() => {
@@ -175,24 +213,78 @@
     localData.value.ingredients.splice(index, 1);
   };
   
-  const handleSave = () => {
-    if (localData.value.type === 'recipe') {
-      savePhotoRecipe();
-    } else {
-      savePhotoIngredient();
+  const handleSave = async () => {
+    if (!isFormValid.value) return;
+    
+    isSaving.value = true;
+    try {
+      if (localData.value.type === 'recipe') {
+        await savePhotoRecipe();
+      } else {
+        await savePhotoIngredient();
+      }
+      emit('confirmed', localData.value);
+      emit('update:modelValue', false);
+    } catch (error) {
+      console.error('Error guardando meal log desde IA:', error);
+      // El error ya está manejado en el store
+    } finally {
+      isSaving.value = false;
     }
-    emit('confirmed', localData.value);
-    emit('update:modelValue', false);
   };
   
-  const savePhotoIngredient = () => {
-    console.log("DEBUG: Ejecutando savePhotoIngredient", localData.value);
-    // Aquí irá el dispatch a la store/repo en el futuro
+  const savePhotoIngredient = async () => {
+    const date = dateStore.selectedDate instanceof Date
+      ? dateStore.selectedDate.toISOString().split('T')[0]
+      : dateStore.selectedDate;
+    
+    const mealData = {
+      quantity: consumedQuantity.value.toString(),
+      unit: localData.value.unit || 'g',
+      ai_name: localData.value.name,
+      ai_data: {
+        type: 'ingredient',
+        name: localData.value.name,
+        amount: parseFloat(localData.value.amount) || 100,
+        unit: localData.value.unit || 'g',
+        kcal: parseFloat(localData.value.kcal) || 0,
+        prot: parseFloat(localData.value.prot) || 0,
+        carb: parseFloat(localData.value.carb) || 0,
+        fat: parseFloat(localData.value.fat) || 0,
+      },
+      logged_at: date,
+    };
+    
+    await mealLogsStore.addMealLogFromAI(mealData);
+    // Recargar meal logs para la fecha actual
+    await mealLogsStore.fetchMealLogs({ date_from: date, date_to: date });
   };
   
-  const savePhotoRecipe = () => {
-    console.log("DEBUG: Ejecutando savePhotoRecipe", localData.value);
-    // Aquí irá el dispatch a la store/repo en el futuro
+  const savePhotoRecipe = async () => {
+    const date = dateStore.selectedDate instanceof Date
+      ? dateStore.selectedDate.toISOString().split('T')[0]
+      : dateStore.selectedDate;
+    
+    const mealData = {
+      quantity: consumedQuantity.value.toString(),
+      unit: 'serving',
+      ai_name: localData.value.name,
+      ai_data: {
+        type: 'recipe',
+        name: localData.value.name,
+        servings: parseFloat(localData.value.servings) || 1,
+        kcal: totals.value.kcal,
+        prot: parseFloat(totals.value.prot) || 0,
+        carb: parseFloat(totals.value.carb) || 0,
+        fat: parseFloat(totals.value.fat) || 0,
+        ingredients: localData.value.ingredients || [],
+      },
+      logged_at: date,
+    };
+    
+    await mealLogsStore.addMealLogFromAI(mealData);
+    // Recargar meal logs para la fecha actual
+    await mealLogsStore.fetchMealLogs({ date_from: date, date_to: date });
   };
   </script>
   

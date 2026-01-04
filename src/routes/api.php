@@ -55,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('meal-logs')->group(function () {
         Route::get('/', [MealLogController::class, 'index']);
         Route::post('/', [MealLogController::class, 'store']);
+        Route::post('/ai', [MealLogController::class, 'storeFromAI']);
         Route::get('/{mealLog}', [MealLogController::class, 'show']);
         Route::put('/{mealLog}', [MealLogController::class, 'update']);
         Route::delete('/{mealLog}', [MealLogController::class, 'destroy']);

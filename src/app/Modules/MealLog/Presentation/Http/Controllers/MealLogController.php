@@ -7,6 +7,7 @@ namespace App\Modules\MealLog\Presentation\Http\Controllers;
 use App\Modules\Core\Presentation\Http\Controllers\ApiController;
 use App\Modules\MealLog\Application\Services\MealLogService;
 use App\Models\MealLog;
+use App\Modules\MealLog\Presentation\Http\Requests\CreateMealLogFromAIRequest;
 use App\Modules\MealLog\Presentation\Http\Requests\CreateMealLogRequest;
 use App\Modules\MealLog\Presentation\Http\Requests\IndexMealLogRequest;
 use App\Modules\MealLog\Presentation\Http\Requests\UpdateMealLogRequest;
@@ -36,6 +37,11 @@ class MealLogController extends ApiController
     public function store(CreateMealLogRequest $request): JsonResponse
     {
         return $this->success($this->service->create($request->toDTO()), 'Meal log created successfully', Response::HTTP_CREATED);
+    }
+
+    public function storeFromAI(CreateMealLogFromAIRequest $request): JsonResponse
+    {
+        return $this->success($this->service->createFromAI($request->toDTO()), 'Meal log created successfully from AI', Response::HTTP_CREATED);
     }
 
     public function update(UpdateMealLogRequest $request, MealLog $mealLog): JsonResponse

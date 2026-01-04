@@ -122,6 +122,21 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         }
     };
 
+    const addMealLogFromAI = async (mealData) => {
+        loading.value = true;
+        error.value = null;
+        try {
+            const newMealLog = await mealLogsRepository.createFromAI(mealData);
+            mealLogs.value.push(newMealLog);
+            return newMealLog;
+        } catch (err) {
+            error.value = err.response?.data?.message || 'Error al crear registro de comida desde IA';
+            throw err;
+        } finally {
+            loading.value = false;
+        }
+    };
+
     const updateMealLog = async (id, mealData) => {
         loading.value = true;
         error.value = null;
@@ -192,6 +207,7 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         analysisResult,
         fetchMealLogs,
         addMealLog,
+        addMealLogFromAI,
         updateMealLog,
         analyzeMealImage,
         removeMealLog,

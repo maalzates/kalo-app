@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\MealLog\Application\Services;
 
 use App\Modules\MealLog\Application\DTOs\CreateMealLogDTO;
+use App\Modules\MealLog\Application\DTOs\CreateMealLogFromAIDTO;
 use App\Modules\MealLog\Application\DTOs\MealLogFilterDTO;
 use App\Modules\MealLog\Application\DTOs\UpdateMealLogDTO;
 use App\Modules\MealLog\Domain\Contracts\MealLogRepositoryInterface;
@@ -57,6 +58,20 @@ class MealLogService
             'recipe_id' => $dto->recipeId,
             'quantity' => $dto->quantity,
             'unit' => $dto->unit,
+            'logged_at' => $dto->loggedAt ?? now(),
+        ]);
+    }
+
+    public function createFromAI(CreateMealLogFromAIDTO $dto): array
+    {
+        return $this->repository->create([
+            'user_id' => $dto->userId,
+            'ingredient_id' => null,
+            'recipe_id' => null,
+            'quantity' => $dto->quantity,
+            'unit' => $dto->unit,
+            'ai_name' => $dto->aiName,
+            'ai_data' => $dto->aiData,
             'logged_at' => $dto->loggedAt ?? now(),
         ]);
     }

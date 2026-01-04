@@ -38,6 +38,16 @@ const mealLogsRepository = {
         }
     },
 
+    async createFromAI(mealLogData) {
+        try {
+            const response = await axios.post('/meal-logs/ai', mealLogData);
+            return response.data.data;
+        } catch (error) {
+            console.error('Error creating meal log from AI:', error);
+            throw error;
+        }
+    },
+
     async update(id, mealLogData) {
         try {
             const response = await axios.put(`/meal-logs/${id}`, mealLogData);
