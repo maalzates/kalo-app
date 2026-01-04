@@ -128,8 +128,6 @@
       }
     } catch (err) {
       console.error("Error en análisis:", err);
-      // El loader se desactiva automáticamente en el finally del store
-      // Aquí podrías agregar un snackbar o notificación de error si lo deseas
     }
   };
   
