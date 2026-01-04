@@ -7,7 +7,6 @@ namespace App\Modules\AI\Infrastructure\Repositories;
 use App\Modules\AI\Domain\Contracts\GeminiRepositoryInterface;
 use App\Modules\AI\Domain\Exceptions\GeminiException;
 use App\Modules\AI\Infrastructure\Clients\GeminiClient;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class GeminiRepository implements GeminiRepositoryInterface
@@ -52,16 +51,7 @@ class GeminiRepository implements GeminiRepositoryInterface
 
             return json_decode($response['candidates'][0]['content']['parts'][0]['text'], true);
         } catch (Throwable $exception) {
-            $detailedError = $exception->getMessage();
-
-            if ($exception instanceof \GuzzleHttp\Exception\ClientException) {
-                $responseBody = $exception->getResponse()->getBody()->getContents();
-                $detailedError = "API Response: " . $responseBody;
-            }
-
-            Log::error("Gemini detailed failure: " . $detailedError);
-
-            throw GeminiException::forFoodAnalysisCall($imageBase64, $mimeType, $exception, $detailedError);
+            throw GeminiException::forFoodAnalysisCall($imageBase64, $mimeType, $exception);
         }
     }
 }

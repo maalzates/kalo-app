@@ -5,23 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Core\Domain\Exceptions;
 
 use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class ApiException extends Exception
+class ApiException extends Exception
 {
+    private const string DEFAULT_MESSAGE = 'Unknown Error Occurred.';
+
     protected array $context = [];
 
-    protected int $httpStatusCode = Response::HTTP_BAD_REQUEST;
-
-    public function __construct(
-        string $message = '',
-        int $code = 0,
-        ?Exception $previous = null,
-        array $context = []
-    ) {
-        parent::__construct($message, $code, $previous);
-        $this->context = $context;
+    public function __construct(?string $message = null, int $code = Response::HTTP_INTERNAL_SERVER_ERROR)
+    {
+        parent::__construct($message ?? self::DEFAULT_MESSAGE, $code);
     }
 
     public function getContext(): array
@@ -29,17 +23,14 @@ abstract class ApiException extends Exception
         return $this->context;
     }
 
-    public function getHttpStatusCode(): int
+    public static function fromApiCallFailedException(ApiCallFailedException $apiCallFailedException): static
     {
-        return $this->httpStatusCode;
-    }
+        /* @phpstan-ignore-next-line */
+        $exception = new static();
+        $exception->code = $apiCallFailedException->getCode();
+        $exception->message = $apiCallFailedException->getMessage();
+        $exception->context = $apiCallFailedException->getContext();
 
-    public function render(): JsonResponse
-    {
-        return response()->json([
-            'message' => $this->getMessage(),
-            'errors' => $this->context,
-        ], $this->httpStatusCode);
+        return $exception;
     }
 }
-
