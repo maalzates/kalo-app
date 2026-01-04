@@ -1,20 +1,65 @@
 export function useStatsCalculator() {
   
   const getNutrientValue = (log, metric) => {
+    // Si tiene ingredient o recipe, usar la lógica tradicional
     const item = log.ingredient || log.recipe;
-    if (!item) return 0;
+    if (item) {
+      const isIngredient = !!log.ingredient;
+      const logMapping = {
+        kcal: isIngredient ? 'kcal' : 'total_kcal',
+        protein: isIngredient ? 'prot' : 'total_prot',
+        carbs: isIngredient ? 'carb' : 'total_carb',
+        fat: isIngredient ? 'fat' : 'total_fat'
+      };
+      const field = logMapping[metric];
+      const baseValue = parseFloat(item[field] || 0);
+      
+      // Aplicar factor de cantidad
+      const quantity = parseFloat(log.quantity) || 0;
+      if (quantity === 0) return 0;
+      
+      const baseAmount = isIngredient 
+        ? (parseFloat(item.amount) || 100)
+        : (parseFloat(item.servings) || 1);
+      
+      if (baseAmount === 0) return 0;
+      const factor = quantity / baseAmount;
+      return baseValue * factor;
+    }
 
-    const isIngredient = !!log.ingredient;
+    // Si tiene ai_data, extraer valores de ahí
+    if (log.ai_data && typeof log.ai_data === 'object') {
+      const aiData = log.ai_data;
+      const quantity = parseFloat(log.quantity) || 0;
+      if (quantity === 0) return 0;
 
-    const logMapping = {
-      kcal: isIngredient ? 'kcal' : 'total_kcal',
-      protein: isIngredient ? 'prot' : 'total_prot',
-      carbs: isIngredient ? 'carb' : 'total_carb',
-      fat: isIngredient ? 'fat' : 'total_fat'
-    };
+      // Mapeo de métricas para ai_data
+      const aiMapping = {
+        kcal: 'kcal',
+        protein: 'prot',
+        carbs: 'carb',
+        fat: 'fat'
+      };
 
-    const field = logMapping[metric];
-    return parseFloat(item[field] || 0);
+      const field = aiMapping[metric];
+      const baseValue = parseFloat(aiData[field] || 0);
+
+      if (aiData.type === 'ingredient') {
+        // Para ingredientes: aplicar factor quantity / amount
+        const baseAmount = parseFloat(aiData.amount) || 100;
+        if (baseAmount === 0) return 0;
+        const factor = quantity / baseAmount;
+        return baseValue * factor;
+      } else if (aiData.type === 'recipe') {
+        // Para recetas: aplicar factor quantity / servings
+        const servings = parseFloat(aiData.servings) || 1;
+        if (servings === 0) return 0;
+        const factor = quantity / servings;
+        return baseValue * factor;
+      }
+    }
+
+    return 0;
   };
 
   const aggregateLogsByDay = (logs) => {

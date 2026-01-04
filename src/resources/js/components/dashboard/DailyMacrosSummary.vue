@@ -99,13 +99,77 @@
     });
   });
 
+  // Helper para obtener calorías de un meal log
+  const getMealCalories = (meal) => {
+    if (meal.ingredient) {
+      return meal.ingredient.kcal || 0;
+    } else if (meal.recipe) {
+      return meal.recipe.total_kcal || 0;
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      return parseFloat(meal.ai_data.kcal) || 0;
+    }
+    return 0;
+  };
+
+  // Helper para obtener base amount de un meal log
+  const getMealBaseAmount = (meal) => {
+    if (meal.ingredient) {
+      return meal.ingredient.amount || 100;
+    } else if (meal.recipe) {
+      return meal.recipe.servings || 1;
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      if (meal.ai_data.type === 'ingredient') {
+        return parseFloat(meal.ai_data.amount) || 100;
+      } else if (meal.ai_data.type === 'recipe') {
+        return parseFloat(meal.ai_data.servings) || 1;
+      }
+    }
+    return 1;
+  };
+
+  // Helper para obtener proteína de un meal log
+  const getMealProtein = (meal) => {
+    if (meal.ingredient) {
+      return parseFloat(meal.ingredient.prot) || 0;
+    } else if (meal.recipe) {
+      return parseFloat(meal.recipe.total_prot) || 0;
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      return parseFloat(meal.ai_data.prot) || 0;
+    }
+    return 0;
+  };
+
+  // Helper para obtener carbohidratos de un meal log
+  const getMealCarbs = (meal) => {
+    if (meal.ingredient) {
+      return parseFloat(meal.ingredient.carb) || 0;
+    } else if (meal.recipe) {
+      return parseFloat(meal.recipe.total_carb) || 0;
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      return parseFloat(meal.ai_data.carb) || 0;
+    }
+    return 0;
+  };
+
+  // Helper para obtener grasas de un meal log
+  const getMealFat = (meal) => {
+    if (meal.ingredient) {
+      return parseFloat(meal.ingredient.fat) || 0;
+    } else if (meal.recipe) {
+      return parseFloat(meal.recipe.total_fat) || 0;
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      return parseFloat(meal.ai_data.fat) || 0;
+    }
+    return 0;
+  };
+
   // Recalcular totales basados en los meal logs filtrados
   // Los meal logs tienen ingredient o recipe con los valores nutricionales
   const totalCaloriesForDate = computed(() => {
     return filteredMealLogsForDate.value.reduce((acc, meal) => {
-      const calories = meal.ingredient?.kcal || meal.recipe?.total_kcal || 0;
+      const calories = getMealCalories(meal);
       const quantity = parseFloat(meal.quantity) || 0;
-      const baseAmount = meal.ingredient?.amount || meal.recipe?.servings || 1;
+      const baseAmount = getMealBaseAmount(meal);
       if (quantity === 0 || baseAmount === 0) return acc;
       const factor = quantity / baseAmount;
       return acc + (calories * factor);
@@ -114,9 +178,9 @@
 
   const totalProteinForDate = computed(() => {
     return filteredMealLogsForDate.value.reduce((acc, meal) => {
-      const protein = parseFloat(meal.ingredient?.prot || meal.recipe?.total_prot || 0);
+      const protein = getMealProtein(meal);
       const quantity = parseFloat(meal.quantity) || 0;
-      const baseAmount = meal.ingredient?.amount || meal.recipe?.servings || 1;
+      const baseAmount = getMealBaseAmount(meal);
       if (quantity === 0 || baseAmount === 0) return acc;
       const factor = quantity / baseAmount;
       return acc + (protein * factor);
@@ -125,9 +189,9 @@
 
   const totalCarbsForDate = computed(() => {
     return filteredMealLogsForDate.value.reduce((acc, meal) => {
-      const carbs = parseFloat(meal.ingredient?.carb || meal.recipe?.total_carb || 0);
+      const carbs = getMealCarbs(meal);
       const quantity = parseFloat(meal.quantity) || 0;
-      const baseAmount = meal.ingredient?.amount || meal.recipe?.servings || 1;
+      const baseAmount = getMealBaseAmount(meal);
       if (quantity === 0 || baseAmount === 0) return acc;
       const factor = quantity / baseAmount;
       return acc + (carbs * factor);
@@ -136,9 +200,9 @@
 
   const totalFatForDate = computed(() => {
     return filteredMealLogsForDate.value.reduce((acc, meal) => {
-      const fat = parseFloat(meal.ingredient?.fat || meal.recipe?.total_fat || 0);
+      const fat = getMealFat(meal);
       const quantity = parseFloat(meal.quantity) || 0;
-      const baseAmount = meal.ingredient?.amount || meal.recipe?.servings || 1;
+      const baseAmount = getMealBaseAmount(meal);
       if (quantity === 0 || baseAmount === 0) return acc;
       const factor = quantity / baseAmount;
       return acc + (fat * factor);

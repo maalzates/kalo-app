@@ -79,14 +79,8 @@ class UserSeeder extends Seeder
             ]
         );
 
-        User::factory(15)->create();
-
-        User::factory(5)->withRole($premiumRole->id ?? 4)->create();
-
-        User::factory(3)->withGoogle()->create();
-
-        User::factory(5)->male()->create();
-        User::factory(5)->female()->create();
+        // Crear solo 5 usuarios adicionales
+        User::factory(5)->create();
     }
 }
 

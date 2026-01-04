@@ -25,6 +25,8 @@ return new class extends Migration
                 ->onDelete('set null');
             $table->decimal('quantity', 8, 2);
             $table->enum('unit', ['g', 'ml', 'un', 'serving']);
+            $table->string('ai_name')->nullable();
+            $table->json('ai_data')->nullable();
             $table->timestamp('logged_at');
             $table->timestamps();
         });

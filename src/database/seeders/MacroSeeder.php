@@ -15,13 +15,13 @@ class MacroSeeder extends Seeder
         $users = User::all();
 
         foreach ($users as $user) {
-            // Crear dos macros por usuario: uno de hoy y otro de ayer
-            // Macro de ayer (más antiguo)
-            $macroTypeYesterday = fake()->randomElement(['cutting', 'bulking', 'maintenance', 'default']);
-            $macroYesterday = $this->createMacroByType($macroTypeYesterday, $user->id);
-            $macroYesterday->created_at = now()->subDay();
-            $macroYesterday->updated_at = now()->subDay();
-            $macroYesterday->save();
+            // Crear macros: uno de 3 días atrás y otro de hoy
+            // Macro de 3 días atrás (más antiguo)
+            $macroTypeThreeDaysAgo = fake()->randomElement(['cutting', 'bulking', 'maintenance', 'default']);
+            $macroThreeDaysAgo = $this->createMacroByType($macroTypeThreeDaysAgo, $user->id);
+            $macroThreeDaysAgo->created_at = now()->subDays(3);
+            $macroThreeDaysAgo->updated_at = now()->subDays(3);
+            $macroThreeDaysAgo->save();
 
             // Macro de hoy (más reciente)
             $macroTypeToday = fake()->randomElement(['cutting', 'bulking', 'maintenance', 'default']);

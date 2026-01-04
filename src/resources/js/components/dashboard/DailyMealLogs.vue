@@ -25,14 +25,14 @@
           </template>
   
           <v-list-item-title class="text-subtitle-1 font-weight-bold text-wrap d-flex align-center ga-2">
-            <span>{{ meal.ingredient?.name || meal.recipe?.name || 'Sin nombre' }}</span>
+            <span>{{ meal.ingredient?.name || meal.recipe?.name || meal.ai_name || 'Sin nombre' }}</span>
             <v-chip 
               size="x-small" 
-              :color="meal.ingredient_id ? 'blue' : 'orange'"
+              :color="getMealTypeColor(meal)"
               variant="tonal"
               class="font-weight-bold"
             >
-              {{ meal.ingredient_id ? 'Alimento' : 'Receta' }}
+              {{ getMealTypeLabel(meal) }}
             </v-chip>
           </v-list-item-title>
   
@@ -109,6 +109,19 @@
     });
   });
 
+  // Obtener tipo y color del chip
+  const getMealTypeLabel = (meal) => {
+    if (meal.ai_name || meal.ai_data) return 'IA';
+    if (meal.ingredient_id) return 'Alimento';
+    return 'Receta';
+  };
+
+  const getMealTypeColor = (meal) => {
+    if (meal.ai_name || meal.ai_data) return 'purple';
+    if (meal.ingredient_id) return 'blue';
+    return 'orange';
+  };
+
   // Calcular calorías basadas en la cantidad consumida
   const calculateCalories = (meal) => {
     const quantity = parseFloat(meal.quantity) || 0;
@@ -126,6 +139,22 @@
       const totalKcal = meal.recipe.total_kcal || 0;
       const factor = quantity / servings;
       return Math.round(totalKcal * factor);
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      // Para meal logs de IA
+      const aiData = meal.ai_data;
+      const baseKcal = parseFloat(aiData.kcal) || 0;
+      
+      if (aiData.type === 'ingredient') {
+        const baseAmount = parseFloat(aiData.amount) || 100;
+        if (baseAmount === 0) return 0;
+        const factor = quantity / baseAmount;
+        return Math.round(baseKcal * factor);
+      } else if (aiData.type === 'recipe') {
+        const servings = parseFloat(aiData.servings) || 1;
+        if (servings === 0) return 0;
+        const factor = quantity / servings;
+        return Math.round(baseKcal * factor);
+      }
     }
     return 0;
   };
@@ -145,6 +174,21 @@
       const totalProt = parseFloat(meal.recipe.total_prot) || 0;
       const factor = quantity / servings;
       return (totalProt * factor).toFixed(1);
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      const aiData = meal.ai_data;
+      const baseProt = parseFloat(aiData.prot) || 0;
+      
+      if (aiData.type === 'ingredient') {
+        const baseAmount = parseFloat(aiData.amount) || 100;
+        if (baseAmount === 0) return 0;
+        const factor = quantity / baseAmount;
+        return (baseProt * factor).toFixed(1);
+      } else if (aiData.type === 'recipe') {
+        const servings = parseFloat(aiData.servings) || 1;
+        if (servings === 0) return 0;
+        const factor = quantity / servings;
+        return (baseProt * factor).toFixed(1);
+      }
     }
     return 0;
   };
@@ -164,6 +208,21 @@
       const totalCarb = parseFloat(meal.recipe.total_carb) || 0;
       const factor = quantity / servings;
       return (totalCarb * factor).toFixed(1);
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      const aiData = meal.ai_data;
+      const baseCarb = parseFloat(aiData.carb) || 0;
+      
+      if (aiData.type === 'ingredient') {
+        const baseAmount = parseFloat(aiData.amount) || 100;
+        if (baseAmount === 0) return 0;
+        const factor = quantity / baseAmount;
+        return (baseCarb * factor).toFixed(1);
+      } else if (aiData.type === 'recipe') {
+        const servings = parseFloat(aiData.servings) || 1;
+        if (servings === 0) return 0;
+        const factor = quantity / servings;
+        return (baseCarb * factor).toFixed(1);
+      }
     }
     return 0;
   };
@@ -183,6 +242,21 @@
       const totalFat = parseFloat(meal.recipe.total_fat) || 0;
       const factor = quantity / servings;
       return (totalFat * factor).toFixed(1);
+    } else if (meal.ai_data && typeof meal.ai_data === 'object') {
+      const aiData = meal.ai_data;
+      const baseFat = parseFloat(aiData.fat) || 0;
+      
+      if (aiData.type === 'ingredient') {
+        const baseAmount = parseFloat(aiData.amount) || 100;
+        if (baseAmount === 0) return 0;
+        const factor = quantity / baseAmount;
+        return (baseFat * factor).toFixed(1);
+      } else if (aiData.type === 'recipe') {
+        const servings = parseFloat(aiData.servings) || 1;
+        if (servings === 0) return 0;
+        const factor = quantity / servings;
+        return (baseFat * factor).toFixed(1);
+      }
     }
     return 0;
   };

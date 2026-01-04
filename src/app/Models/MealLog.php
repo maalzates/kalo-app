@@ -25,6 +25,8 @@ class MealLog extends Model
         'recipe_id',
         'quantity',
         'unit',
+        'ai_name',
+        'ai_data',
         'logged_at',
     ];
 
@@ -33,6 +35,7 @@ class MealLog extends Model
         return [
             'quantity' => 'decimal:2',
             'logged_at' => 'datetime',
+            'ai_data' => 'array',
         ];
     }
 
