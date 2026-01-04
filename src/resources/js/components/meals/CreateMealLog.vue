@@ -107,12 +107,13 @@
                                 <v-col v-if="activeTab !== 'recipe'" cols="5">
                                     <v-select
                                         v-model="form.base_unit"
-                                        :items="['g', 'ml', 'unidad']"
+                                        :items="availableUnits"
                                         label="Unidad"
                                         variant="outlined"
                                         rounded="lg"
                                         color="deep-purple-accent-4"
                                         hide-details
+                                        :disabled="availableUnits.length === 1"
                                     ></v-select>
                                 </v-col>
                             </v-row>
@@ -137,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import { useMealLogsStore } from "@/stores/useMealLogsStore";
 import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import { useRecipesStore } from "@/stores/useRecipesStore";
@@ -157,6 +158,7 @@ const recipesStore = useRecipesStore();
 
 const activeTab = ref("ai");
 const selectedItem = ref(null);
+const selectedIngredient = ref(null); // Guardar el ingrediente seleccionado para acceder a su unidad
 const isCreateIngredientDialogOpen = ref(false);
 const isCreateRecipeDialogOpen = ref(false);
 
@@ -175,7 +177,26 @@ const initialState = {
 
 const form = ref({ ...initialState });
 
+// Computed para obtener las unidades disponibles basadas en el ingrediente seleccionado
+const availableUnits = computed(() => {
+    if (activeTab.value === 'recipe') {
+        return [];
+    }
+    
+    if (!selectedIngredient.value) {
+        return ['g', 'ml', 'unidad'];
+    }
+    
+    // Obtener la unidad del ingrediente y mapear 'un' a 'unidad'
+    const ingredientUnit = selectedIngredient.value.unit || 'g';
+    const normalizedUnit = ingredientUnit === 'un' ? 'unidad' : ingredientUnit;
+    
+    // Retornar solo la unidad del ingrediente
+    return [normalizedUnit];
+});
+
 const onAiAnalysisFinished = (aiResult) => {
+    selectedIngredient.value = null; // Limpiar ingrediente seleccionado cuando se usa IA
     form.value = {
         ...initialState,
         name: aiResult.detected_name || "Comida detectada",
@@ -194,13 +215,27 @@ const onAiAnalysisFinished = (aiResult) => {
 };
 
 const onFoodSelected = (item) => {
-    if (!item) return;
+    if (!item) {
+        selectedIngredient.value = null;
+        return;
+    }
     const isRec = activeTab.value === 'recipe';
     const amount = isRec ? (item.servings || 1) : (item.amount || 100);
+    // Guardar el ingrediente seleccionado para acceder a su unidad
+    if (!isRec) {
+        selectedIngredient.value = item;
+    } else {
+        selectedIngredient.value = null;
+    }
+    
+    // Mapear 'un' a 'unidad' para mantener consistencia en la UI
+    const unit = isRec ? 'serving' : (item.unit || 'g');
+    const normalizedUnit = unit === 'un' ? 'unidad' : unit;
+    
     form.value = {
         ...initialState,
         id: item.id, name: item.name, base_amount: amount,
-        base_unit: isRec ? 'serving' : (item.unit || 'g'),
+        base_unit: normalizedUnit,
         calories: Math.round(isRec ? item.total_kcal : item.kcal),
         protein: parseFloat(isRec ? item.total_prot : item.prot).toFixed(1),
         carbs: parseFloat(isRec ? item.total_carb : item.carb).toFixed(1),
@@ -226,9 +261,11 @@ watch(() => form.value.base_amount, (val) => {
 const saveMeal = async () => {
     try {
         const date = dateStore.selectedDate.toISOString().split('T')[0];
+        // Mapear 'unidad' de vuelta a 'un' para el backend
+        const unit = form.value.base_unit === 'unidad' ? 'un' : (form.value.base_unit || 'g');
         const mealData = {
             quantity: form.value.base_amount.toString(),
-            unit: form.value.base_unit || 'g',
+            unit: unit,
             logged_at: date,
             ...(activeTab.value === 'food' && { ingredient_id: form.value.id }),
             ...(activeTab.value === 'recipe' && { recipe_id: form.value.id }),
@@ -246,6 +283,7 @@ const handleCreateNew = (type) => {
 watch(activeTab, () => {
     form.value = { ...initialState };
     selectedItem.value = null;
+    selectedIngredient.value = null;
 });
 
 onMounted(() => {
