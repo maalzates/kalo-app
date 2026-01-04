@@ -19,14 +19,17 @@ class GeminiException extends ApiException
 
     public static function forFoodAnalysisCall(string $imageBase64, string $mimeType, Throwable $throwable): self
     {
-        $exception = new self('Failed to analyze food image with Gemini API');
+        $code = $throwable->getCode() > 0 ? $throwable->getCode() : 500;
+
+        $exception = new self('Failed to analyze food image with Gemini API', $code, $throwable);
+
         $exception->context = [
             'mimeType' => $mimeType,
             'imageSize' => strlen($imageBase64),
             'error' => [
                 'exception' => $throwable->getMessage(),
                 'trace' => $throwable->getTraceAsString(),
-                'code' => $throwable->getCode(),
+                'code' => $code,
             ],
         ];
 

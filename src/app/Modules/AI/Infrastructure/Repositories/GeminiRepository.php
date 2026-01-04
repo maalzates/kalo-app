@@ -21,17 +21,16 @@ class GeminiRepository implements GeminiRepositoryInterface
             $systemInstruction = config('prompts.gemini.food_analysis.system_instruction');
             $userInstruction = config('prompts.gemini.food_analysis.user_instruction');
 
+            // En la versión v1 estable, mezclamos la instrucción de sistema con la del usuario 
+            // ya que el campo 'system_instruction' a menudo da error 400.
+            $combinedPrompt = "IMPORTANT INSTRUCTIONS:\n" . $systemInstruction . "\n\nUSER REQUEST:\n" . $userInstruction;
+
             $response = $this->client->generateContent([
-                'system_instruction' => [
-                    'parts' => [
-                        ['text' => $systemInstruction],
-                    ],
-                ],
                 'contents' => [
                     [
                         'role' => 'user',
                         'parts' => [
-                            ['text' => $userInstruction],
+                            ['text' => $combinedPrompt],
                             [
                                 'inline_data' => [
                                     'mime_type' => $mimeType,
@@ -42,14 +41,21 @@ class GeminiRepository implements GeminiRepositoryInterface
                     ],
                 ],
                 'generationConfig' => [
-                    'response_mime_type' => 'application/json',
-                    'temperature' => 0.4,
+                    // Nota: Se eliminó 'response_mime_type' porque v1 a veces no lo reconoce 
+                    // Tu prompt ya exige JSON, así que Gemini cumplirá.
+                    'temperature' => 0.2, // Bajamos un poco la temperatura para que sea más exacto con el JSON
                     'top_p' => 0.95,
                     'top_k' => 40,
                 ],
             ]);
 
-            return json_decode($response['candidates'][0]['content']['parts'][0]['text'], true);
+            $textResponse = $response['candidates'][0]['content']['parts'][0]['text'] ?? '';
+
+            // Limpieza de Markdown: Gemini a veces envuelve el JSON en bloques ```json ... ```
+            $cleanJson = preg_replace('/^```json\s*|```$/m', '', $textResponse);
+
+            return json_decode(trim($cleanJson), true) ?? throw new \Exception("Invalid JSON response from AI");
+
         } catch (Throwable $exception) {
             throw GeminiException::forFoodAnalysisCall($imageBase64, $mimeType, $exception);
         }

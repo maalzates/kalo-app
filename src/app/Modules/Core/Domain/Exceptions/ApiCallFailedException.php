@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Core\Domain\Exceptions;
 
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class ApiCallFailedException extends ApiException
@@ -23,19 +24,23 @@ class ApiCallFailedException extends ApiException
         ?int $httpStatusCode = null,
         ?array $responseBody = null
     ): self {
+        Log::error('API Call Failed', [
+            'uri' => $uri,
+            'method' => $method,
+            'status_code' => $httpStatusCode,
+            'response' => $responseBody, // AQUÍ veremos el mensaje real de Google
+            'exception_message' => $throwable->getMessage()
+        ]);
+    
         $exception = new self();
         $exception->code = $httpStatusCode ?? $throwable->getCode();
         $exception->context = [
             'error' => [
                 'message' => $throwable->getMessage(),
-                'trace' => $throwable->getTraceAsString(),
                 'code' => $throwable->getCode(),
-                'line' => $throwable->getLine(),
-                'file' => $throwable->getFile(),
             ],
             'method' => $method,
             'uri' => $uri,
-            'options' => $options,
             'http_status_code' => $httpStatusCode,
             'response_body' => $responseBody,
         ];
