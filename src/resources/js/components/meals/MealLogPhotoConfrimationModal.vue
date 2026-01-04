@@ -106,7 +106,7 @@
           </v-card>
         </v-container>
       </v-card>
-    </v-card>
+    </v-dialog>
   </template>
   
   <script setup>

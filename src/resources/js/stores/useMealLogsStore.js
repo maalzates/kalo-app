@@ -174,6 +174,7 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         mealLogs,
         loading,
         error,
+        isAnalyzing,
         calorieGoal,
         proteinGoal,
         carbsGoal,

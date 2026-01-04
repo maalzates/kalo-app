@@ -123,9 +123,13 @@
     if (!imageBlob.value) return;
     try {
       const result = await mealStore.analyzeMealImage(imageBlob.value);
-      emit('analysis-finished', result);
+      if (result) {
+        emit('analysis-finished', result);
+      }
     } catch (err) {
-      console.error("Error en análisis");
+      console.error("Error en análisis:", err);
+      // El loader se desactiva automáticamente en el finally del store
+      // Aquí podrías agregar un snackbar o notificación de error si lo deseas
     }
   };
   

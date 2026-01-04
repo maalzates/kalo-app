@@ -152,6 +152,7 @@ import { useDateStore } from "@/stores/useDateStore";
 import AddOrEditIngredient from "@/components/ingredients/AddOrEditIngredient.vue";
 import AddOrEditRecipe from "@/components/recipes/AddOrEditRecipe.vue";
 import AddFoodPhoto from "@/components/meals/AddFoodPhoto.vue";
+import MealLogPhotoConfirmationModal from "@/components/meals/MealLogPhotoConfrimationModal.vue";
 
 const props = defineProps({ modelValue: Boolean });
 const emit = defineEmits(["update:modelValue"]);

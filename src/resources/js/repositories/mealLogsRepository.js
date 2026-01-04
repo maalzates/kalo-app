@@ -58,9 +58,15 @@ const mealLogsRepository = {
         }
     },
     async analyzeFoodImage(imageBlob) {
-        const formData = new FormData();
-        formData.append('image', imageBlob, 'capture.jpg');
-        return axios.post('/ai/image/analyze', formData);
+        try {
+            const formData = new FormData();
+            formData.append('image', imageBlob, 'capture.jpg');
+            const response = await axios.post('/ai/image/analyze', formData);
+            return response.data.data || response.data;
+        } catch (error) {
+            console.error('Error analyzing food image:', error);
+            throw error;
+        }
     }
 };
 
