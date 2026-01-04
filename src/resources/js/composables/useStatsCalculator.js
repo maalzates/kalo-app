@@ -14,7 +14,6 @@ export function useStatsCalculator() {
       const field = logMapping[metric];
       const baseValue = parseFloat(item[field] || 0);
       
-      // Aplicar factor de cantidad
       const quantity = parseFloat(log.quantity) || 0;
       if (quantity === 0) return 0;
       
@@ -33,7 +32,6 @@ export function useStatsCalculator() {
       const quantity = parseFloat(log.quantity) || 0;
       if (quantity === 0) return 0;
 
-      // Mapeo de métricas para ai_data
       const aiMapping = {
         kcal: 'kcal',
         protein: 'prot',
@@ -45,13 +43,11 @@ export function useStatsCalculator() {
       const baseValue = parseFloat(aiData[field] || 0);
 
       if (aiData.type === 'ingredient') {
-        // Para ingredientes: aplicar factor quantity / amount
         const baseAmount = parseFloat(aiData.amount) || 100;
         if (baseAmount === 0) return 0;
         const factor = quantity / baseAmount;
         return baseValue * factor;
       } else if (aiData.type === 'recipe') {
-        // Para recetas: aplicar factor quantity / servings
         const servings = parseFloat(aiData.servings) || 1;
         if (servings === 0) return 0;
         const factor = quantity / servings;
@@ -81,7 +77,9 @@ export function useStatsCalculator() {
   const getTargetForDate = (dateStr, allGoals, metric) => {
     if (!allGoals || !allGoals.length) return null;
 
-    const targetDate = new Date(dateStr);
+    // ✅ FIX: Parsear como fecha local en lugar de UTC
+    const [year, month, day] = dateStr.split('-');
+    const targetDate = new Date(year, month - 1, day, 23, 59, 59);
     
     // ORDENAR: Más nuevos primero
     const sortedGoals = [...allGoals].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -89,7 +87,7 @@ export function useStatsCalculator() {
     // BUSCAR META VIGENTE
     const applicableGoal = sortedGoals.find(goal => {
       const goalDate = new Date(goal.created_at);
-      return goalDate <= targetDate.setHours(23, 59, 59);
+      return goalDate <= targetDate;
     });
 
     if (applicableGoal) {
