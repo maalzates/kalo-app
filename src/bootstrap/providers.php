@@ -11,4 +11,5 @@ return [
     App\Modules\Role\RoleServiceProvider::class,
     App\Modules\Permission\PermissionServiceProvider::class,
     App\Modules\Macro\MacroServiceProvider::class,
+    App\Modules\AI\AIServiceProvider::class,
 ];

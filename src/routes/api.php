@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\AI\Presentation\Http\Controllers\FoodAnalysisController;
 use App\Modules\Auth\Presentation\Http\Controllers\AuthController;
 use App\Modules\Biometric\Presentation\Http\Controllers\BiometricController;
 use App\Modules\Ingredient\Presentation\Http\Controllers\IngredientController;
@@ -93,5 +94,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{macro}', [MacroController::class, 'update']);
         Route::delete('/{macro}', [MacroController::class, 'destroy']);
     });
-});
 
+    Route::prefix('ai')->group(function () {
+        Route::post('food-analysis', [FoodAnalysisController::class, 'analyze']);
+    });
+});

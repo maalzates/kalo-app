@@ -92,13 +92,30 @@
   const takePhoto = () => {
     const video = videoPlayer.value;
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    
+    // --- Lógica de Redimensionado ---
+    const MAX_WIDTH = 800; // Suficiente para que la IA vea texturas de comida
+    let width = video.videoWidth;
+    let height = video.videoHeight;
+
+    if (width > MAX_WIDTH) {
+        height = (MAX_WIDTH / width) * height;
+        width = MAX_WIDTH;
+    }
+
+    canvas.width = width;
+    canvas.height = height;
+    // --------------------------------
+
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0);
-  
-    capturedImage.value = canvas.toDataURL('image/jpeg');
-    canvas.toBlob((blob) => { imageBlob.value = blob; }, 'image/jpeg', 0.8);
+    ctx.drawImage(video, 0, 0, width, height);
+    
+    // Bajamos la calidad a 0.7 (70%). Visualmente es casi igual, pero pesa la mitad.
+    capturedImage.value = canvas.toDataURL('image/jpeg', 0.7);
+    canvas.toBlob((blob) => { 
+        imageBlob.value = blob; 
+    }, 'image/jpeg', 0.7);
+    
     stopCamera();
   };
   
