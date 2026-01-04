@@ -159,7 +159,7 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         isAnalyzing.value = true;
         error.value = null;
         try {
-            const result = await mealLogsRepository.analyzeImage(imageBlob);
+            const result = await mealLogsRepository.analyzeFoodImage(imageBlob);
             analysisResult.value = result;
             return result;
         } catch (err) {

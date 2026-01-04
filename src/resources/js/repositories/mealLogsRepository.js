@@ -60,7 +60,7 @@ const mealLogsRepository = {
     async analyzeFoodImage(imageBlob) {
         const formData = new FormData();
         formData.append('image', imageBlob, 'capture.jpg');
-        return axios.post('/meals/analyze-image', formData);
+        return axios.post('/ai/image/analyze', formData);
     }
 };
 

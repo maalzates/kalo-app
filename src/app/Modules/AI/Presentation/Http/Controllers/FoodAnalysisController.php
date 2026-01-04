@@ -15,7 +15,7 @@ class FoodAnalysisController extends ApiController
         private readonly FoodAnalysisService $service
     ) {}
 
-    public function analyze(AnalyzeFoodImageRequest $request): JsonResponse
+    public function store(AnalyzeFoodImageRequest $request): JsonResponse
     {
         return $this->success($this->service->analyzeFoodImage($request->toDTO()));
     }

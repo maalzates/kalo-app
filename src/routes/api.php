@@ -96,6 +96,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('ai')->group(function () {
-        Route::post('food-analysis', [FoodAnalysisController::class, 'analyze']);
+        Route::post('image/analyze', [FoodAnalysisController::class, 'store']);
     });
 });

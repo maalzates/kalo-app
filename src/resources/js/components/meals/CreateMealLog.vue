@@ -134,6 +134,11 @@
 
         <AddOrEditIngredient v-model="isCreateIngredientDialogOpen" :initial-data="null" />
         <AddOrEditRecipe v-model="isCreateRecipeDialogOpen" :initial-data="null" />
+        <MealLogPhotoConfirmationModal 
+            v-model="isConfirmationModalOpen" 
+            :analysis-data="aiAnalysisResult"
+            @confirmed="(data) => console.log('Data final confirmada:', data)"
+        />
     </v-dialog>
 </template>
 
@@ -161,6 +166,8 @@ const selectedItem = ref(null);
 const selectedIngredient = ref(null); // Guardar el ingrediente seleccionado para acceder a su unidad
 const isCreateIngredientDialogOpen = ref(false);
 const isCreateRecipeDialogOpen = ref(false);
+const isConfirmationModalOpen = ref(false);
+const aiAnalysisResult = ref(null);
 
 const metrics = [
     { label: 'kcal', key: 'calories', unit: '' },
@@ -196,22 +203,8 @@ const availableUnits = computed(() => {
 });
 
 const onAiAnalysisFinished = (aiResult) => {
-    selectedIngredient.value = null; // Limpiar ingrediente seleccionado cuando se usa IA
-    form.value = {
-        ...initialState,
-        name: aiResult.detected_name || "Comida detectada",
-        base_amount: aiResult.amount || 100,
-        base_unit: 'g',
-        calories: Math.round(aiResult.kcal || 0),
-        protein: parseFloat(aiResult.prot || 0).toFixed(1),
-        carbs: parseFloat(aiResult.carb || 0).toFixed(1),
-        fat: parseFloat(aiResult.fat || 0).toFixed(1),
-        base_amount_ref: aiResult.amount || 100,
-        base_kcal: aiResult.kcal || 0,
-        base_prot: aiResult.prot || 0,
-        base_carb: aiResult.carb || 0,
-        base_fat: aiResult.fat || 0,
-    };
+    aiAnalysisResult.value = aiResult;
+    isConfirmationModalOpen.value = true;
 };
 
 const onFoodSelected = (item) => {
