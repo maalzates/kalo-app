@@ -21,7 +21,7 @@ class IndexMealLogRequest extends FormRequest
             'date_to' => ['nullable', 'date', 'after_or_equal:date_from'],
             'type' => ['nullable', 'in:ingredient,recipe'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
+            'per_page' => ['nullable', 'integer'],
         ];
     }
 
