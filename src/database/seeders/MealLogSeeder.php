@@ -37,23 +37,31 @@ class MealLogSeeder extends Seeder
                             'user_id' => $user->id,
                             'recipe_id' => $userRecipes->random()->id,
                             'logged_at' => $loggedAt,
+                            'created_at' => $loggedAt,
+                            'updated_at' => $loggedAt,
                         ]);
                     } elseif ($mealType === 'ingredient') {
                         MealLog::factory()->ingredient()->create([
                             'user_id' => $user->id,
                             'ingredient_id' => $globalIngredients->random()->id,
                             'logged_at' => $loggedAt,
+                            'created_at' => $loggedAt,
+                            'updated_at' => $loggedAt,
                         ]);
                     } elseif ($mealType === 'ai_recipe') {
                         MealLog::factory()->aiRecipe()->create([
                             'user_id' => $user->id,
                             'logged_at' => $loggedAt,
+                            'created_at' => $loggedAt,
+                            'updated_at' => $loggedAt,
                         ]);
                     } else {
                         // ai_ingredient
                         MealLog::factory()->aiIngredient()->create([
                             'user_id' => $user->id,
                             'logged_at' => $loggedAt,
+                            'created_at' => $loggedAt,
+                            'updated_at' => $loggedAt,
                         ]);
                     }
                 }
@@ -81,27 +89,39 @@ class MealLogSeeder extends Seeder
 
             // Asegurar logs específicos para 3 días atrás y hoy
             // 3 días atrás
+            $threeDaysAgo = now()->subDays(3)->addHours(fake()->numberBetween(8, 20));
             MealLog::factory(2)->create([
                 'user_id' => $user->id,
                 'ingredient_id' => $globalIngredients->random()->id,
-                'logged_at' => now()->subDays(3)->addHours(fake()->numberBetween(8, 20)),
+                'logged_at' => $threeDaysAgo,
+                'created_at' => $threeDaysAgo,
+                'updated_at' => $threeDaysAgo,
             ]);
 
+            $threeDaysAgoRecipe = now()->subDays(3)->addHours(fake()->numberBetween(8, 20));
             MealLog::factory(1)->aiRecipe()->create([
                 'user_id' => $user->id,
-                'logged_at' => now()->subDays(3)->addHours(fake()->numberBetween(8, 20)),
+                'logged_at' => $threeDaysAgoRecipe,
+                'created_at' => $threeDaysAgoRecipe,
+                'updated_at' => $threeDaysAgoRecipe,
             ]);
 
             // Hoy
+            $today = now()->subHours(fake()->numberBetween(1, 12));
             MealLog::factory(2)->create([
                 'user_id' => $user->id,
                 'ingredient_id' => $globalIngredients->random()->id,
-                'logged_at' => now()->subHours(fake()->numberBetween(1, 12)),
+                'logged_at' => $today,
+                'created_at' => $today,
+                'updated_at' => $today,
             ]);
 
+            $todayAI = now()->subHours(fake()->numberBetween(1, 12));
             MealLog::factory(1)->aiIngredient()->create([
                 'user_id' => $user->id,
-                'logged_at' => now()->subHours(fake()->numberBetween(1, 12)),
+                'logged_at' => $todayAI,
+                'created_at' => $todayAI,
+                'updated_at' => $todayAI,
             ]);
         }
     }

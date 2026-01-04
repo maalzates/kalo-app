@@ -17,6 +17,8 @@ class MealLogFactory extends Factory
     public function definition(): array
     {
         $isIngredient = $this->faker->boolean(60);
+        // Usar now() como base para que logged_at y created_at sean iguales por defecto
+        $baseDate = now();
 
         return [
             'user_id' => User::factory(),
@@ -26,7 +28,9 @@ class MealLogFactory extends Factory
             'unit' => $isIngredient 
                 ? $this->faker->randomElement(['g', 'ml', 'un'])
                 : 'serving',
-            'logged_at' => $this->faker->dateTimeBetween('-30 days', 'now'),
+            'logged_at' => $baseDate,
+            'created_at' => $baseDate,
+            'updated_at' => $baseDate,
         ];
     }
 
@@ -52,15 +56,21 @@ class MealLogFactory extends Factory
 
     public function today(): static
     {
+        $date = now()->subHours($this->faker->numberBetween(1, 12));
         return $this->state(fn (array $attributes) => [
-            'logged_at' => now()->subHours($this->faker->numberBetween(1, 12)),
+            'logged_at' => $date,
+            'created_at' => $date,
+            'updated_at' => $date,
         ]);
     }
 
     public function thisWeek(): static
     {
+        $date = now()->subDays($this->faker->numberBetween(0, 7));
         return $this->state(fn (array $attributes) => [
-            'logged_at' => now()->subDays($this->faker->numberBetween(0, 7)),
+            'logged_at' => $date,
+            'created_at' => $date,
+            'updated_at' => $date,
         ]);
     }
 
