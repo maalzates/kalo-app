@@ -22,13 +22,18 @@ class GeminiClient extends ApiClientAbstract
     public function generateContent(array $payload): array
     {
         $model = config('services.gemini.model');
-        $apiKey = config('services.gemini.api_key');
-        $baseUrl = config('services.gemini.api_url');
+    $apiKey = config('services.gemini.api_key');
+    // Usamos rtrim para asegurar que NO haya barra al final de la URL base
+    $baseUrl = rtrim(config('services.gemini.api_url'), '/');
 
-        $uri = sprintf('%smodels/%s:generateContent?key=%s', $baseUrl, $model, $apiKey);
+    // Construcción limpia: nos aseguramos de que solo haya una barra entre el base y models
+    $uri = "{$baseUrl}/models/{$model}:generateContent?key={$apiKey}";
 
-        return $this->post($uri, [
-            RequestOptions::JSON => $payload,
-        ]);
+    // Debug opcional: Descomenta la siguiente línea una vez para ver la URL en el log
+    // \Log::info("Gemini Request URI: " . $uri);
+
+    return $this->post($uri, [
+        RequestOptions::JSON => $payload,
+    ]);
     }
 }

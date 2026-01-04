@@ -40,4 +40,12 @@ return [
         'model' => env('GEMINI_MODEL', 'gemini-1.5-flash'),
     ],
 
+    'openrouter' => [
+        'api_url' => env('OPENROUTER_API_URL', 'https://openrouter.ai/api/v1/chat/completions'),
+        'api_key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'google/gemini-pro-1.5-exp'),
+        'http_referer' => env('OPENROUTER_HTTP_REFERER', 'http://localhost'),
+        'app_name' => env('OPENROUTER_APP_NAME', 'Kalo App'),
+    ],
+
 ];

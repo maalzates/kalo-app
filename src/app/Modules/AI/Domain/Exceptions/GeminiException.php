@@ -6,6 +6,7 @@ namespace App\Modules\AI\Domain\Exceptions;
 
 use App\Modules\Core\Domain\Exceptions\ApiException;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class GeminiException extends ApiException
 {
@@ -16,11 +17,14 @@ class GeminiException extends ApiException
         parent::__construct($message ?? self::DEFAULT_MESSAGE, Response::HTTP_SERVICE_UNAVAILABLE);
     }
 
-    public static function forFoodAnalysisCall(string $imageBase64, string $mimeType): self
+    public static function forFoodAnalysisCall(string $imageBase64, string $mimeType, Throwable $previous = null): self
     {
+        $errorMessage = $previous ? $previous->getMessage() : 'Unknown error';
+
         $exception = new self('Failed to analyze food image with Gemini API', 0, null, [
             'mimeType' => $mimeType,
             'imageSize' => strlen($imageBase64),
+            'error' => $errorMessage,
         ]);
 
         return $exception;
