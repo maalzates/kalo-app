@@ -48,4 +48,10 @@ return [
         'app_name' => env('OPENROUTER_APP_NAME', 'Kalo App'),
     ],
 
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('APP_URL') . '/login/google/callback',
+    ],
+
 ];

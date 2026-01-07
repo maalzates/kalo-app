@@ -8,18 +8,24 @@ import FoodManager from '@/components/menus/FoodManager.vue';
 import Progress from '@/components/menus/Progress.vue';
 import Login from '@/components/Login.vue';
 import Register from '@/components/Register.vue';
+import AuthCallback from '@/components/AuthCallback.vue';
 import { useUserStore } from '../js/stores/useUserStore';
 
 const routes = [
-    { 
-        path: '/login', 
+    {
+        path: '/login',
         name: 'login', // <--- IMPORTANTE
-        component: Login 
+        component: Login
     },
-    { 
-        path: '/register', 
+    {
+        path: '/register',
         name: 'register', // <--- IMPORTANTE
-        component: Register 
+        component: Register
+    },
+    {
+        path: '/auth/callback',
+        name: 'auth-callback',
+        component: AuthCallback
     },
     { 
         path: '/', 

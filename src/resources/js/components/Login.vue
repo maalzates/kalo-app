@@ -39,7 +39,10 @@
         }
     };
     
-    const loginWithGoogle = () => console.log("Google Login (Pending)...");
+    const loginWithGoogle = () => {
+        // Redirect to backend Google OAuth route
+        window.location.href = '/login/google';
+    };
     </script>
     
     <template>

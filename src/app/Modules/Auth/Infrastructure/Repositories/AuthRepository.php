@@ -13,6 +13,7 @@ use App\Modules\Auth\Domain\Exceptions\LogoutFailedException;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Throwable;
 
 class AuthRepository implements AuthRepositoryInterface
@@ -80,6 +81,46 @@ class AuthRepository implements AuthRepositoryInterface
             return true;
         } catch (Throwable $exception) {
             throw LogoutFailedException::forUser($userId);
+        }
+    }
+
+    public function loginOrRegisterWithGoogle(SocialiteUser $googleUser): array
+    {
+        try {
+            // Find user by email or create new one
+            $user = User::where('email', $googleUser->getEmail())->first();
+
+            if ($user) {
+                // Update Google ID and auth provider if not set
+                if (!$user->google_id) {
+                    $user->update([
+                        'google_id' => $googleUser->getId(),
+                        'auth_provider' => 'google',
+                    ]);
+                }
+            } else {
+                // Create new user with Google data
+                $user = User::create([
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'google_id' => $googleUser->getId(),
+                    'auth_provider' => 'google',
+                    'email_verified_at' => now(),
+                    'role_id' => 1, // Default user role
+                ]);
+            }
+
+            // Reload user with relationships
+            $user = User::with(['macros', 'biometrics'])->findOrFail($user->id);
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return [
+                'user' => $user->toArray(),
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+            ];
+        } catch (Throwable $exception) {
+            throw new \Exception('Failed to authenticate with Google: ' . $exception->getMessage());
         }
     }
 }

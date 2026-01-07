@@ -40,7 +40,10 @@
         }
     };
     
-    const registerWithGoogle = () => console.log("Google Register (Pending)...");
+    const registerWithGoogle = () => {
+        // Redirect to backend Google OAuth route (same as login - creates account if needed)
+        window.location.href = '/login/google';
+    };
     </script>
     
     <template>
