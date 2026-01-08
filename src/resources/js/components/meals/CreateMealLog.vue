@@ -134,10 +134,10 @@
 
         <AddOrEditIngredient v-model="isCreateIngredientDialogOpen" :initial-data="null" />
         <AddOrEditRecipe v-model="isCreateRecipeDialogOpen" :initial-data="null" />
-        <MealLogPhotoConfirmationModal 
-            v-model="isConfirmationModalOpen" 
+        <MealLogPhotoConfirmationModal
+            v-model="isConfirmationModalOpen"
             :analysis-data="aiAnalysisResult"
-            @confirmed="(data) => console.log('Data final confirmada:', data)"
+            @confirmed="onAiConfirmed"
         />
     </v-dialog>
 </template>
@@ -148,11 +148,14 @@ import { useMealLogsStore } from "@/stores/useMealLogsStore";
 import { useIngredientsStore } from "@/stores/useIngredientsStore";
 import { useRecipesStore } from "@/stores/useRecipesStore";
 import { useDateStore } from "@/stores/useDateStore";
+import { useToast } from 'vue-toastification';
 
 import AddOrEditIngredient from "@/components/ingredients/AddOrEditIngredient.vue";
 import AddOrEditRecipe from "@/components/recipes/AddOrEditRecipe.vue";
 import AddFoodPhoto from "@/components/meals/AddFoodPhoto.vue";
 import MealLogPhotoConfirmationModal from "@/components/meals/MealLogPhotoConfrimationModal.vue";
+
+const toast = useToast();
 
 const props = defineProps({ modelValue: Boolean });
 const emit = defineEmits(["update:modelValue"]);
@@ -206,6 +209,12 @@ const availableUnits = computed(() => {
 const onAiAnalysisFinished = (aiResult) => {
     aiAnalysisResult.value = aiResult;
     isConfirmationModalOpen.value = true;
+};
+
+const onAiConfirmed = () => {
+    // Close both confirmation modal and parent modal
+    isConfirmationModalOpen.value = false;
+    emit("update:modelValue", false);
 };
 
 const onFoodSelected = (item) => {
@@ -266,8 +275,12 @@ const saveMeal = async () => {
         };
         await mealLogsStore.addMealLog(mealData);
         await mealLogsStore.fetchMealLogs({ date_from: date, date_to: date });
+        toast.success('Consumo registrado exitosamente');
         emit("update:modelValue", false);
-    } catch (e) { console.error(e); }
+    } catch (e) {
+        console.error(e);
+        toast.error('Error al registrar consumo. Intenta de nuevo.');
+    }
 };
 
 const handleCreateNew = (type) => {

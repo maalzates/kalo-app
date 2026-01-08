@@ -10,10 +10,10 @@
             Confirmar Análisis
           </v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn 
-            variant="flat" 
-            color="white" 
-            class="text-deep-purple font-weight-bold rounded-pill px-6" 
+          <v-btn
+            variant="flat"
+            color="white"
+            class="text-deep-purple font-weight-bold rounded-pill px-6"
             :loading="isSaving"
             :disabled="isSaving || !isFormValid"
             @click="handleSave"
@@ -21,57 +21,106 @@
             Confirmar
           </v-btn>
         </v-toolbar>
-  
+
         <v-container class="pa-4" style="max-width: 800px">
+          <!-- Food Name and Quantity Section -->
           <v-card rounded="xl" class="pa-4 mb-4" border="sm">
-            <div class="text-overline text-deep-purple-accent-4 font-weight-bold mb-1">Resultado de la IA</div>
-            <v-text-field v-model="localData.name" label="Nombre del plato/alimento" variant="outlined" rounded="lg"
-              color="deep-purple-accent-4" density="comfortable"></v-text-field>
-  
-            <v-row v-if="localData.type === 'recipe'" dense>
-              <v-col cols="6">
-                <v-text-field v-model.number="localData.servings" label="Porciones que rinde" type="number"
-                  variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
-                  prepend-inner-icon="mdi-account-group"></v-text-field>
-              </v-col>
-              <v-col cols="6">
-                <v-text-field v-model.number="consumedQuantity" label="Porciones consumidas" type="number"
-                  variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
-                  prepend-inner-icon="mdi-food"></v-text-field>
-              </v-col>
-            </v-row>
-  
-            <v-row v-if="localData.type === 'ingredient'" dense>
-              <v-col cols="6">
-                <v-text-field v-model.number="localData.amount" label="Cantidad base" type="number" variant="outlined"
-                  rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
-              </v-col>
-              <v-col cols="3">
-                <v-select v-model="localData.unit" :items="['g', 'ml', 'un']" label="Unidad base" variant="outlined"
-                  rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-select>
-              </v-col>
-              <v-col cols="3">
-                <v-text-field v-model.number="consumedQuantity" label="Cantidad consumida" type="number"
-                  variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
-              </v-col>
-            </v-row>
+            <div class="d-flex align-center justify-space-between mb-3">
+              <div class="text-overline text-deep-purple-accent-4 font-weight-bold">Resultado de la IA</div>
+              <v-btn
+                v-if="!editMode"
+                variant="text"
+                color="deep-purple-accent-4"
+                density="compact"
+                prepend-icon="mdi-pencil"
+                class="text-caption font-weight-bold"
+                @click="editMode = true"
+              >
+                Editar detalles
+              </v-btn>
+            </div>
+
+            <template v-if="!editMode">
+              <!-- Display Mode -->
+              <div class="text-h6 font-weight-bold mb-3">{{ localData.name }}</div>
+              <v-row dense>
+                <v-col cols="6">
+                  <div class="text-caption text-grey-darken-1">Cantidad base</div>
+                  <div class="text-subtitle-1 font-weight-bold">
+                    {{ localData.type === 'recipe' ? localData.servings + ' porciones' : localData.amount + ' ' + localData.unit }}
+                  </div>
+                </v-col>
+                <v-col cols="6">
+                  <div class="text-caption text-grey-darken-1">Cantidad consumida</div>
+                  <div class="text-subtitle-1 font-weight-bold text-deep-purple-accent-4">
+                    {{ consumedQuantity }} {{ localData.type === 'recipe' ? 'porciones' : localData.unit }}
+                  </div>
+                </v-col>
+              </v-row>
+            </template>
+
+            <template v-else>
+              <!-- Edit Mode -->
+              <v-text-field v-model="localData.name" label="Nombre del plato/alimento" variant="outlined" rounded="lg"
+                color="deep-purple-accent-4" density="comfortable" class="mb-2"></v-text-field>
+
+              <v-row v-if="localData.type === 'recipe'" dense>
+                <v-col cols="6">
+                  <v-text-field v-model.number="localData.servings" label="Porciones que rinde" type="number"
+                    variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
+                    prepend-inner-icon="mdi-account-group"></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field v-model.number="consumedQuantity" label="Porciones consumidas" type="number"
+                    variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
+                    prepend-inner-icon="mdi-food"></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-row v-if="localData.type === 'ingredient'" dense>
+                <v-col cols="6">
+                  <v-text-field v-model.number="localData.amount" label="Cantidad base" type="number" variant="outlined"
+                    rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
+                </v-col>
+                <v-col cols="3">
+                  <v-select v-model="localData.unit" :items="['g', 'ml', 'un']" label="Unidad base" variant="outlined"
+                    rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-select>
+                </v-col>
+                <v-col cols="3">
+                  <v-text-field v-model.number="consumedQuantity" label="Cantidad consumida" type="number"
+                    variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-btn
+                variant="text"
+                color="deep-purple-accent-4"
+                density="compact"
+                prepend-icon="mdi-check"
+                class="text-caption font-weight-bold mt-2"
+                @click="editMode = false"
+              >
+                Guardar cambios
+              </v-btn>
+            </template>
           </v-card>
   
-          <template v-if="localData.type === 'recipe'">
+          <!-- Ingredients Section (for recipes only, editable) -->
+          <template v-if="localData.type === 'recipe' && editMode">
             <div class="d-flex align-center justify-space-between mb-2 px-2">
               <div class="text-overline text-grey-darken-1 font-weight-bold">Desglose de ingredientes</div>
               <v-btn variant="text" color="deep-purple-accent-4" density="compact" prepend-icon="mdi-plus" @click="addIngredient">
                 Agregar
               </v-btn>
             </div>
-  
+
             <v-card v-for="(ing, index) in localData.ingredients" :key="index" rounded="xl" class="pa-4 mb-3" border="sm">
               <div class="d-flex align-center mb-3">
                 <v-text-field v-model="ing.name" label="Ingrediente" variant="underlined" hide-details
                   density="compact" class="font-weight-bold"></v-text-field>
                 <v-btn icon="mdi-delete-outline" variant="text" color="red-lighten-1" size="small" @click="removeIngredient(index)"></v-btn>
               </div>
-  
+
               <v-row dense>
                 <v-col cols="4">
                   <v-text-field v-model.number="ing.amount" label="Cant." type="number" variant="outlined" rounded="lg"
@@ -86,7 +135,7 @@
                     density="compact" hide-details color="orange-darken-2"></v-text-field>
                 </v-col>
               </v-row>
-              
+
               <v-row dense class="mt-2 text-center">
                 <v-col v-for="m in ['prot', 'carb', 'fat']" :key="m" cols="4">
                   <v-text-field v-model.number="ing[m]" :label="m.toUpperCase()" type="number" variant="outlined" rounded="lg"
@@ -95,30 +144,81 @@
               </v-row>
             </v-card>
           </template>
-  
-          <div class="text-overline mb-1 ml-2 text-deep-purple-accent-4 font-weight-bold">Totales Calculados</div>
-          <v-card rounded="xl" class="pa-4 bg-deep-purple-accent-4 text-white" elevation="4">
-            <v-row no-gutters class="text-center">
-              <v-col>
-                <div class="text-h5 font-weight-black">{{ totals.kcal }}</div>
-                <div class="text-caption font-weight-bold uppercase">kcal</div>
-              </v-col>
-              <v-divider vertical class="mx-2 border-opacity-25"></v-divider>
-              <v-col>
-                <div class="text-h6 font-weight-black">{{ totals.prot }}g</div>
-                <div class="text-caption font-weight-bold uppercase">Prot</div>
-              </v-col>
-              <v-divider vertical class="mx-2 border-opacity-25"></v-divider>
-              <v-col>
-                <div class="text-h6 font-weight-black">{{ totals.carb }}g</div>
-                <div class="text-caption font-weight-bold uppercase">Carbs</div>
-              </v-col>
-              <v-divider vertical class="mx-2 border-opacity-25"></v-divider>
-              <v-col>
-                <div class="text-h6 font-weight-black">{{ totals.fat }}g</div>
-                <div class="text-caption font-weight-bold uppercase">Grasa</div>
-              </v-col>
-            </v-row>
+
+          <!-- Macros Display Section -->
+          <div class="text-overline mb-2 ml-2 text-deep-purple-accent-4 font-weight-bold">
+            Información Nutricional {{ localData.type === 'ingredient' ? '(por ' + localData.amount + ' ' + localData.unit + ')' : '(total)' }}
+          </div>
+          <v-card rounded="xl" class="pa-6" elevation="2">
+            <!-- Calories Display -->
+            <div class="text-center mb-6">
+              <v-progress-circular
+                :model-value="100"
+                :size="140"
+                :width="12"
+                color="deep-purple-accent-4"
+              >
+                <div class="text-center">
+                  <span class="text-h4 font-weight-bold">{{ consumedTotals.kcal }}</span>
+                  <div class="text-caption text-uppercase text-grey-darken-1">kcal totales</div>
+                </div>
+              </v-progress-circular>
+            </div>
+
+            <v-divider class="mb-4"></v-divider>
+
+            <!-- Macros Progress Bars -->
+            <div>
+              <div class="d-flex justify-space-between align-center mb-2">
+                <div class="d-flex align-center ga-2">
+                  <v-icon size="20" color="deep-purple">mdi-food-drumstick</v-icon>
+                  <span class="text-subtitle-2 font-weight-bold">Proteína</span>
+                </div>
+                <span class="text-body-2 font-weight-bold text-deep-purple">
+                  {{ consumedTotals.prot }}g
+                </span>
+              </div>
+              <v-progress-linear
+                :model-value="100"
+                color="deep-purple"
+                height="10"
+                rounded
+                class="mb-4"
+              ></v-progress-linear>
+
+              <div class="d-flex justify-space-between align-center mb-2">
+                <div class="d-flex align-center ga-2">
+                  <v-icon size="20" color="orange-darken-1">mdi-bread-slice</v-icon>
+                  <span class="text-subtitle-2 font-weight-bold">Carbohidratos</span>
+                </div>
+                <span class="text-body-2 font-weight-bold text-orange-darken-1">
+                  {{ consumedTotals.carb }}g
+                </span>
+              </div>
+              <v-progress-linear
+                :model-value="100"
+                color="orange-darken-1"
+                height="10"
+                rounded
+                class="mb-4"
+              ></v-progress-linear>
+
+              <div class="d-flex justify-space-between align-center mb-2">
+                <div class="d-flex align-center ga-2">
+                  <v-icon size="20" color="cyan-darken-1">mdi-oil</v-icon>
+                  <span class="text-subtitle-2 font-weight-bold">Grasas</span>
+                </div>
+                <span class="text-body-2 font-weight-bold text-cyan-darken-1">
+                  {{ consumedTotals.fat }}g
+                </span>
+              </div>
+              <v-progress-linear
+                :model-value="100"
+                color="cyan-darken-1"
+                height="10"
+                rounded
+              ></v-progress-linear>
+            </div>
           </v-card>
         </v-container>
       </v-card>
@@ -129,19 +229,22 @@
   import { ref, computed, watch } from 'vue';
   import { useMealLogsStore } from '@/stores/useMealLogsStore';
   import { useDateStore } from '@/stores/useDateStore';
-  
+  import { useToast } from 'vue-toastification';
+
   const props = defineProps({
     modelValue: Boolean,
     analysisData: Object // El JSON que devuelve la IA
   });
-  
+
   const emit = defineEmits(['update:modelValue', 'confirmed']);
-  
+
+  const toast = useToast();
   const mealLogsStore = useMealLogsStore();
   const dateStore = useDateStore();
   const isSaving = ref(false);
   const consumedQuantity = ref(0);
-  
+  const editMode = ref(false);
+
   // Clonamos la data para que sea editable localmente sin mutar el prop
   const localData = ref({
     type: 'ingredient',
@@ -155,10 +258,11 @@
     fat: 0,
     ingredients: []
   });
-  
+
   watch(() => props.analysisData, (newVal) => {
     if (newVal) {
       localData.value = JSON.parse(JSON.stringify(newVal));
+      editMode.value = false;
       // Inicializar cantidad consumida con los valores base
       if (newVal.type === 'ingredient') {
         consumedQuantity.value = newVal.amount || 0;
@@ -177,7 +281,7 @@
     return true;
   });
   
-  // Totales computados: si es receta suma ingredientes, si no usa los del objeto base
+  // Totales base: si es receta suma ingredientes, si no usa los del objeto base
   const totals = computed(() => {
     if (localData.value.type === 'ingredient') {
       return {
@@ -187,7 +291,7 @@
         fat: parseFloat(localData.value.fat || 0).toFixed(1)
       };
     }
-  
+
     return localData.value.ingredients.reduce((acc, ing) => {
       acc.kcal += Number(ing.kcal || 0);
       acc.prot = (Number(acc.prot) + Number(ing.prot || 0)).toFixed(1);
@@ -195,6 +299,20 @@
       acc.fat = (Number(acc.fat) + Number(ing.fat || 0)).toFixed(1);
       return acc;
     }, { kcal: 0, prot: 0, carb: 0, fat: 0 });
+  });
+
+  // Totales consumidos: calcula basado en la cantidad consumida vs base
+  const consumedTotals = computed(() => {
+    const baseAmount = localData.value.type === 'ingredient' ? (localData.value.amount || 1) : (localData.value.servings || 1);
+    const consumed = consumedQuantity.value || 0;
+    const factor = baseAmount > 0 ? consumed / baseAmount : 0;
+
+    return {
+      kcal: Math.round(totals.value.kcal * factor),
+      prot: (parseFloat(totals.value.prot) * factor).toFixed(1),
+      carb: (parseFloat(totals.value.carb) * factor).toFixed(1),
+      fat: (parseFloat(totals.value.fat) * factor).toFixed(1)
+    };
   });
   
   const addIngredient = () => {
@@ -215,7 +333,7 @@
   
   const handleSave = async () => {
     if (!isFormValid.value) return;
-    
+
     isSaving.value = true;
     try {
       if (localData.value.type === 'recipe') {
@@ -223,11 +341,12 @@
       } else {
         await savePhotoIngredient();
       }
+      toast.success('Análisis confirmado y consumo registrado exitosamente');
       emit('confirmed', localData.value);
       emit('update:modelValue', false);
     } catch (error) {
       console.error('Error guardando meal log desde IA:', error);
-      // El error ya está manejado en el store
+      toast.error('Error al guardar el análisis. Intenta de nuevo.');
     } finally {
       isSaving.value = false;
     }
