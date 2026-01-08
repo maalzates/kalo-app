@@ -35,13 +35,13 @@ class GoogleAuthService
             $authData = $this->authRepository->loginOrRegisterWithGoogle($googleUser);
 
             // Redirect to frontend with token and user data
-            $frontendUrl = env('FRONTEND_URL', 'http://localhost');
+            $appUrl = config('app.url');
             $queryParams = http_build_query([
                 'token' => $authData['access_token'],
                 'user' => json_encode($authData['user']),
             ]);
 
-            return redirect()->away("{$frontendUrl}/auth/callback?{$queryParams}");
+            return redirect()->away("{$appUrl}/auth/callback?{$queryParams}");
         } catch (\Exception $e) {
             return $this->redirectToLoginWithError('Authentication failed. Please try again.');
         }
@@ -49,8 +49,8 @@ class GoogleAuthService
 
     private function redirectToLoginWithError(string $error): RedirectResponse
     {
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost');
-        return redirect()->away("{$frontendUrl}/login?error=" . urlencode($error));
+        $appUrl = config('app.url');
+        return redirect()->away("{$appUrl}/login?error=" . urlencode($error));
     }
 
     /**
