@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\AI\Presentation\Http\Controllers\FoodAnalysisController;
 use App\Modules\Auth\Presentation\Http\Controllers\AuthController;
+use App\Modules\Auth\Presentation\Http\Controllers\GoogleAuthController;
 use App\Modules\Biometric\Presentation\Http\Controllers\BiometricController;
 use App\Modules\Ingredient\Presentation\Http\Controllers\IngredientController;
 use App\Modules\Macro\Presentation\Http\Controllers\MacroController;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 // Public routes (no authentication required)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/auth/google', [GoogleAuthController::class, 'authenticateWithIdToken']);
 
 // Protected routes (authentication required)
 Route::middleware('auth:sanctum')->group(function () {
