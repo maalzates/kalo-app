@@ -37,7 +37,10 @@
                 <v-window v-model="activeTab" :touch="false">
                     <v-window-item value="ai" class="pb-3">
                         <v-card rounded="xl" class="overflow-hidden mb-2" border="sm">
-                            <AddFoodPhoto @analysis-finished="onAiAnalysisFinished" />
+                            <AddFoodPhoto
+                                ref="addFoodPhotoComponentRef"
+                                @analysis-finished="onAiAnalysisFinished"
+                            />
                         </v-card>
                         <p class="text-center text-caption text-grey-darken-1 px-4 mt-2">
                             Analiza automáticamente los macros de tu plato con una foto.
@@ -135,9 +138,10 @@
         <AddOrEditIngredient v-model="isCreateIngredientDialogOpen" :initial-data="null" />
         <AddOrEditRecipe v-model="isCreateRecipeDialogOpen" :initial-data="null" />
         <MealLogPhotoConfirmationModal
-            v-model="isConfirmationModalOpen"
+            v-model="isAiConfirmationModalOpen"
             :analysis-data="aiAnalysisResult"
             @confirmed="onAiConfirmed"
+            @cancelled="onAiAnalysisCancelled"
         />
     </v-dialog>
 </template>
@@ -170,8 +174,9 @@ const selectedItem = ref(null);
 const selectedIngredient = ref(null); // Guardar el ingrediente seleccionado para acceder a su unidad
 const isCreateIngredientDialogOpen = ref(false);
 const isCreateRecipeDialogOpen = ref(false);
-const isConfirmationModalOpen = ref(false);
+const isAiConfirmationModalOpen = ref(false);
 const aiAnalysisResult = ref(null);
+const addFoodPhotoComponentRef = ref(null);
 
 const metrics = [
     { label: 'kcal', key: 'calories', unit: '' },
@@ -208,13 +213,21 @@ const availableUnits = computed(() => {
 
 const onAiAnalysisFinished = (aiResult) => {
     aiAnalysisResult.value = aiResult;
-    isConfirmationModalOpen.value = true;
+    isAiConfirmationModalOpen.value = true;
 };
 
 const onAiConfirmed = () => {
-    // Close both confirmation modal and parent modal
-    isConfirmationModalOpen.value = false;
+    // Close both AI confirmation modal and parent meal log modal
+    isAiConfirmationModalOpen.value = false;
     emit("update:modelValue", false);
+};
+
+const onAiAnalysisCancelled = () => {
+    // Usuario cerró el modal de confirmación sin confirmar el análisis
+    // Resetear la cámara para permitir tomar otra foto
+    if (addFoodPhotoComponentRef.value) {
+        addFoodPhotoComponentRef.value.resetCameraToInitialState();
+    }
 };
 
 const onFoodSelected = (item) => {

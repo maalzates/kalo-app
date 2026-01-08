@@ -234,7 +234,7 @@
     analysisData: Object // El JSON que devuelve la IA
   });
 
-  const emit = defineEmits(['update:modelValue', 'confirmed']);
+  const emit = defineEmits(['update:modelValue', 'confirmed', 'cancelled']);
 
   const toast = useToast();
   const mealLogsStore = useMealLogsStore();
@@ -269,6 +269,16 @@
       }
     }
   }, { immediate: true });
+
+  // Emitir evento cuando el usuario cierra el modal sin confirmar
+  watch(() => props.modelValue, (isModalCurrentlyOpen, wasModalPreviouslyOpen) => {
+    const userClosedModalWithoutConfirming = wasModalPreviouslyOpen === true && isModalCurrentlyOpen === false;
+
+    if (userClosedModalWithoutConfirming) {
+      // Notificar al padre que el usuario canceló/cerró sin confirmar
+      emit('cancelled');
+    }
+  });
 
   // Validar que el formulario esté completo
   const isFormValid = computed(() => {

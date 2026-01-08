@@ -32,7 +32,7 @@
       </v-card>
 
       <!-- Camera Modal for Desktop -->
-      <v-dialog v-model="showCameraModal" max-width="900px">
+      <v-dialog v-model="isCameraModalOpenOnDesktop" max-width="900px">
         <v-card class="camera-modal-card">
           <v-card-text class="pa-0">
             <div class="camera-wrapper bg-black position-relative" style="height: 600px;">
@@ -43,7 +43,7 @@
               </div>
 
               <video
-                v-show="!capturedImage"
+                v-show="!capturedPhotoDataUrl"
                 ref="videoPlayer"
                 autoplay
                 playsinline
@@ -51,8 +51,8 @@
               ></video>
 
               <v-img
-                v-if="capturedImage"
-                :src="capturedImage"
+                v-if="capturedPhotoDataUrl"
+                :src="capturedPhotoDataUrl"
                 class="camera-element"
                 cover
               ></v-img>
@@ -73,7 +73,7 @@
                 ></v-btn>
 
                 <v-btn
-                  v-if="isStreamActive && !capturedImage"
+                  v-if="isCameraCurrentlyActive && !capturedPhotoDataUrl"
                   icon="mdi-camera"
                   size="80"
                   color="white"
@@ -83,7 +83,7 @@
                 ></v-btn>
 
                 <v-btn
-                  v-if="isStreamActive && !capturedImage"
+                  v-if="isCameraCurrentlyActive && !capturedPhotoDataUrl"
                   icon="mdi-folder-image"
                   size="small"
                   color="white"
@@ -92,14 +92,14 @@
                   @click="openFileUpload"
                 ></v-btn>
 
-                <div v-if="capturedImage && !mealStore.isAnalyzing" class="d-flex ga-3 w-100 max-width-mobile">
+                <div v-if="capturedPhotoDataUrl && !mealStore.isAnalyzing" class="d-flex ga-3 w-100 max-width-mobile">
                   <v-btn
                     color="white"
                     variant="tonal"
                     rounded="pill"
                     size="large"
                     class="flex-grow-1 font-weight-bold"
-                    @click="resetCamera"
+                    @click="resetCameraToInitialState"
                   >
                     Repetir
                   </v-btn>
@@ -130,7 +130,7 @@
       </div>
 
       <video
-        v-show="!capturedImage"
+        v-show="!capturedPhotoDataUrl"
         ref="videoPlayer"
         autoplay
         playsinline
@@ -138,8 +138,8 @@
       ></video>
 
       <v-img
-        v-if="capturedImage"
-        :src="capturedImage"
+        v-if="capturedPhotoDataUrl"
+        :src="capturedPhotoDataUrl"
         class="camera-element"
         cover
       ></v-img>
@@ -151,7 +151,7 @@
 
       <div class="controls-overlay pa-6 d-flex justify-center align-center ga-3">
         <v-btn
-          v-if="isStreamActive && !capturedImage"
+          v-if="isCameraCurrentlyActive && !capturedPhotoDataUrl"
           icon="mdi-folder-image"
           size="small"
           color="white"
@@ -161,7 +161,7 @@
         ></v-btn>
 
         <v-btn
-          v-if="isStreamActive && !capturedImage"
+          v-if="isCameraCurrentlyActive && !capturedPhotoDataUrl"
           icon="mdi-camera"
           size="80"
           color="white"
@@ -170,14 +170,14 @@
           @click="takePhoto"
         ></v-btn>
 
-        <div v-if="capturedImage && !mealStore.isAnalyzing" class="d-flex ga-3 w-100 max-width-mobile">
+        <div v-if="capturedPhotoDataUrl && !mealStore.isAnalyzing" class="d-flex ga-3 w-100 max-width-mobile">
           <v-btn
             color="white"
             variant="tonal"
             rounded="pill"
             size="large"
             class="flex-grow-1 font-weight-bold"
-            @click="resetCamera"
+            @click="resetCameraToInitialState"
           >
             Repetir
           </v-btn>
@@ -197,7 +197,7 @@
 
     <!-- Hidden file input -->
     <input
-      ref="fileInput"
+      ref="fileInputElement"
       type="file"
       accept="image/*"
       style="display: none"
@@ -217,11 +217,11 @@
   const toast = useToast();
 
   const videoPlayer = ref(null);
-  const isStreamActive = ref(false);
-  const capturedImage = ref(null);
-  const imageBlob = ref(null);
-  const showCameraModal = ref(false);
-  const fileInput = ref(null);
+  const isCameraCurrentlyActive = ref(false);
+  const capturedPhotoDataUrl = ref(null);
+  const capturedPhotoBlob = ref(null);
+  const isCameraModalOpenOnDesktop = ref(false);
+  const fileInputElement = ref(null);
 
   const startCamera = async () => {
     try {
@@ -231,7 +231,7 @@
       });
       if (videoPlayer.value) {
         videoPlayer.value.srcObject = stream;
-        isStreamActive.value = true;
+        isCameraCurrentlyActive.value = true;
       }
     } catch (err) {
       console.error("Error acceso cámara:", err);
@@ -261,18 +261,18 @@
     ctx.drawImage(video, 0, 0, width, height);
 
     // Bajamos la calidad a 0.7 (70%). Visualmente es casi igual, pero pesa la mitad.
-    capturedImage.value = canvas.toDataURL('image/jpeg', 0.7);
+    capturedPhotoDataUrl.value = canvas.toDataURL('image/jpeg', 0.7);
     canvas.toBlob((blob) => {
-        imageBlob.value = blob;
+        capturedPhotoBlob.value = blob;
     }, 'image/jpeg', 0.7);
 
     stopCamera();
   };
 
   const processPhoto = async () => {
-    if (!imageBlob.value) return;
+    if (!capturedPhotoBlob.value) return;
     try {
-      const result = await mealStore.analyzeMealImage(imageBlob.value);
+      const result = await mealStore.analyzeMealImage(capturedPhotoBlob.value);
       if (result) {
         emit('analysis-finished', result);
         closeCameraModal();
@@ -286,31 +286,26 @@
   const stopCamera = () => {
     if (videoPlayer.value?.srcObject) {
       videoPlayer.value.srcObject.getTracks().forEach(t => t.stop());
-      isStreamActive.value = false;
+      isCameraCurrentlyActive.value = false;
     }
   };
 
-  const resetCamera = () => {
-    capturedImage.value = null;
-    imageBlob.value = null;
+  const resetCameraToInitialState = () => {
+    capturedPhotoDataUrl.value = null;
+    capturedPhotoBlob.value = null;
     startCamera();
   };
 
   const openCameraModal = () => {
-    showCameraModal.value = true;
-    // Wait for modal to render before starting camera
-    setTimeout(() => startCamera(), 100);
+    isCameraModalOpenOnDesktop.value = true;
   };
 
   const closeCameraModal = () => {
-    stopCamera();
-    showCameraModal.value = false;
-    capturedImage.value = null;
-    imageBlob.value = null;
+    isCameraModalOpenOnDesktop.value = false;
   };
 
   const openFileUpload = () => {
-    fileInput.value?.click();
+    fileInputElement.value?.click();
   };
 
   const handleFileUpload = async (event) => {
@@ -328,7 +323,7 @@
       // Read file as data URL for preview
       const reader = new FileReader();
       reader.onload = (e) => {
-        capturedImage.value = e.target.result;
+        capturedPhotoDataUrl.value = e.target.result;
       };
       reader.readAsDataURL(file);
 
@@ -354,7 +349,7 @@
         ctx.drawImage(img, 0, 0, width, height);
 
         canvas.toBlob((blob) => {
-          imageBlob.value = blob;
+          capturedPhotoBlob.value = blob;
         }, 'image/jpeg', 0.7);
       };
 
@@ -385,13 +380,22 @@
 
   onBeforeUnmount(() => stopCamera());
 
-  // Watch for modal close to cleanup
-  watch(showCameraModal, (newVal) => {
-    if (!newVal) {
+  // Watch for desktop modal opening/closing to manage camera lifecycle
+  watch(isCameraModalOpenOnDesktop, (isModalOpen) => {
+    if (isModalOpen) {
+      // Modal just opened - start camera
+      startCamera();
+    } else {
+      // Modal just closed - cleanup
       stopCamera();
-      capturedImage.value = null;
-      imageBlob.value = null;
+      capturedPhotoDataUrl.value = null;
+      capturedPhotoBlob.value = null;
     }
+  });
+
+  // Expose methods to parent component
+  defineExpose({
+    resetCameraToInitialState
   });
   </script>
   
