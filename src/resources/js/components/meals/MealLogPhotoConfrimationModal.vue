@@ -62,33 +62,31 @@
             <template v-else>
               <!-- Edit Mode -->
               <v-text-field v-model="localData.name" label="Nombre del plato/alimento" variant="outlined" rounded="lg"
-                color="deep-purple-accent-4" density="comfortable" class="mb-2"></v-text-field>
+                color="deep-purple-accent-4" density="comfortable" class="mb-3"></v-text-field>
 
               <v-row v-if="localData.type === 'recipe'" dense>
-                <v-col cols="6">
-                  <v-text-field v-model.number="localData.servings" label="Porciones que rinde" type="number"
-                    variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
-                    prepend-inner-icon="mdi-account-group"></v-text-field>
-                </v-col>
-                <v-col cols="6">
+                <v-col cols="12">
                   <v-text-field v-model.number="consumedQuantity" label="Porciones consumidas" type="number"
                     variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"
-                    prepend-inner-icon="mdi-food"></v-text-field>
+                    prepend-inner-icon="mdi-food" hint="Edita la cantidad de porciones que consumiste"
+                    persistent-hint></v-text-field>
                 </v-col>
               </v-row>
 
               <v-row v-if="localData.type === 'ingredient'" dense>
-                <v-col cols="6">
-                  <v-text-field v-model.number="localData.amount" label="Cantidad base" type="number" variant="outlined"
-                    rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
-                </v-col>
-                <v-col cols="3">
-                  <v-select v-model="localData.unit" :items="['g', 'ml', 'un']" label="Unidad base" variant="outlined"
-                    rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-select>
-                </v-col>
-                <v-col cols="3">
-                  <v-text-field v-model.number="consumedQuantity" label="Cantidad consumida" type="number"
-                    variant="outlined" rounded="lg" color="deep-purple-accent-4" density="comfortable"></v-text-field>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model.number="consumedQuantity"
+                    :label="`Cantidad consumida (${localData.unit})`"
+                    type="number"
+                    variant="outlined"
+                    rounded="lg"
+                    color="deep-purple-accent-4"
+                    density="comfortable"
+                    prepend-inner-icon="mdi-food"
+                    :hint="`Edita la cantidad en ${localData.unit} que consumiste`"
+                    persistent-hint
+                  ></v-text-field>
                 </v-col>
               </v-row>
 
