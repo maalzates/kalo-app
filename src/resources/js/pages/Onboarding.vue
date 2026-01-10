@@ -1,0 +1,314 @@
+<template>
+  <v-container class="fill-height bg-grey-lighten-4" fluid>
+    <v-row justify="center" align="center">
+      <v-col cols="12" sm="10" md="8" lg="6" xl="5">
+        <!-- Paso 1: Pantalla de Bienvenida -->
+        <v-card v-if="currentStep === 0" rounded="xl" class="pa-8 text-center" elevation="4">
+          <v-icon size="100" color="deep-purple-accent-4" class="mb-6">mdi-account-heart</v-icon>
+          <h1 class="text-h4 font-weight-bold mb-4">¡Bienvenido a Kalo App!</h1>
+          <p class="text-body-1 text-grey-darken-1 mb-6">
+            Para comenzar, necesitamos conocer algunos datos básicos sobre ti.
+            Esto nos permitirá calcular tus macros personalizados y ayudarte a alcanzar tus objetivos.
+          </p>
+          <v-btn
+            color="deep-purple-accent-4"
+            variant="flat"
+            size="large"
+            rounded="pill"
+            class="font-weight-bold px-8"
+            @click="currentStep = 1"
+          >
+            Comenzar
+          </v-btn>
+        </v-card>
+
+        <!-- Paso 2: Formulario de Datos -->
+        <v-card v-if="currentStep === 1" rounded="xl" class="pa-6" elevation="4">
+          <v-card-title class="text-h5 font-weight-bold mb-4 px-0">
+            Cuéntanos sobre ti
+          </v-card-title>
+
+          <v-form ref="formRef" v-model="isFormValid">
+            <v-row dense>
+              <!-- Peso -->
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model.number="formData.weight"
+                  label="Peso"
+                  type="number"
+                  suffix="kg"
+                  variant="outlined"
+                  rounded="lg"
+                  color="deep-purple-accent-4"
+                  prepend-inner-icon="mdi-weight-kilogram"
+                  :rules="[rules.required, rules.positive]"
+                ></v-text-field>
+              </v-col>
+
+              <!-- Altura -->
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model.number="formData.height"
+                  label="Altura"
+                  type="number"
+                  suffix="cm"
+                  variant="outlined"
+                  rounded="lg"
+                  color="deep-purple-accent-4"
+                  prepend-inner-icon="mdi-human-male-height"
+                  :rules="[rules.required, rules.positive]"
+                ></v-text-field>
+              </v-col>
+
+              <!-- Fecha de Nacimiento -->
+              <v-col cols="12" sm="6">
+                <v-text-field
+                  v-model="formData.birth_date"
+                  label="Fecha de Nacimiento"
+                  type="date"
+                  variant="outlined"
+                  rounded="lg"
+                  color="deep-purple-accent-4"
+                  prepend-inner-icon="mdi-calendar"
+                  :rules="[rules.required]"
+                ></v-text-field>
+              </v-col>
+
+              <!-- Género -->
+              <v-col cols="12" sm="6">
+                <v-select
+                  v-model="formData.gender"
+                  :items="genderOptions"
+                  item-title="label"
+                  item-value="value"
+                  label="Género"
+                  variant="outlined"
+                  rounded="lg"
+                  color="deep-purple-accent-4"
+                  prepend-inner-icon="mdi-gender-male-female"
+                  :rules="[rules.required]"
+                ></v-select>
+              </v-col>
+
+              <!-- Nivel de Actividad -->
+              <v-col cols="12">
+                <v-select
+                  v-model="formData.activity_level"
+                  :items="activityLevels"
+                  item-title="label"
+                  item-value="value"
+                  label="Nivel de Actividad"
+                  variant="outlined"
+                  rounded="lg"
+                  color="deep-purple-accent-4"
+                  prepend-inner-icon="mdi-run"
+                  :rules="[rules.required]"
+                >
+                  <template #item="{ props, item }">
+                    <v-list-item v-bind="props">
+                      <v-list-item-subtitle class="text-caption text-wrap">
+                        {{ item.raw.description }}
+                      </v-list-item-subtitle>
+                    </v-list-item>
+                  </template>
+                </v-select>
+              </v-col>
+
+              <!-- Objetivo -->
+              <v-col cols="12">
+                <v-select
+                  v-model="formData.goal_type"
+                  :items="goalOptions"
+                  item-title="label"
+                  item-value="value"
+                  label="Objetivo"
+                  variant="outlined"
+                  rounded="lg"
+                  color="deep-purple-accent-4"
+                  prepend-inner-icon="mdi-target"
+                  :rules="[rules.required]"
+                >
+                  <template #item="{ props, item }">
+                    <v-list-item v-bind="props">
+                      <v-list-item-subtitle class="text-caption">
+                        {{ item.raw.description }}
+                      </v-list-item-subtitle>
+                    </v-list-item>
+                  </template>
+                </v-select>
+              </v-col>
+            </v-row>
+
+            <v-btn
+              color="deep-purple-accent-4"
+              variant="flat"
+              size="large"
+              rounded="pill"
+              class="font-weight-bold mt-4"
+              block
+              :disabled="!isFormValid || loading"
+              :loading="loading"
+              @click="saveProfileAndCalculateMacros"
+            >
+              Calcular Mis Macros
+            </v-btn>
+          </v-form>
+        </v-card>
+
+        <!-- Paso 3: Confirmación de Macros -->
+        <v-card v-if="currentStep === 2" rounded="xl" class="pa-6" elevation="4">
+          <v-card-title class="text-h5 font-weight-bold mb-2 px-0">
+            Tus Macros Calculados
+          </v-card-title>
+          <v-card-subtitle class="px-0 mb-4">
+            Basados en tus datos personales, estos son tus macros recomendados. Puedes ajustarlos si lo deseas.
+          </v-card-subtitle>
+
+          <UpdateMyMacros
+            :pre-filled-data="calculatedMacros"
+            :is-onboarding="true"
+            @saved="onboardingComplete"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script setup>
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/useUserStore';
+import { useMacroCalculator } from '@/composables/useMacroCalculator';
+import { useToast } from 'vue-toastification';
+import UpdateMyMacros from '@/components/macros/UpdateMyMacros.vue';
+
+const router = useRouter();
+const userStore = useUserStore();
+const toast = useToast();
+
+const currentStep = ref(0);
+const isFormValid = ref(false);
+const loading = ref(false);
+const formRef = ref(null);
+const calculatedMacros = ref(null);
+
+const formData = reactive({
+  weight: null,
+  height: null,
+  birth_date: '',
+  gender: '',
+  activity_level: null,
+  goal_type: ''
+});
+
+const genderOptions = [
+  { label: 'Masculino', value: 'male' },
+  { label: 'Femenino', value: 'female' }
+];
+
+const activityLevels = [
+  {
+    label: 'Sedentario',
+    value: 1.2,
+    description: 'Poco o ningún ejercicio, trabajo de oficina'
+  },
+  {
+    label: 'Ligero',
+    value: 1.375,
+    description: 'Ejercicio ligero 1-3 días por semana'
+  },
+  {
+    label: 'Moderado',
+    value: 1.55,
+    description: 'Ejercicio moderado 3-5 días por semana'
+  },
+  {
+    label: 'Activo',
+    value: 1.725,
+    description: 'Ejercicio intenso 6-7 días por semana'
+  },
+  {
+    label: 'Muy Activo',
+    value: 1.9,
+    description: 'Ejercicio muy intenso, trabajo físico o entrenamiento 2 veces al día'
+  }
+];
+
+const goalOptions = [
+  {
+    label: 'Perder Peso',
+    value: 'loss',
+    description: 'Déficit calórico de 500 kcal'
+  },
+  {
+    label: 'Mantener Peso',
+    value: 'maintenance',
+    description: 'Mantener peso actual'
+  },
+  {
+    label: 'Ganar Peso',
+    value: 'gain',
+    description: 'Superávit calórico de 300 kcal'
+  }
+];
+
+const rules = {
+  required: value => !!value || 'Campo requerido',
+  positive: value => value > 0 || 'Debe ser mayor a 0'
+};
+
+const calculateAge = (birthDate) => {
+  const today = new Date();
+  const birth = new Date(birthDate);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+
+  return age;
+};
+
+const saveProfileAndCalculateMacros = async () => {
+  loading.value = true;
+  try {
+    // 1. Actualizar perfil de usuario
+    await userStore.updateProfile(formData);
+    toast.success('Perfil actualizado correctamente');
+
+    // 2. Calcular edad a partir de fecha de nacimiento
+    const age = calculateAge(formData.birth_date);
+
+    // 3. Calcular macros usando useMacroCalculator
+    calculatedMacros.value = useMacroCalculator({
+      weight: formData.weight,
+      height: formData.height,
+      age: age,
+      gender: formData.gender,
+      activityLevel: formData.activity_level,
+      goal: formData.goal_type
+    });
+
+    // 4. Pasar al paso 3 para mostrar UpdateMyMacros
+    currentStep.value = 2;
+  } catch (error) {
+    console.error(error);
+    toast.error('Error al guardar el perfil. Intenta de nuevo.');
+  } finally {
+    loading.value = false;
+  }
+};
+
+const onboardingComplete = () => {
+  toast.success('¡Configuración completada! Bienvenido a Kalo App');
+  router.push('/');
+};
+</script>
+
+<style scoped>
+.fill-height {
+  min-height: 100vh;
+}
+</style>

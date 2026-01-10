@@ -66,12 +66,30 @@ export const useUserStore = defineStore("userStore", () => {
         });
     };
 
+    /**
+     * Actualizar perfil de usuario
+     * Llama al repositorio para actualizar datos en el backend
+     * Actualiza el estado local y localStorage al completarse
+     */
+    const updateProfile = async (profileData) => {
+        try {
+            const updatedUser = await usersRepository.updateUser(user.value.id, profileData);
+            user.value = { ...user.value, ...updatedUser };
+            localStorage.setItem('user_data', JSON.stringify(user.value));
+            return updatedUser;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    };
+
     return {
         user,
         token,
         isLoggedIn,
         userInitials,
         setAuth,
-        logout
+        logout,
+        updateProfile
     };
 });

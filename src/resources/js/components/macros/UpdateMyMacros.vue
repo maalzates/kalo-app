@@ -89,22 +89,49 @@
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, watch } from 'vue';
   import { useMacroCalculator } from '@/composables/useMacroCalculator';
   import { useMacrosStore } from '@/stores/useMacrosStore';
-  
+  import { useToast } from 'vue-toastification';
+
+  const props = defineProps({
+    preFilledData: {
+      type: Object,
+      default: null
+    },
+    isOnboarding: {
+      type: Boolean,
+      default: false
+    }
+  });
+
+  const emit = defineEmits(['saved']);
+  const toast = useToast();
+
   const activeTab = ref('auto');
   const macrosStore = useMacrosStore();
-  
-  const { 
-    gender, weight, height, age, activityLevel, goal, 
-    activityFactors, calculatedResults 
+
+  const {
+    gender, weight, height, age, activityLevel, goal,
+    activityFactors, calculatedResults
   } = useMacroCalculator();
-  
+
   const manualCalories = ref(0);
   const manualProtein = ref(0);
   const manualCarbs = ref(0);
   const manualFat = ref(0);
+
+  // Si hay datos pre-cargados (desde onboarding), cargarlos en el tab manual
+  watch(() => props.preFilledData, (data) => {
+    if (data) {
+      manualCalories.value = data.calories;
+      manualProtein.value = data.protein;
+      manualCarbs.value = data.carbs;
+      manualFat.value = data.fat;
+      // Cambiar al tab manual para mostrar los datos
+      activeTab.value = 'manual';
+    }
+  }, { immediate: true });
   
   const loadExistingMacro = () => {
     if (macrosStore.macros.length > 0) {
@@ -127,13 +154,22 @@
       await macrosStore.createMacro(macroData);
       await macrosStore.fetchMacros();
       loadExistingMacro();
+      toast.success('Macros actualizados correctamente');
+
+      if (props.isOnboarding) {
+        emit('saved');
+      }
     } catch (error) {
-      console.error("Error applying macros:", error);
+      console.error(error);
+      toast.error(error);
     }
   };
-  
+
   const saveManual = async () => {
-    if (manualCalories.value <= 0) return;
+    if (manualCalories.value <= 0) {
+      toast.error('Las calorías deben ser mayores a 0');
+      return;
+    }
     try {
       const macroData = {
         kcal: manualCalories.value,
@@ -143,8 +179,14 @@
       };
       await macrosStore.createMacro(macroData);
       await macrosStore.fetchMacros();
+      toast.success('Macros guardados correctamente');
+
+      if (props.isOnboarding) {
+        emit('saved');
+      }
     } catch (error) {
-      console.error("Error saving manual macros:", error);
+      console.error(error);
+      toast.error(error);
     }
   };
   
