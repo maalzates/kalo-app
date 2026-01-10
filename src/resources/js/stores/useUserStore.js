@@ -83,6 +83,23 @@ export const useUserStore = defineStore("userStore", () => {
         }
     };
 
+    /**
+     * Actualizar peso del usuario
+     * Llama al repositorio para actualizar el peso en el backend
+     * Actualiza el estado local y localStorage al completarse
+     */
+    const updateWeight = async (weight) => {
+        try {
+            const updatedUser = await usersRepository.updateWeight(user.value.id, weight);
+            user.value = { ...user.value, ...updatedUser };
+            localStorage.setItem('user_data', JSON.stringify(user.value));
+            return updatedUser;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    };
+
     return {
         user,
         token,
@@ -90,6 +107,7 @@ export const useUserStore = defineStore("userStore", () => {
         userInitials,
         setAuth,
         logout,
-        updateProfile
+        updateProfile,
+        updateWeight
     };
 });

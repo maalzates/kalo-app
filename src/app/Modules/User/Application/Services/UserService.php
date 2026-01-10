@@ -6,6 +6,7 @@ namespace App\Modules\User\Application\Services;
 
 use App\Modules\User\Application\DTOs\CreateUserDTO;
 use App\Modules\User\Application\DTOs\UpdateUserDTO;
+use App\Modules\User\Application\DTOs\UpdateWeightDTO;
 use App\Modules\User\Application\DTOs\UserFilterDTO;
 use App\Modules\User\Domain\Contracts\UserRepositoryInterface;
 use App\Modules\User\Domain\Exceptions\UserNotFoundException;
@@ -94,6 +95,27 @@ class UserService
         // Recargar usuario con relaciones desde el repositorio
         $updatedUser = $this->repository->findByIdWithRelations($dto->userId);
         
+        if ($updatedUser === null) {
+            throw UserNotFoundException::withId($dto->userId);
+        }
+
+        return $updatedUser;
+    }
+
+    public function updateWeight(UpdateWeightDTO $dto): array
+    {
+        $user = $this->repository->findById($dto->userId);
+
+        if ($user === null) {
+            throw UserNotFoundException::withId($dto->userId);
+        }
+
+        $this->repository->update($dto->userId, [
+            'weight' => $dto->weight,
+        ]);
+
+        $updatedUser = $this->repository->findByIdWithRelations($dto->userId);
+
         if ($updatedUser === null) {
             throw UserNotFoundException::withId($dto->userId);
         }

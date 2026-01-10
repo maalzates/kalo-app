@@ -30,7 +30,7 @@
         </template>
 
         <v-list-item-title class="font-weight-bold">
-          {{ biometric.weight }} kg
+          {{ formatNumber(biometric.weight) }} kg
           <v-chip v-if="page === 1 && index === 0" size="x-small" color="deep-purple-accent-4" class="ml-2 font-weight-bold">
             Reciente
           </v-chip>
@@ -38,13 +38,13 @@
 
         <v-list-item-subtitle class="text-caption">
           <div v-if="biometric.fat_percentage">
-            Grasa: {{ biometric.fat_percentage }}%
+            Grasa: {{ formatNumber(biometric.fat_percentage) }}%
           </div>
           <div v-if="biometric.clean_mass">
-            Masa Magra: {{ biometric.clean_mass }} kg
+            Masa Magra: {{ formatNumber(biometric.clean_mass) }} kg
           </div>
           <div v-if="biometric.waist_circumference">
-            Cintura: {{ biometric.waist_circumference }} cm
+            Cintura: {{ formatNumber(biometric.waist_circumference) }} cm
           </div>
         </v-list-item-subtitle>
 
@@ -99,5 +99,13 @@ const formatDate = (dateString) => {
     month: 'short',
     day: 'numeric'
   });
+};
+
+// Formatea números para quitar decimales innecesarios
+const formatNumber = (value) => {
+  if (!value) return '';
+  const num = parseFloat(value);
+  // Si el número es entero, mostrar sin decimales
+  return num % 1 === 0 ? num.toFixed(0) : num.toString();
 };
 </script>

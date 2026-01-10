@@ -21,6 +21,16 @@ const usersRepository = {
         }
     },
 
+    async updateWeight(userId, weight) {
+        try {
+            const response = await axios.patch(`/users/${userId}/weight`, { weight });
+            return response.data.data;
+        } catch (error) {
+            console.error('Error updating weight:', error);
+            throw error;
+        }
+    },
+
     async logout() {
         try {
             await axios.post('/logout');

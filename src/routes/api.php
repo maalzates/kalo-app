@@ -15,6 +15,7 @@ use App\Modules\Recipe\Presentation\Http\Controllers\RecipeIngredientController;
 use App\Modules\Role\Presentation\Http\Controllers\RoleController;
 use App\Modules\Role\Presentation\Http\Controllers\RolePermissionController;
 use App\Modules\User\Presentation\Http\Controllers\UserController;
+use App\Modules\User\Presentation\Http\Controllers\UserWeightController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
@@ -31,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/', [UserController::class, 'store']);
         Route::get('/{user}', [UserController::class, 'show']);
         Route::put('/{user}', [UserController::class, 'update']);
+        Route::patch('/{user}/weight', [UserWeightController::class, 'update']);
         Route::delete('/{user}', [UserController::class, 'destroy']);
     });
 

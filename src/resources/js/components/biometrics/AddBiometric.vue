@@ -85,9 +85,11 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useBiometricsStore } from '@/stores/useBiometricsStore';
+import { useUserStore } from '@/stores/useUserStore';
 import { useToast } from 'vue-toastification';
 
 const biometricsStore = useBiometricsStore();
+const userStore = useUserStore();
 const toast = useToast();
 
 const weight = ref(null);
@@ -131,6 +133,10 @@ const saveBiometric = async () => {
     }
 
     await biometricsStore.createBiometric(data);
+
+    // Actualizar el peso del usuario
+    await userStore.updateWeight(weight.value);
+
     toast.success('Medición guardada correctamente');
 
     // Reset form
