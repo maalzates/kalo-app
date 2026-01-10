@@ -97,7 +97,7 @@
                   <v-icon class="mr-2" size="small">mdi-run-fast</v-icon>
                   <span class="text-overline font-weight-bold">Nivel de Actividad</span>
                 </div>
-                <div class="text-h5 text-capitalize font-weight-bold mb-1">{{ user.activity_level }}</div>
+                <div class="text-h5 text-capitalize font-weight-bold mb-1">{{ getActivityLabel(user.activity_level) }}</div>
                 <div class="text-body-2 opacity-70">Gasto calórico diario basado en tu movimiento.</div>
               </v-card>
             </v-col>
@@ -146,11 +146,13 @@
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
+import { useActivityLevel } from '@/composables/useActivityLevel';
 import usersRepository from '@/repositories/usersRepository.js';
 import EditUserInfo from '@/components/user/EditUserInfo.vue';
 
 const userStore = useUserStore();
 const router = useRouter();
+const { getActivityLabel } = useActivityLevel();
 const user = computed(() => userStore.user);
 const isModalOpen = ref(false);
 const showLogoutDialog = ref(false);

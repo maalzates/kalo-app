@@ -20,7 +20,7 @@ class UserFactory extends Factory
         $birthDate = $this->faker->optional(0.8)->dateTimeBetween('-60 years', '-18 years');
         $emailVerifiedAt = $this->faker->optional(0.9)->dateTimeBetween('-1 year', 'now');
         $countryCodes = ['+1', '+57', '+52', '+34', '+44', '+33', '+49', '+39', '+55', '+54'];
-        $activityLevels = ['Sedentario', 'Ligero', 'Moderado', 'Muy Activo'];
+        $activityLevels = [1, 2, 3, 4];
         $goalTypes = ['cut', 'maintain', 'grow'];
         $macroCalculationModes = ['auto', 'manual', 'tdee', 'bmr'];
 

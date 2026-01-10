@@ -1,12 +1,42 @@
 import { ref, computed } from 'vue';
 
+/**
+ * Calcula macros basado en parámetros (función pura)
+ * @param {Object} params - Parámetros de cálculo
+ * @returns {Object} - Macros calculados
+ */
+export function calculateMacros({ weight, height, age, gender, activityLevel, goal }) {
+  // Validación básica
+  if (!weight || !height || !age) return null;
+
+  // Fórmula de Mifflin-St Jeor
+  let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+  bmr = gender === 'male' ? bmr + 5 : bmr - 161;
+
+  const tdee = bmr * activityLevel;
+
+  let targetCalories = tdee;
+  if (goal === 'cut') targetCalories -= 500;
+  if (goal === 'grow') targetCalories += 300;
+
+  return {
+    calories: Math.round(targetCalories),
+    protein: Math.round((targetCalories * 0.30) / 4),
+    carbs: Math.round((targetCalories * 0.40) / 4),
+    fat: Math.round((targetCalories * 0.30) / 9)
+  };
+}
+
+/**
+ * Composable reactivo para cálculo de macros
+ */
 export function useMacroCalculator() {
   const gender = ref('male');
   const weight = ref(0);
   const height = ref(0);
   const age = ref(0);
   const activityLevel = ref(1.2);
-  const goal = ref('maintenance');
+  const goal = ref('maintain');
 
   const activityFactors = [
     { title: 'Sedentario (Oficina/Sin ejercicio)', value: 1.2 },
@@ -17,27 +47,14 @@ export function useMacroCalculator() {
   ];
 
   const calculatedResults = computed(() => {
-    // Validación básica para evitar cálculos con ceros
-    if (!weight.value || !height.value || !age.value) return null;
-
-    // Fórmula de Mifflin-St Jeor
-    // Hombres: (10 × peso) + (6.25 × altura) - (5 × edad) + 5
-    // Mujeres: (10 × peso) + (6.25 × altura) - (5 × edad) - 161
-    let bmr = (10 * weight.value) + (6.25 * height.value) - (5 * age.value);
-    bmr = gender.value === 'male' ? bmr + 5 : bmr - 161;
-
-    const tdee = bmr * activityLevel.value;
-
-    let targetCalories = tdee;
-    if (goal.value === 'loss') targetCalories -= 500;
-    if (goal.value === 'gain') targetCalories += 300;
-
-    return {
-      calories: Math.round(targetCalories),
-      protein: Math.round((targetCalories * 0.30) / 4),
-      carbs: Math.round((targetCalories * 0.40) / 4),
-      fat: Math.round((targetCalories * 0.30) / 9)
-    };
+    return calculateMacros({
+      weight: weight.value,
+      height: height.value,
+      age: age.value,
+      gender: gender.value,
+      activityLevel: activityLevel.value,
+      goal: goal.value
+    });
   });
 
   return {

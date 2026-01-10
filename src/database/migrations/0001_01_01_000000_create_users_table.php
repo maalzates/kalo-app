@@ -23,7 +23,7 @@ return new class extends Migration
             $table->integer('height')->nullable();
             $table->decimal('weight', 5, 2)->nullable();
             $table->string('country_code')->nullable();
-            $table->string('activity_level')->nullable()->default('Sedentario');
+            $table->tinyInteger('activity_level')->nullable()->default(1);
             $table->enum('goal_type', ['cut', 'maintain', 'grow'])->nullable()->default('maintain');
             $table->string('macro_calculation_mode')->nullable();
             $table->string('google_id')->nullable();

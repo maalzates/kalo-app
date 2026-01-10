@@ -98,7 +98,7 @@
             <v-select
               v-model="form.activity_level"
               label="Nivel de Actividad"
-              :items="['Sedentario', 'Ligero', 'Moderado', 'Muy Activo']"
+              :items="activityLevelOptions"
               variant="outlined"
               rounded="lg"
               density="comfortable"
@@ -185,18 +185,27 @@
   
   <script setup>
   import { reactive, ref, watch } from 'vue';
-  
+  import { useActivityLevel } from '@/composables/useActivityLevel';
+
   const props = defineProps({
     modelValue: Boolean,
     userData: Object
   });
-  
+
   const emit = defineEmits(['update:modelValue', 'save']);
-  
+
+  const { getActivityOptions } = useActivityLevel();
+
   // Estado para mostrar/ocultar contraseñas
   const showCurrentPassword = ref(false);
   const showNewPassword = ref(false);
   const showConfirmPassword = ref(false);
+
+  // Opciones de activity level
+  const activityLevelOptions = getActivityOptions().map(option => ({
+    title: option.label,
+    value: option.value
+  }));
   
   // Estado local para editar sin afectar la store directamente
   const form = reactive({
@@ -206,7 +215,7 @@
     gender: '',
     height: 0,
     birth_date: '',
-    activity_level: '',
+    activity_level: null,
     goal_type: '',
     current_password: '',
     new_password: '',
@@ -224,7 +233,7 @@
         gender: userDataCopy.gender || '',
         height: userDataCopy.height || 0,
         birth_date: userDataCopy.birth_date || '',
-        activity_level: userDataCopy.activity_level || '',
+        activity_level: userDataCopy.activity_level || null,
         goal_type: userDataCopy.goal_type || '',
         current_password: '',
         new_password: '',

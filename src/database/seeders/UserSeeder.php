@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
                 'height' => 180,
                 'weight' => 75.50,
                 'country_code' => '+57',
-                'activity_level' => 'Moderado',
+                'activity_level' => 3,
                 'goal_type' => 'maintain',
                 'macro_calculation_mode' => 'auto',
             ]
@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
                 'height' => 165,
                 'weight' => 70.25,
                 'country_code' => '+57',
-                'activity_level' => 'Ligero',
+                'activity_level' => 2,
                 'goal_type' => 'cut',
                 'macro_calculation_mode' => 'tdee',
             ]
@@ -73,7 +73,7 @@ class UserSeeder extends Seeder
                 'height' => 175,
                 'weight' => 80.00,
                 'country_code' => '+57',
-                'activity_level' => 'Muy Activo',
+                'activity_level' => 4,
                 'goal_type' => 'grow',
                 'macro_calculation_mode' => 'manual',
             ]

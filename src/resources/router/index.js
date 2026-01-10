@@ -32,7 +32,7 @@ const routes = [
         path: '/onboarding',
         name: 'onboarding',
         component: Onboarding,
-        meta: { requiresAuth: true, skipProfileCheck: true }
+        meta: { requiresAuth: true, skipProfileCheck: true, hideLayout: true }
     },
     {
         path: '/',

@@ -52,6 +52,8 @@ class User extends Authenticatable
             'birth_date' => 'date',
             'password' => 'hashed',
             'weight' => 'decimal:2',
+            'height' => 'integer',
+            'activity_level' => 'integer',
         ];
     }
 

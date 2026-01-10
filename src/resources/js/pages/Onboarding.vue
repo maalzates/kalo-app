@@ -179,13 +179,15 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
-import { useMacroCalculator } from '@/composables/useMacroCalculator';
+import { calculateMacros } from '@/composables/useMacroCalculator';
+import { useActivityLevel } from '@/composables/useActivityLevel';
 import { useToast } from 'vue-toastification';
 import UpdateMyMacros from '@/components/macros/UpdateMyMacros.vue';
 
 const router = useRouter();
 const userStore = useUserStore();
 const toast = useToast();
+const { getActivityOptions, getActivityMultiplier } = useActivityLevel();
 
 const currentStep = ref(0);
 const isFormValid = ref(false);
@@ -207,48 +209,22 @@ const genderOptions = [
   { label: 'Femenino', value: 'female' }
 ];
 
-const activityLevels = [
-  {
-    label: 'Sedentario',
-    value: 1.2,
-    description: 'Poco o ningún ejercicio, trabajo de oficina'
-  },
-  {
-    label: 'Ligero',
-    value: 1.375,
-    description: 'Ejercicio ligero 1-3 días por semana'
-  },
-  {
-    label: 'Moderado',
-    value: 1.55,
-    description: 'Ejercicio moderado 3-5 días por semana'
-  },
-  {
-    label: 'Activo',
-    value: 1.725,
-    description: 'Ejercicio intenso 6-7 días por semana'
-  },
-  {
-    label: 'Muy Activo',
-    value: 1.9,
-    description: 'Ejercicio muy intenso, trabajo físico o entrenamiento 2 veces al día'
-  }
-];
+const activityLevels = getActivityOptions();
 
 const goalOptions = [
   {
     label: 'Perder Peso',
-    value: 'loss',
+    value: 'cut',
     description: 'Déficit calórico de 500 kcal'
   },
   {
     label: 'Mantener Peso',
-    value: 'maintenance',
+    value: 'maintain',
     description: 'Mantener peso actual'
   },
   {
-    label: 'Ganar Peso',
-    value: 'gain',
+    label: 'Ganar Músculo',
+    value: 'grow',
     description: 'Superávit calórico de 300 kcal'
   }
 ];
@@ -281,17 +257,20 @@ const saveProfileAndCalculateMacros = async () => {
     // 2. Calcular edad a partir de fecha de nacimiento
     const age = calculateAge(formData.birth_date);
 
-    // 3. Calcular macros usando useMacroCalculator
-    calculatedMacros.value = useMacroCalculator({
+    // 3. Convertir integer de activity_level a multiplier
+    const activityMultiplier = getActivityMultiplier(formData.activity_level);
+
+    // 4. Calcular macros usando calculateMacros
+    calculatedMacros.value = calculateMacros({
       weight: formData.weight,
       height: formData.height,
       age: age,
       gender: formData.gender,
-      activityLevel: formData.activity_level,
+      activityLevel: activityMultiplier,
       goal: formData.goal_type
     });
 
-    // 4. Pasar al paso 3 para mostrar UpdateMyMacros
+    // 5. Pasar al paso 3 para mostrar UpdateMyMacros
     currentStep.value = 2;
   } catch (error) {
     console.error(error);
