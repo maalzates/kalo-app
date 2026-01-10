@@ -42,6 +42,11 @@
                     to="/macros"
                 />
                 <v-list-item
+                    prepend-icon="mdi-scale-bathroom"
+                    title="Biométricos"
+                    to="/biometrics"
+                />
+                <v-list-item
                     prepend-icon="mdi-trending-up"
                     title="Progreso"
                     to="/progress"

@@ -15,18 +15,23 @@ class BiometricSeeder extends Seeder
         $users = User::all();
 
         foreach ($users as $user) {
-            // Create weekly measurements for last 12 weeks using factory
-            for ($week = 0; $week < 12; $week++) {
-                Biometric::factory()->complete()->create([
-                    'user_id' => $user->id,
-                    'measured_at' => now()->subWeeks($week)->subHours(fake()->numberBetween(0, 23)),
-                ]);
-            }
+            $usedDates = [];
 
-            // Recent measurements
-            Biometric::factory(3)->recent()->complete()->create([
-                'user_id' => $user->id,
-            ]);
+            // Create weekly measurements for last 12 weeks using factory
+            // Solo un registro por semana, asegurando fechas únicas por día
+            for ($week = 0; $week < 12; $week++) {
+                $measuredAt = now()->subWeeks($week)->startOfDay();
+                $dateKey = $measuredAt->format('Y-m-d');
+
+                // Solo crear si no existe ya un registro para esta fecha
+                if (!in_array($dateKey, $usedDates)) {
+                    Biometric::factory()->complete()->create([
+                        'user_id' => $user->id,
+                        'measured_at' => $measuredAt,
+                    ]);
+                    $usedDates[] = $dateKey;
+                }
+            }
         }
     }
 }

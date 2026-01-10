@@ -24,9 +24,10 @@ export const useBiometricsStore = defineStore("biometricsStore", () => {
     const createBiometric = async (data) => {
         try {
             const newRecord = await biometricsRepository.create(data);
-            biometrics.value = [newRecord, ...biometrics.value].sort((a, b) => 
-                new Date(b.measured_at) - new Date(a.measured_at)
-            );
+
+            // Refrescar la lista completa después de guardar
+            await fetchBiometrics();
+
             return newRecord;
         } catch (err) {
             error.value = err;

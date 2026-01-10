@@ -4,6 +4,7 @@ import Ingredients from '@/components/menus/Ingredients.vue';
 import Recipes from '@/components/menus/Recipes.vue';
 import Profile from '@/components/user/Profile.vue';
 import MyMacros from '@/components/menus/MyMacros.vue';
+import MyBiometrics from '@/components/menus/MyBiometrics.vue';
 import FoodManager from '@/components/menus/FoodManager.vue';
 import Progress from '@/components/menus/Progress.vue';
 import Login from '@/components/Login.vue';
@@ -58,16 +59,22 @@ const routes = [
         component: Profile, 
         meta: {requiresAuth: true} 
     },
-    { 
-        path: '/macros', 
-        name: 'macros', 
-        component: MyMacros, 
+    {
+        path: '/macros',
+        name: 'macros',
+        component: MyMacros,
         meta: {requiresAuth: true}
     },
     {
-        path: '/progress', 
-        name: 'progress', 
-        component: Progress, 
+        path: '/biometrics',
+        name: 'biometrics',
+        component: MyBiometrics,
+        meta: {requiresAuth: true}
+    },
+    {
+        path: '/progress',
+        name: 'progress',
+        component: Progress,
         meta: {requiresAuth: true}
     },
     // Ruta comodín: redirige cualquier URL desconocida al Dashboard
