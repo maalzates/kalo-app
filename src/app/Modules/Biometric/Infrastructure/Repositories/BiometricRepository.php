@@ -66,6 +66,17 @@ class BiometricRepository implements BiometricRepositoryInterface
         }
     }
 
+    public function findByUserIdAndDate(int $userId, string $date): ?Biometric
+    {
+        try {
+            return Biometric::where('user_id', $userId)
+                ->whereDate('measured_at', $date)
+                ->first();
+        } catch (Throwable $exception) {
+            return null;
+        }
+    }
+
     public function create(array $data): array
     {
         try {

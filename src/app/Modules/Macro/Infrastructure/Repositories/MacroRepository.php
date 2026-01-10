@@ -73,6 +73,17 @@ class MacroRepository implements MacroRepositoryInterface
         }
     }
 
+    public function findByUserIdAndDate(int $userId, string $date): ?Macro
+    {
+        try {
+            return Macro::where('user_id', $userId)
+                ->whereDate('created_at', $date)
+                ->first();
+        } catch (Throwable $exception) {
+            return null;
+        }
+    }
+
     public function create(array $data): array
     {
         try {

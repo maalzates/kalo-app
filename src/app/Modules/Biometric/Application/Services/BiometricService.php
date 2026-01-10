@@ -41,13 +41,36 @@ class BiometricService
 
     public function create(CreateBiometricDTO $dto): array
     {
+        // Use provided measured_at or default to today
+        $measuredAt = $dto->measuredAt ?? now();
+        $dateToCheck = is_string($measuredAt) ? $measuredAt : $measuredAt->toDateString();
+
+        // Check if a biometric already exists for this date
+        $existingBiometric = $this->repository->findByUserIdAndDate((int) $dto->userId, $dateToCheck);
+
+        if ($existingBiometric !== null) {
+            // Update existing biometric for this date
+            $updateData = array_filter([
+                'weight' => $dto->weight,
+                'fat_percentage' => $dto->fatPercentage,
+                'clean_mass' => $dto->cleanMass,
+                'waist_circumference' => $dto->waistCircumference,
+                'measured_at' => $measuredAt,
+            ], fn ($value) => $value !== null);
+
+            $existingBiometric->update($updateData);
+
+            return $existingBiometric->toArray();
+        }
+
+        // Create new biometric if none exists for this date
         return $this->repository->create([
             'user_id' => $dto->userId,
             'weight' => $dto->weight,
             'fat_percentage' => $dto->fatPercentage,
             'clean_mass' => $dto->cleanMass,
             'waist_circumference' => $dto->waistCircumference,
-            'measured_at' => $dto->measuredAt ?? now(),
+            'measured_at' => $measuredAt,
         ]);
     }
 

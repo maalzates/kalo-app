@@ -39,8 +39,23 @@ class MacroService
 
     public function create(CreateMacroDTO $dto): array
     {
-        // Permitir múltiples macros por usuario para mantener historial
-        // Ya no validamos si existe un macro previo, permitimos crear nuevos
+        // Check if a macro already exists for today
+        $today = now()->toDateString();
+        $existingMacro = $this->repository->findByUserIdAndDate((int) $dto->userId, $today);
+
+        if ($existingMacro !== null) {
+            // Update existing macro for today
+            $existingMacro->update([
+                'kcal' => $dto->kcal,
+                'prot' => $dto->prot,
+                'carb' => $dto->carb,
+                'fat' => $dto->fat,
+            ]);
+
+            return $existingMacro->load('user')->toArray();
+        }
+
+        // Create new macro if none exists for today
         return $this->repository->create([
             'kcal' => $dto->kcal,
             'prot' => $dto->prot,
