@@ -141,7 +141,7 @@
 <script setup>
 import { ref, reactive, watch, computed } from 'vue';
 import { useIngredientsStore } from '@/stores/useIngredientsStore';
-
+import { useToast } from 'vue-toastification';
 const props = defineProps({
   modelValue: Boolean,
   initialData: Object
@@ -152,6 +152,7 @@ const emit = defineEmits(['update:modelValue', 'save']);
 const ingredientsStore = useIngredientsStore();
 const isEditing = ref(false);
 const loading = ref(false);
+const toast = useToast();
 
 const form = reactive({
   name: '',
@@ -202,13 +203,16 @@ const handleSubmit = async () => {
   try {
     if (isEditing.value && props.initialData?.id) {
       await ingredientsStore.updateIngredient(props.initialData.id, form);
+      toast.success('Ingrediente actualizado correctamente');
     } else {
       await ingredientsStore.createIngredient(form);
+      toast.success('Ingrediente creado correctamente');
     }
     emit('update:modelValue', false);
     resetForm();
   } catch (error) {
     console.error('Error saving ingredient:', error);
+    toast.error('Error al guardar el ingrediente. Intenta de nuevo.');
   } finally {
     loading.value = false;
   }
@@ -216,7 +220,6 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-/* Consistencia en los inputs de número */
 :deep(input::-webkit-outer-spin-button),
 :deep(input::-webkit-inner-spin-button) {
   -webkit-appearance: none;

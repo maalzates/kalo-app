@@ -76,7 +76,7 @@
   </v-card>
 
   <AddOrEditIngredient v-model="ingDialog" :initialData="selectedItem" />
-  <AddOrEditRecipe v-model="recDialog" :initialData="selectedItem" @save="handleSaveRecipe" />
+  <AddOrEditRecipe v-model="recDialog" :initialData="selectedItem" />
   
   <ConfirmDeleteDialog 
     v-model="deleteDialog" 
@@ -140,15 +140,17 @@ const openDeleteConfirm = (item) => {
 };
 
 const confirmDelete = async () => {
-  if (activeTab.value === 'ing') await ingStore.deleteIngredient(selectedItem.value.id);
-  else await recStore.deleteRecipe(selectedItem.value.id);
-  deleteDialog.value = false;
-};
-
-const handleSaveRecipe = async (data) => {
-  if (selectedItem.value) await recStore.updateRecipe(selectedItem.value.id, data);
-  else await recStore.createRecipe(data);
-  recDialog.value = false;
+  try {
+    if (activeTab.value === 'ing') await ingStore.deleteIngredient(selectedItem.value.id);
+    else await recStore.deleteRecipe(selectedItem.value.id);
+    deleteDialog.value = false;
+    toast.success(`El ${ activeTab.value === 'ing' ? 'ingrediente' : 'receta' } eliminado correctamente`);
+  } catch (error) {
+    console.error('Error deleting item:', error);
+    toast.error(`Error al eliminar ${ activeTab.value === 'ing' ? 'el ingrediente' : 'la receta' }. Intenta de nuevo.`);
+  } finally {
+    loading.value = false;
+  }
 };
 
 onMounted(() => {

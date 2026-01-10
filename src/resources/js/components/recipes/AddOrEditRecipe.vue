@@ -154,14 +154,18 @@
   <script setup>
   import { ref, reactive, computed, watch, onMounted } from "vue";
   import { useIngredientsStore } from "@/stores/useIngredientsStore";
-  
+  import { useRecipesStore } from "@/stores/useRecipesStore";
+  import { useToast } from 'vue-toastification';
+
   const props = defineProps({
     modelValue: Boolean,
     initialData: Object,
   });
-  
-  const emit = defineEmits(["update:modelValue", "save"]);
+
+  const emit = defineEmits(["update:modelValue"]);
+  const toast = useToast();
   const ingredientsStore = useIngredientsStore();
+  const recipesStore = useRecipesStore();
   const isEditing = ref(false);
   const selectedIngFromList = ref(null);
   const loading = ref(false);
@@ -289,11 +293,19 @@
           unit: ing.unit || 'g'
         }))
       };
-      
-      emit("save", recipeData);
+
+      if (isEditing.value && recipeForm.id) {
+        await recipesStore.updateRecipe(recipeForm.id, recipeData);
+        toast.success('Receta actualizada correctamente');
+      } else {
+        await recipesStore.createRecipe(recipeData);
+        toast.success('Receta creada correctamente');
+      }
+
       emit("update:modelValue", false);
     } catch (error) {
-      console.error('Error saving recipe:', error);
+      console.error(error);
+      toast.error(error);
     } finally {
       loading.value = false;
     }
