@@ -158,8 +158,7 @@ const isModalOpen = ref(false);
 const showLogoutDialog = ref(false);
 
 const currentWeight = computed(() => {
-  if (!user.value?.biometrics?.length) return '--';
-  return user.value.biometrics[user.value.biometrics.length - 1].weight;
+  return user.value.weight;
 });
 
 const confirmLogout = () => {
