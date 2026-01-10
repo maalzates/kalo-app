@@ -21,14 +21,14 @@
               <v-text-field v-model.number="height" label="Altura (cm)" type="number" variant="outlined" rounded="lg"></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-select v-model="activityLevel" :items="activityFactors" label="Nivel de Actividad" variant="outlined" rounded="lg"></v-select>
+              <v-select v-model="activityLevelInteger" :items="activityLevelOptions" label="Nivel de Actividad" variant="outlined" rounded="lg"></v-select>
             </v-col>
             <v-col cols="12">
-              <v-select 
-                v-model="goal" 
-                :items="[{title:'Perder Peso', value:'loss'}, {title:'Mantener', value:'maintenance'}, {title:'Ganar Músculo', value:'gain'}]" 
-                label="Objetivo" 
-                variant="outlined" 
+              <v-select
+                v-model="goal"
+                :items="[{title:'Perder Peso', value:'cut'}, {title:'Mantener', value:'maintain'}, {title:'Ganar Músculo', value:'grow'}]"
+                label="Objetivo"
+                variant="outlined"
                 rounded="lg"
               ></v-select>
             </v-col>
@@ -89,9 +89,11 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, watch } from 'vue';
+  import { ref, onMounted, watch, computed } from 'vue';
   import { useMacroCalculator } from '@/composables/useMacroCalculator';
   import { useMacrosStore } from '@/stores/useMacrosStore';
+  import { useUserStore } from '@/stores/useUserStore';
+  import { useActivityLevel } from '@/composables/useActivityLevel';
   import { useToast } from 'vue-toastification';
 
   const props = defineProps({
@@ -107,6 +109,8 @@
 
   const emit = defineEmits(['saved']);
   const toast = useToast();
+  const userStore = useUserStore();
+  const { getActivityMultiplier, getActivityOptions } = useActivityLevel();
 
   const activeTab = ref('auto');
   const macrosStore = useMacrosStore();
@@ -116,10 +120,50 @@
     activityFactors, calculatedResults
   } = useMacroCalculator();
 
+  // Opciones de activity level para el select
+  const activityLevelOptions = getActivityOptions().map(option => ({
+    title: option.label,
+    value: option.value
+  }));
+
+  // Variable para el integer de activity level (1-4)
+  const activityLevelInteger = ref(1);
+
+  // Watcher que convierte integer a multiplier para el cálculo
+  watch(activityLevelInteger, (newValue) => {
+    activityLevel.value = getActivityMultiplier(newValue);
+  });
+
   const manualCalories = ref(0);
   const manualProtein = ref(0);
   const manualCarbs = ref(0);
   const manualFat = ref(0);
+
+  // Función para calcular edad desde fecha de nacimiento
+  const calculateAge = (birthDate) => {
+    if (!birthDate) return 0;
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  // Cargar datos del usuario en el tab automático
+  const loadUserData = () => {
+    const user = userStore.user;
+    if (user) {
+      gender.value = user.gender || 'male';
+      weight.value = parseFloat(user.weight) || 0;
+      height.value = parseInt(user.height) || 0;
+      age.value = calculateAge(user.birth_date);
+      activityLevelInteger.value = user.activity_level || 1;
+      goal.value = user.goal_type || 'maintain';
+    }
+  };
 
   // Si hay datos pre-cargados (desde onboarding), cargarlos en el tab manual
   watch(() => props.preFilledData, (data) => {
@@ -191,6 +235,7 @@
   };
   
   onMounted(() => {
+    loadUserData();
     loadExistingMacro();
   });
   </script>

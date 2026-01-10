@@ -148,28 +148,13 @@
               block
               :disabled="!isFormValid || loading"
               :loading="loading"
-              @click="saveProfileAndCalculateMacros"
+              @click="saveProfile"
             >
-              Calcular Mis Macros
+              Completar Configuración
             </v-btn>
           </v-form>
         </v-card>
 
-        <!-- Paso 3: Confirmación de Macros -->
-        <v-card v-if="currentStep === 2" rounded="xl" class="pa-6" elevation="4">
-          <v-card-title class="text-h5 font-weight-bold mb-2 px-0">
-            Tus Macros Calculados
-          </v-card-title>
-          <v-card-subtitle class="px-0 mb-4">
-            Basados en tus datos personales, estos son tus macros recomendados. Puedes ajustarlos si lo deseas.
-          </v-card-subtitle>
-
-          <UpdateMyMacros
-            :pre-filled-data="calculatedMacros"
-            :is-onboarding="true"
-            @saved="onboardingComplete"
-          />
-        </v-card>
       </v-col>
     </v-row>
   </v-container>
@@ -179,21 +164,18 @@
 import { ref, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/useUserStore';
-import { calculateMacros } from '@/composables/useMacroCalculator';
 import { useActivityLevel } from '@/composables/useActivityLevel';
 import { useToast } from 'vue-toastification';
-import UpdateMyMacros from '@/components/macros/UpdateMyMacros.vue';
 
 const router = useRouter();
 const userStore = useUserStore();
 const toast = useToast();
-const { getActivityOptions, getActivityMultiplier } = useActivityLevel();
+const { getActivityOptions } = useActivityLevel();
 
 const currentStep = ref(0);
 const isFormValid = ref(false);
 const loading = ref(false);
 const formRef = ref(null);
-const calculatedMacros = ref(null);
 
 const formData = reactive({
   weight: null,
@@ -234,55 +216,18 @@ const rules = {
   positive: value => value > 0 || 'Debe ser mayor a 0'
 };
 
-const calculateAge = (birthDate) => {
-  const today = new Date();
-  const birth = new Date(birthDate);
-  let age = today.getFullYear() - birth.getFullYear();
-  const monthDiff = today.getMonth() - birth.getMonth();
-
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-
-  return age;
-};
-
-const saveProfileAndCalculateMacros = async () => {
+const saveProfile = async () => {
   loading.value = true;
   try {
-    // 1. Actualizar perfil de usuario
     await userStore.updateProfile(formData);
-    toast.success('Perfil actualizado correctamente');
-
-    // 2. Calcular edad a partir de fecha de nacimiento
-    const age = calculateAge(formData.birth_date);
-
-    // 3. Convertir integer de activity_level a multiplier
-    const activityMultiplier = getActivityMultiplier(formData.activity_level);
-
-    // 4. Calcular macros usando calculateMacros
-    calculatedMacros.value = calculateMacros({
-      weight: formData.weight,
-      height: formData.height,
-      age: age,
-      gender: formData.gender,
-      activityLevel: activityMultiplier,
-      goal: formData.goal_type
-    });
-
-    // 5. Pasar al paso 3 para mostrar UpdateMyMacros
-    currentStep.value = 2;
+    toast.success('¡Configuración completada! Bienvenido a Kalo App');
+    router.push('/');
   } catch (error) {
     console.error(error);
     toast.error('Error al guardar el perfil. Intenta de nuevo.');
   } finally {
     loading.value = false;
   }
-};
-
-const onboardingComplete = () => {
-  toast.success('¡Configuración completada! Bienvenido a Kalo App');
-  router.push('/');
 };
 </script>
 
