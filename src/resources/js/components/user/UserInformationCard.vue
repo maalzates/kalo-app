@@ -57,7 +57,7 @@
                   </v-avatar>
                   <div>
                     <div class="text-caption text-grey">Nacimiento</div>
-                    <div class="text-body-2 font-weight-bold">{{ user.birth_date }}</div>
+                    <div class="text-body-2 font-weight-bold">{{ formattedBirthDate }}</div>
                   </div>
                 </div>
               </div>
@@ -108,11 +108,11 @@
                   <v-icon class="mr-2" size="small">mdi-target</v-icon>
                   <span class="text-overline font-weight-bold text-white">Objetivo Meta</span>
                 </div>
-                <div class="text-h5 text-uppercase font-weight-black mb-1">
-                  {{ user.goal_type?.replace('_', ' ') }}
+                <div class="text-h5 font-weight-black mb-1">
+                  {{ getGoalTypeLabel(user.goal_type) }}
                 </div>
                 <div class="text-body-2 opacity-80">
-                  Cálculo: <span class="text-capitalize">{{ user.macro_calculation_mode }}</span>
+                  Cálculo: {{ getCalculationModeLabel(user.macro_calculation_mode) }}
                 </div>
               </v-card>
             </v-col>
@@ -159,6 +159,34 @@ const showLogoutDialog = ref(false);
 
 const currentWeight = computed(() => {
   return user.value.weight;
+});
+
+const getGoalTypeLabel = (goalType) => {
+  const labels = {
+    'maintain': 'Mantener',
+    'lose_weight': 'Perder Peso',
+    'gain_weight': 'Ganar Peso',
+    'cut': 'Definir',
+    'bulk': 'Volumen'
+  };
+  return labels[goalType] || goalType;
+};
+
+const getCalculationModeLabel = (mode) => {
+  const labels = {
+    'auto': 'Automático',
+    'manual': 'Manual'
+  };
+  return labels[mode] || mode;
+};
+
+const formattedBirthDate = computed(() => {
+  if (!user.value?.birth_date) return '';
+  const date = new Date(user.value.birth_date);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 });
 
 const confirmLogout = () => {
