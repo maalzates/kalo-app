@@ -1,14 +1,14 @@
 <template>
-  <v-card class="pa-2" rounded="lg" elevation="0" border style="width: fit-content; max-width: 100%;">
-    <div v-if="heatmapData.length > 0" class="d-flex align-center flex-wrap" style="gap: 8px;">
+  <v-card class="pa-3" rounded="lg" elevation="0" border style="width: fit-content; max-width: 100%;">
+    <div v-if="heatmapData.length > 0" class="d-flex align-center flex-wrap" style="gap: 10px;">
       <!-- Título -->
       <div class="d-flex align-center flex-shrink-0">
-        <v-icon icon="mdi-calendar-check" color="primary" size="x-small" class="mr-1"></v-icon>
-        <span class="text-caption font-weight-medium text-medium-emphasis">Adherencia</span>
+        <v-icon icon="mdi-calendar-check" color="primary" size="small" class="mr-1"></v-icon>
+        <span class="text-body-2 font-weight-medium text-medium-emphasis">Adherencia</span>
       </div>
 
       <!-- Heatmap inline -->
-      <div class="d-flex flex-wrap align-center" style="gap: 2px;">
+      <div class="d-flex flex-wrap align-center" style="gap: 3px;">
         <div
           v-for="day in heatmapData"
           :key="day.date"
@@ -23,7 +23,7 @@
 
       <!-- Stats inline -->
       <div class="d-flex align-center flex-shrink-0">
-        <span class="text-caption">
+        <span class="text-body-2">
           <span class="font-weight-bold text-primary">{{ averageAdherence }}%</span>
           <span class="text-medium-emphasis mx-1">·</span>
           <span class="text-medium-emphasis">{{ heatmapData.length }}d</span>
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <div v-else class="text-caption text-medium-emphasis text-center py-1">
+    <div v-else class="text-body-2 text-medium-emphasis text-center py-2">
       Sin datos
     </div>
   </v-card>
@@ -86,15 +86,15 @@ const formatDate = (dateStr) => {
 
 <style scoped>
 .heatmap-cell {
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
   cursor: pointer;
   flex-shrink: 0;
   transition: transform 0.15s ease;
 }
 
 .heatmap-cell:hover {
-  transform: scale(1.5);
+  transform: scale(1.4);
 }
 </style>

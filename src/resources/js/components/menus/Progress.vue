@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-4 pa-sm-6">
-    <v-row align="center" class="mb-6">
+    <v-row align="center">
       <!-- Columna izquierda: Título -->
       <v-col cols="12" md="6">
         <h1 class="text-h4 font-weight-black">Mi Progreso</h1>
