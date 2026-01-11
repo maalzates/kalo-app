@@ -100,13 +100,9 @@
     });
   };
 
-  // Filtrar meal logs por fecha seleccionada
+  // Los meal logs ya vienen filtrados del backend, no necesitamos filtrar nuevamente
   const filteredMealLogs = computed(() => {
-    const selectedDateStr = formattedDateForAPI.value;
-    return mealLogsStore.mealLogs.filter(meal => {
-      const mealDate = meal.logged_at ? meal.logged_at.split('T')[0] : null;
-      return mealDate === selectedDateStr;
-    });
+    return mealLogsStore.mealLogs;
   });
 
   // Obtener tipo y color del chip

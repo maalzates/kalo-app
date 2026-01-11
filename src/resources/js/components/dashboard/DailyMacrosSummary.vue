@@ -87,16 +87,9 @@
   const macrosStore = useMacrosStore();
   const dateStore = useDateStore();
 
-  // Filtrar meal logs por fecha seleccionada para los cálculos
+  // Los meal logs ya vienen filtrados del backend por fecha, no necesitamos filtrar nuevamente
   const filteredMealLogsForDate = computed(() => {
-    const selectedDateStr = dateStore.selectedDate instanceof Date
-      ? dateStore.selectedDate.toISOString().split('T')[0]
-      : dateStore.selectedDate;
-    
-    return mealLogsStore.mealLogs.filter(meal => {
-      const mealDate = meal.logged_at ? meal.logged_at.split('T')[0] : null;
-      return mealDate === selectedDateStr;
-    });
+    return mealLogsStore.mealLogs;
   });
 
   // Helper para obtener calorías de un meal log
