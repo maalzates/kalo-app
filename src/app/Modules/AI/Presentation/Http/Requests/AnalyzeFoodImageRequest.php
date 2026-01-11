@@ -25,6 +25,7 @@ class AnalyzeFoodImageRequest extends FormRequest
     public function toDTO(): AnalyzeFoodImageDTO
     {
         return new AnalyzeFoodImageDTO(
+            userId: $this->user()->id,
             image: $this->file('image'),
             mimeType: $this->file('image')->getMimeType(),
             foodType: $this->input('food_type', 'ingredient')

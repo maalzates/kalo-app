@@ -31,7 +31,13 @@ class GeminiRepository implements GeminiRepositoryInterface
             // Limpieza de Markdown: Gemini a veces envuelve el JSON en bloques ```json ... ```
             $cleanJson = preg_replace('/^```json\s*|```$/m', '', $textResponse);
 
-            return json_decode(trim($cleanJson), true) ?? throw new \Exception('Invalid JSON response from AI');
+            $parsedContent = json_decode(trim($cleanJson), true) ?? throw new \Exception('Invalid JSON response from AI');
+
+            // Retornar tanto el contenido como los metadatos de uso
+            return [
+                'content' => $parsedContent,
+                'usageMetadata' => $response['usageMetadata'] ?? null,
+            ];
 
         } catch (Throwable $exception) {
             throw GeminiException::forFoodAnalysisCall($imageBase64, $mimeType, $exception);

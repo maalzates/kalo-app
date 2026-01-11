@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 readonly class AnalyzeFoodImageDTO
 {
     public function __construct(
+        public int $userId,
         public UploadedFile $image,
         public string $mimeType,
         public string $foodType = 'ingredient'

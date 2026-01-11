@@ -12,4 +12,5 @@ return [
     App\Modules\Permission\PermissionServiceProvider::class,
     App\Modules\Macro\MacroServiceProvider::class,
     App\Modules\AI\AIServiceProvider::class,
+    App\Modules\Logs\LogsServiceProvider::class,
 ];

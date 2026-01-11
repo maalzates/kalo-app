@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             MealLogSeeder::class,
             BiometricSeeder::class,
             MacroSeeder::class,
+            UsageLogSeeder::class,
         ]);
     }
 }
