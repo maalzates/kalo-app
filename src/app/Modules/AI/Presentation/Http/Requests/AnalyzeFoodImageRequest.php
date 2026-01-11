@@ -18,6 +18,7 @@ class AnalyzeFoodImageRequest extends FormRequest
     {
         return [
             'image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:10240'],
+            'food_type' => ['sometimes', 'string', 'in:ingredient,recipe'],
         ];
     }
 
@@ -25,7 +26,8 @@ class AnalyzeFoodImageRequest extends FormRequest
     {
         return new AnalyzeFoodImageDTO(
             image: $this->file('image'),
-            mimeType: $this->file('image')->getMimeType()
+            mimeType: $this->file('image')->getMimeType(),
+            foodType: $this->input('food_type', 'ingredient')
         );
     }
 }

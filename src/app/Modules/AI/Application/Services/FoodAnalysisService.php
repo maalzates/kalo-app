@@ -18,6 +18,6 @@ class FoodAnalysisService
     {
         $imageBase64 = $this->imageScalingService->scaleAndConvertToBase64($dto->image);
 
-        return $this->repository->analyzeFoodImage($imageBase64, 'image/jpeg');
+        return $this->repository->analyzeFoodImage($imageBase64, 'image/jpeg', $dto->foodType);
     }
 }

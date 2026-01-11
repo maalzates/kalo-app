@@ -175,11 +175,11 @@ export const useMealLogsStore = defineStore("mealLogsStore", () => {
         }
     };
 
-    const analyzeMealImage = async (imageBlob) => {
+    const analyzeMealImage = async (imageBlob, foodType = 'ingredient') => {
         isAnalyzing.value = true;
         error.value = null;
         try {
-            const result = await mealLogsRepository.analyzeFoodImage(imageBlob);
+            const result = await mealLogsRepository.analyzeFoodImage(imageBlob, foodType);
             analysisResult.value = result;
             return result;
         } catch (err) {

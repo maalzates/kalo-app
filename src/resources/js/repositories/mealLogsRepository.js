@@ -60,10 +60,11 @@ const mealLogsRepository = {
             throw error;
         }
     },
-    async analyzeFoodImage(imageBlob) {
+    async analyzeFoodImage(imageBlob, foodType = 'ingredient') {
         try {
             const formData = new FormData();
             formData.append('image', imageBlob, 'capture.jpg');
+            formData.append('food_type', foodType);
             const response = await axios.post('/ai/image/analyze', formData);
             return response.data.data || response.data;
         } catch (error) {

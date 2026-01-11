@@ -6,6 +6,7 @@ namespace App\Modules\AI;
 
 use App\Modules\AI\Domain\Contracts\GeminiRepositoryInterface;
 use App\Modules\AI\Domain\Contracts\OpenRouterRepositoryInterface;
+use App\Modules\AI\Infrastructure\Builders\PromptBuilder;
 use App\Modules\AI\Infrastructure\Clients\GeminiClient;
 use App\Modules\AI\Infrastructure\Clients\OpenRouterClient;
 use App\Modules\AI\Infrastructure\Repositories\GeminiRepository;
@@ -29,6 +30,8 @@ class AIServiceProvider extends ServiceProvider
                 ])
             );
         });
+
+        $this->app->singleton(PromptBuilder::class);
 
         $this->app->bind(GeminiRepositoryInterface::class, GeminiRepository::class);
 

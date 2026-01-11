@@ -92,27 +92,45 @@
                   @click="openFileUpload"
                 ></v-btn>
 
-                <div v-if="capturedPhotoDataUrl && !mealStore.isAnalyzing" class="d-flex ga-3 w-100 max-width-mobile">
-                  <v-btn
-                    color="white"
-                    variant="tonal"
-                    rounded="pill"
-                    size="large"
-                    class="flex-grow-1 font-weight-bold"
-                    @click="resetCameraToInitialState"
-                  >
-                    Repetir
-                  </v-btn>
-                  <v-btn
+                <div v-if="capturedPhotoDataUrl && !mealStore.isAnalyzing" class="d-flex flex-column ga-3 w-100 max-width-mobile align-center">
+                  <v-btn-toggle
+                    v-model="selectedFoodType"
+                    mandatory
                     color="deep-purple-accent-4"
-                    variant="flat"
+                    density="compact"
                     rounded="pill"
-                    size="large"
-                    class="flex-grow-1 font-weight-bold"
-                    @click="processPhoto"
+                    class="food-type-selector"
                   >
-                    Analizar
-                  </v-btn>
+                    <v-btn value="ingredient" size="small">
+                      Ingrediente
+                    </v-btn>
+                    <v-btn value="recipe" size="small">
+                      Receta
+                    </v-btn>
+                  </v-btn-toggle>
+
+                  <div class="d-flex ga-3 w-100">
+                    <v-btn
+                      color="white"
+                      variant="tonal"
+                      rounded="pill"
+                      size="large"
+                      class="flex-grow-1 font-weight-bold"
+                      @click="resetCameraToInitialState"
+                    >
+                      Repetir
+                    </v-btn>
+                    <v-btn
+                      color="deep-purple-accent-4"
+                      variant="flat"
+                      rounded="pill"
+                      size="large"
+                      class="flex-grow-1 font-weight-bold"
+                      @click="processPhoto"
+                    >
+                      Analizar
+                    </v-btn>
+                  </div>
                 </div>
               </div>
             </div>
@@ -170,27 +188,45 @@
           @click="takePhoto"
         ></v-btn>
 
-        <div v-if="capturedPhotoDataUrl && !mealStore.isAnalyzing" class="d-flex ga-3 w-100 max-width-mobile">
-          <v-btn
-            color="white"
-            variant="tonal"
-            rounded="pill"
-            size="large"
-            class="flex-grow-1 font-weight-bold"
-            @click="resetCameraToInitialState"
-          >
-            Repetir
-          </v-btn>
-          <v-btn
+        <div v-if="capturedPhotoDataUrl && !mealStore.isAnalyzing" class="d-flex flex-column ga-3 w-100 max-width-mobile align-center">
+          <v-btn-toggle
+            v-model="selectedFoodType"
+            mandatory
             color="deep-purple-accent-4"
-            variant="flat"
+            density="compact"
             rounded="pill"
-            size="large"
-            class="flex-grow-1 font-weight-bold"
-            @click="processPhoto"
+            class="food-type-selector"
           >
-            Analizar
-          </v-btn>
+            <v-btn value="ingredient" size="small">
+              Ingrediente
+            </v-btn>
+            <v-btn value="recipe" size="small">
+              Receta
+            </v-btn>
+          </v-btn-toggle>
+
+          <div class="d-flex ga-3 w-100">
+            <v-btn
+              color="white"
+              variant="tonal"
+              rounded="pill"
+              size="large"
+              class="flex-grow-1 font-weight-bold"
+              @click="resetCameraToInitialState"
+            >
+              Repetir
+            </v-btn>
+            <v-btn
+              color="deep-purple-accent-4"
+              variant="flat"
+              rounded="pill"
+              size="large"
+              class="flex-grow-1 font-weight-bold"
+              @click="processPhoto"
+            >
+              Analizar
+            </v-btn>
+          </div>
         </div>
       </div>
     </div>
@@ -222,6 +258,7 @@
   const capturedPhotoBlob = ref(null);
   const isCameraModalOpenOnDesktop = ref(false);
   const fileInputElement = ref(null);
+  const selectedFoodType = ref('ingredient');
 
   const startCamera = async () => {
     try {
@@ -272,7 +309,7 @@
   const processPhoto = async () => {
     if (!capturedPhotoBlob.value) return;
     try {
-      const result = await mealStore.analyzeMealImage(capturedPhotoBlob.value);
+      const result = await mealStore.analyzeMealImage(capturedPhotoBlob.value, selectedFoodType.value);
       if (result) {
         emit('analysis-finished', result);
         closeCameraModal();
@@ -293,6 +330,7 @@
   const resetCameraToInitialState = () => {
     capturedPhotoDataUrl.value = null;
     capturedPhotoBlob.value = null;
+    selectedFoodType.value = 'ingredient';
     startCamera();
   };
 
@@ -390,6 +428,7 @@
       stopCamera();
       capturedPhotoDataUrl.value = null;
       capturedPhotoBlob.value = null;
+      selectedFoodType.value = 'ingredient';
     }
   });
 
@@ -457,6 +496,11 @@
 
   .camera-modal-card {
     overflow: hidden;
+  }
+
+  .food-type-selector {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   @media (min-width: 600px) {

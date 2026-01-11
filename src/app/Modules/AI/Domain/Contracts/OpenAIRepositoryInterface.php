@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\AI\Domain\Contracts;
 
-interface GeminiRepositoryInterface
+interface OpenAIRepositoryInterface
 {
     /**
      * @param  string  $imageBase64
