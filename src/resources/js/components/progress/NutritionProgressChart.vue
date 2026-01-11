@@ -1,30 +1,28 @@
 <script setup>
 import { ref, computed } from "vue";
-import { Bar } from "vue-chartjs";
+import { Line } from "vue-chartjs";
 import { useStatsCalculator } from "@/composables/useStatsCalculator";
 import {
     Chart as ChartJS,
     Title,
     Tooltip,
     Legend,
-    BarElement,
     CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
-    LineController,
+    Filler
 } from "chart.js";
 
 ChartJS.register(
     Title,
     Tooltip,
     Legend,
-    BarElement,
     CategoryScale,
     LinearScale,
     PointElement,
     LineElement,
-    LineController
+    Filler
 );
 
 const props = defineProps({
@@ -41,6 +39,13 @@ const metrics = [
     { title: "Carbos", value: "carbs", color: "#81C784" },
     { title: "Grasas", value: "fat", color: "#FFD54F" },
 ];
+
+const hexToRgba = (hex, alpha = 0.2) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
 
 const chartData = computed(() => {
     const dailyData = aggregateLogsByDay(props.mealLogs);
@@ -66,85 +71,133 @@ const chartData = computed(() => {
         getTargetForDate(date, props.macroGoals, selectedMetric.value)
     );
 
-    const finalData = {
+    return {
         labels: labels,
         datasets: [
             {
                 label: "Consumo Real",
-                type: "bar",
-                backgroundColor: currentMetricObj.color,
+                borderColor: currentMetricObj.color,
+                backgroundColor: hexToRgba(currentMetricObj.color, 0.3),
                 data: consumoData,
-                borderRadius: 6,
-                order: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: currentMetricObj.color,
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
+                borderWidth: 3,
             },
             {
                 label: "Objetivo",
-                type: "line",
-                borderColor: "#546E7A",
-                borderWidth: 2,
-                borderDash: [5, 5],
-                pointRadius: 3,
+                borderColor: "#37474F",
+                backgroundColor: "rgba(55, 71, 79, 0.1)",
+                borderWidth: 3,
+                borderDash: [8, 4],
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                pointBackgroundColor: "#37474F",
+                pointBorderColor: "#fff",
+                pointBorderWidth: 2,
                 data: objetivoData,
-                order: 1,
+                fill: false,
                 spanGaps: true,
+                tension: 0.1,
             },
         ],
     };
-
-    console.log(
-        "🎨 OBJETO FINAL COMPLETO:",
-        JSON.parse(JSON.stringify(finalData))
-    );
-
-    return finalData;
 });
 
 const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-        legend: { position: "bottom" },
-        tooltip: { mode: "index", intersect: false, callbacks: {
-            label: function (context) {
-                let label = context.dataset.label || "";
-                if (label) {
-                    label += ": ";
+        legend: {
+            position: "bottom",
+            labels: {
+                usePointStyle: true,
+                padding: 15,
+                font: { size: 12, weight: '500' }
+            }
+        },
+        tooltip: {
+            mode: "index",
+            intersect: false,
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: { size: 13, weight: 'bold' },
+            bodyFont: { size: 12 },
+            padding: 12,
+            callbacks: {
+                label: function (context) {
+                    let label = context.dataset.label || "";
+                    if (label) {
+                        label += ": ";
+                    }
+                    label += context.parsed.y.toFixed(1);
+                    return label;
+                },
+                afterBody: function(context) {
+                    const consumo = context[0].parsed.y;
+                    const objetivo = context[1]?.parsed.y;
+                    if (objetivo) {
+                        const diff = consumo - objetivo;
+                        const percentage = ((diff / objetivo) * 100).toFixed(1);
+                        const symbol = diff >= 0 ? '+' : '';
+                        return `Diferencia: ${symbol}${diff.toFixed(1)} (${symbol}${percentage}%)`;
+                    }
+                    return '';
                 }
-                // ✅ Formatear sin comas, con 2 decimales
-                label += context.parsed.y.toFixed(2);
-                return label;
-            },
-        } },
-        
+            }
+        }
     },
     scales: {
-        y: { beginAtZero: true, grid: { color: "#F0F0F0" } },
-        x: { grid: { display: false } },
-    },
+        y: {
+            beginAtZero: true,
+            grid: { color: "rgba(0, 0, 0, 0.05)" },
+            ticks: {
+                font: { size: 11 },
+                callback: function(value) {
+                    return value.toFixed(0);
+                }
+            }
+        },
+        x: {
+            grid: { display: false },
+            ticks: { font: { size: 11 } }
+        }
+    }
 };
 </script>
 
 <template>
     <v-card class="pa-6" rounded="xl" border elevation="0">
-        <div class="d-flex justify-space-between align-center mb-6">
-            <span class="text-subtitle-1 font-weight-bold"
-                >Llegaste a tus requerimientos?</span
-            >
-            <v-select
+        <div class="d-flex flex-column flex-sm-row justify-space-between align-start align-sm-center mb-6 ga-3">
+            <div class="d-flex align-center">
+                <v-icon icon="mdi-chart-line-variant" color="primary" class="mr-2"></v-icon>
+                <span class="text-subtitle-1 font-weight-bold">Llegaste a tus requerimientos?</span>
+            </div>
+
+            <v-chip-group
                 v-model="selectedMetric"
-                :items="metrics"
-                item-title="title"
-                item-value="value"
+                mandatory
+                selected-class="text-primary font-weight-bold"
                 density="compact"
-                variant="outlined"
-                hide-details
-                rounded="lg"
-                style="max-width: 140px"
-            ></v-select>
+            >
+                <v-chip
+                    v-for="metric in metrics"
+                    :key="metric.value"
+                    :value="metric.value"
+                    variant="tonal"
+                    size="small"
+                    :color="selectedMetric === metric.value ? 'primary' : 'default'"
+                >
+                    {{ metric.title }}
+                </v-chip>
+            </v-chip-group>
         </div>
 
-        <div style="height: 350px">
-            <Bar
+        <div style="height: 320px">
+            <Line
                 v-if="chartData"
                 :data="chartData"
                 :options="chartOptions"
@@ -152,11 +205,12 @@ const chartOptions = {
             />
             <v-sheet
                 v-else
-                class="d-flex align-center justify-center fill-height bg-grey-lighten-5 rounded-xl border"
+                class="d-flex align-center justify-center fill-height bg-grey-lighten-4 rounded-lg"
             >
-                <span class="text-grey text-caption"
-                    >Sin datos para graficar</span
-                >
+                <div class="text-center text-grey">
+                    <v-icon size="48" color="grey-lighten-1">mdi-chart-line-variant</v-icon>
+                    <p class="text-caption mt-2">Sin datos para graficar</p>
+                </div>
             </v-sheet>
         </div>
     </v-card>

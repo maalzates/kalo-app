@@ -98,5 +98,70 @@ export function useStatsCalculator() {
     return null;
   };
 
-  return { aggregateLogsByDay, getTargetForDate };
+  /**
+   * Calcula el score de adherencia (0-100) para cada día
+   * Score = qué tan cerca estuviste de tus objetivos
+   */
+  const calculateAdherence = (logs, macroGoals) => {
+    const dailyData = aggregateLogsByDay(logs);
+    const adherenceByDay = {};
+
+    Object.keys(dailyData).forEach(date => {
+      const consumed = dailyData[date];
+      const targets = {
+        kcal: getTargetForDate(date, macroGoals, 'kcal'),
+        protein: getTargetForDate(date, macroGoals, 'prot'),
+        carbs: getTargetForDate(date, macroGoals, 'carb'),
+        fat: getTargetForDate(date, macroGoals, 'fat')
+      };
+
+      // Si no hay targets ese día, score = 0
+      if (!targets.kcal) {
+        adherenceByDay[date] = 0;
+        return;
+      }
+
+      // Calcular % de adherencia por métrica (penaliza tanto exceso como déficit)
+      const kcalScore = Math.max(0, 100 - Math.abs((consumed.kcal - targets.kcal) / targets.kcal * 100));
+      const proteinScore = targets.protein ? Math.max(0, 100 - Math.abs((consumed.protein - targets.protein) / targets.protein * 100)) : 100;
+      const carbsScore = targets.carbs ? Math.max(0, 100 - Math.abs((consumed.carbs - targets.carbs) / targets.carbs * 100)) : 100;
+      const fatScore = targets.fat ? Math.max(0, 100 - Math.abs((consumed.fat - targets.fat) / targets.fat * 100)) : 100;
+
+      // Promedio ponderado (calorías cuenta más)
+      adherenceByDay[date] = (kcalScore * 0.4 + proteinScore * 0.2 + carbsScore * 0.2 + fatScore * 0.2);
+    });
+
+    return adherenceByDay;
+  };
+
+  /**
+   * Calcula composición corporal (masa grasa vs masa magra) a partir de biometrics
+   */
+  const calculateBodyComposition = (biometrics) => {
+    if (!Array.isArray(biometrics)) return [];
+
+    return biometrics
+      .filter(b => b.weight && b.fat_percentage)
+      .map(b => {
+        const weight = parseFloat(b.weight);
+        const fatPercentage = parseFloat(b.fat_percentage);
+        const fatMass = weight * (fatPercentage / 100);
+        const leanMass = weight - fatMass;
+
+        return {
+          date: b.measured_at,
+          weight,
+          fatMass: parseFloat(fatMass.toFixed(2)),
+          leanMass: parseFloat(leanMass.toFixed(2))
+        };
+      })
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
+  return {
+    aggregateLogsByDay,
+    getTargetForDate,
+    calculateAdherence,
+    calculateBodyComposition
+  };
 }
