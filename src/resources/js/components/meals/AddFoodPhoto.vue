@@ -358,6 +358,11 @@
         return;
       }
 
+      // Open modal on desktop if not already open
+      if (mdAndUp.value && !isCameraModalOpenOnDesktop.value) {
+        isCameraModalOpenOnDesktop.value = true;
+      }
+
       // Read file as data URL for preview
       const reader = new FileReader();
       reader.onload = (e) => {
